@@ -6,7 +6,7 @@ struct HomePageView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            SearchBarView(searchBarText: $searchText)
+            HeaderView(searchBarText: $searchText)
             
             HorizontalCalendarView()
             

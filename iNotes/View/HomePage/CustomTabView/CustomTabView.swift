@@ -42,7 +42,7 @@ struct CustomTabView: View {
             .foregroundStyle(.primary)
         }
         .sheet(isPresented: $isSheetPresented) {
-            VStack {
+            NavigationStack {
                 AddNoteView(isPresented: $isSheetPresented, viewModel: notesViewModel)
             }
             .presentationBackground(Color.backgroundHomePage)

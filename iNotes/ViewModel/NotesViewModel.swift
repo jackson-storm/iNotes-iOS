@@ -10,6 +10,7 @@ class NotesViewModel: ObservableObject {
     }
     
     func saveNotes() {
+        notes = Array(Set(notes))
         UserDefaults.standard.set(notes, forKey: notesKey)
     }
     
@@ -22,5 +23,9 @@ class NotesViewModel: ObservableObject {
     func deleteAllNotes() {
         notes.removeAll()
         saveNotes()
+    }
+    
+    func noteExists(_ note: String) -> Bool {
+        return notes.contains(note)
     }
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SearchBarView: View {
+struct HeaderView: View {
     @Binding var searchBarText: String
     
     var body: some View {
@@ -22,5 +22,5 @@ struct SearchBarView: View {
 
 #Preview {
     @Previewable @State var searchText: String = ""
-    SearchBarView(searchBarText: $searchText)
+    HeaderView(searchBarText: $searchText)
 }
