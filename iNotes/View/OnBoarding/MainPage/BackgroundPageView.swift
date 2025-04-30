@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct BackgroundPage: View {
+struct BackgroundPageView: View {
     var image: String
     
     var body: some View {
@@ -26,5 +26,5 @@ struct BackgroundPage: View {
 }
 
 #Preview {
-    BackgroundPage(image: "iamge5")
+    BackgroundPageView(image: "iamge5")
 }

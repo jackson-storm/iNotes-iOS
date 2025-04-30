@@ -1,26 +1,6 @@
 import SwiftUI
 
-struct SearchBarView: View {
-    @Binding var searchBarText: String
-    
-    var body: some View {
-        HStack(spacing: 15) {
-            if searchBarText.isEmpty {
-                ProfileImage()
-            }
-            
-            SearchBar(searchText: $searchBarText)
-            
-            if searchBarText.isEmpty {
-                HeaderMenus()
-            }
-        }
-        .animation(.bouncy(duration: 0.5), value: searchBarText)
-        .padding(.horizontal, 15)
-    }
-}
-
-private struct SearchBar: View {
+struct CustomTextField: View {
     @Binding var searchText: String
     
     var body: some View {
@@ -64,37 +44,4 @@ private struct SearchBar: View {
             .padding(.horizontal, 15)
         }
     }
-}
-private struct ProfileImage: View {
-    var body: some View {
-        VStack {
-            Button(action: {
-                //
-            }) {
-                Image(systemName: "person.circle")
-                    .font(.system(size: 24))
-            }
-            .foregroundStyle(.secondary)
-        }
-    }
-}
-
-
-private struct HeaderMenus: View {
-    var body: some View {
-        VStack {
-            Button(action: {
-                //
-            }) {
-                Image(systemName: "line.3.horizontal")
-                    .font(.system(size: 24))
-            }
-            .foregroundStyle(.secondary)
-        }
-    }
-}
-
-#Preview {
-    @Previewable @State var searchText: String = ""
-    SearchBarView(searchBarText: $searchText)
 }

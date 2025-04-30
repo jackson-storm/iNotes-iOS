@@ -10,7 +10,7 @@ struct OnBoardingPageTwo: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
-            BackgroundPage(image: "image4")
+            BackgroundPageView(image: "image4")
         )
         .ignoresSafeArea(.all)
     }

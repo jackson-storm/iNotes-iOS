@@ -16,7 +16,7 @@ struct OnBoardingMainView: View {
             }
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             
-            SelectedMenu(selectedPage: $selectedPage)
+            SelectedMenuView(selectedPage: $selectedPage)
         }
         .background(Color.black)
         .ignoresSafeArea()

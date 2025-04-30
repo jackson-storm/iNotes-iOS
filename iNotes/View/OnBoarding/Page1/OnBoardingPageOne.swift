@@ -10,7 +10,7 @@ struct OnboardingPageOne: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
-            BackgroundPage(image: "image3")
+            BackgroundPageView(image: "image3")
         )
         .ignoresSafeArea(.all)
     }

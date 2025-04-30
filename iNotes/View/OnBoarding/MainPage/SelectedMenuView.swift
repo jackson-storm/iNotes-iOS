@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SelectedMenu: View {
+struct SelectedMenuView: View {
     @Binding var selectedPage: Int
     @AppStorage("hasLaunchedBefore") private var hasLaunchedBefore = false
     
@@ -9,7 +9,7 @@ struct SelectedMenu: View {
             HStack {
                 ForEach(0..<3, id: \.self) { index in
                     Circle()
-                        .fill(selectedPage == index ? Color.orange : Color.secondary)
+                        .fill(selectedPage == index ? Color.white : Color.secondary)
                         .frame(width: 10, height: 10)
                         .scaleEffect(selectedPage == index ? 1.1 : 1.0)
                         .animation(.easeInOut, value: selectedPage)
@@ -26,7 +26,9 @@ struct SelectedMenu: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 15)
-                            .fill(Color.orange)
+                            .fill(Color.clear)
+                            .stroke(.gray, lineWidth: 1)
+                        
                         Text("Get Started")
                             .foregroundColor(.white)
                             .bold()
@@ -40,7 +42,9 @@ struct SelectedMenu: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 15)
-                            .fill(Color.orange)
+                            .fill(Color.clear)
+                            .stroke(.gray, lineWidth: 1)
+                        
                         Image(systemName: "chevron.right")
                             .foregroundColor(.white)
                             .bold()
