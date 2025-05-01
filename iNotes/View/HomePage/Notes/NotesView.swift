@@ -13,6 +13,7 @@ struct NotesView: View {
                     Text("Empty notes")
                         
                 }
+                .padding(.bottom, 50)
                 .foregroundColor(.gray)
                 .font(.system(size: 24))
                 

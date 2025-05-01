@@ -1,15 +1,15 @@
 import SwiftUI
 
-struct HeaderMenuView: View {
+struct ProfileImage: View {
     var body: some View {
         VStack {
             Button(action: {
                 //
             }) {
-                Image(systemName: "line.3.horizontal")
+                Image(systemName: "person.circle")
                     .font(.system(size: 24))
             }
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Color.blue.opacity(0.8))
         }
     }
 }

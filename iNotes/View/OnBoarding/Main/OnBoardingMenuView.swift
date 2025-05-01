@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SelectedMenuView: View {
+struct OnBoardingMenuView: View {
     @Binding var selectedPage: Int
     @AppStorage("hasLaunchedBefore") private var hasLaunchedBefore = false
     

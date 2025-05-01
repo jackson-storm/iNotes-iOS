@@ -24,11 +24,12 @@ struct CustomTabView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(.ultraThickMaterial)
+                            .fill(Color.backgroundSelected)
                             .frame(width: 55, height: 55)
                         
                         Image(systemName: "plus")
                             .font(.system(size: 20))
+                            .foregroundStyle(.white)
                     }
                 }
                 

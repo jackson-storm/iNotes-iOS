@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct BackgroundPageView: View {
+struct OnboardingBackgroundView: View {
     var image: String
     
     var body: some View {
@@ -26,5 +26,5 @@ struct BackgroundPageView: View {
 }
 
 #Preview {
-    BackgroundPageView(image: "iamge5")
+    OnboardingBackgroundView(image: "iamge5")
 }

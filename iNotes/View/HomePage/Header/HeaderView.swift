@@ -9,14 +9,14 @@ struct HeaderView: View {
                 ProfileImage()
             }
             
-            CustomTextField(searchText: $searchBarText)
+            CustomSearchBar(searchText: $searchBarText)
             
             if searchBarText.isEmpty {
                 HeaderMenuView()
             }
         }
         .animation(.bouncy(duration: 0.5), value: searchBarText)
-        .padding(.horizontal, 15)
+        .padding(.horizontal, 20)
     }
 }
 

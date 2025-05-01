@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CustomTextField: View {
+struct CustomSearchBar: View {
     @Binding var searchText: String
     
     var body: some View {
