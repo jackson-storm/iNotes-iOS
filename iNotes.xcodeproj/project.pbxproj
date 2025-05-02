@@ -11,10 +11,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E20B273D2DBC28DF008F4D14 /* Exceptions for "iNotes" folder in "iNotes" target */ = {
+		E2BF95572DC556ED00263114 /* Exceptions for "iNotes" folder in "iNotes" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Application/Info.plist,
+				"Supporting Files/Info.plist",
 			);
 			target = E20B27142DBC1CA4008F4D14 /* iNotes */;
 		};
@@ -24,7 +24,7 @@
 		E20B27172DBC1CA4008F4D14 /* iNotes */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				E20B273D2DBC28DF008F4D14 /* Exceptions for "iNotes" folder in "iNotes" target */,
+				E2BF95572DC556ED00263114 /* Exceptions for "iNotes" folder in "iNotes" target */,
 			);
 			path = iNotes;
 			sourceTree = "<group>";
@@ -264,11 +264,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"iNotes/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"iNotes/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = WZHZ6LB2F6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iNotes/Application/Info.plist;
+				INFOPLIST_FILE = "iNotes/Supporting Files/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -284,7 +284,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -295,11 +295,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"iNotes/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"iNotes/Resources/Preview Content\"";
 				DEVELOPMENT_TEAM = WZHZ6LB2F6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = iNotes/Application/Info.plist;
+				INFOPLIST_FILE = "iNotes/Supporting Files/Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -315,7 +315,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
