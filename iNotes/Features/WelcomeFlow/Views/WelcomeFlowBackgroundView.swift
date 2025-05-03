@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct OnboardingBackgroundView: View {
+struct WelcomeFlowBackgroundView: View {
     var image: String
     
     var body: some View {
@@ -25,6 +25,3 @@ struct OnboardingBackgroundView: View {
     }
 }
 
-#Preview {
-    OnboardingBackgroundView(image: "iamge5")
-}

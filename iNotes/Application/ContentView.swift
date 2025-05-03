@@ -7,7 +7,7 @@ struct ContentView: View {
         if hasLaunchedBefore {
             HomeView()
         } else {
-            OnBoardingView()
+            WelcomeFlowView()
         }
     }
 }

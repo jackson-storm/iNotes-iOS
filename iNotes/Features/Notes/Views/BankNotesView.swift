@@ -10,22 +10,19 @@ struct BankNotesView: View {
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(Color.backgroundHomePage)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.all)
+            CustomBackgroundView()
             
             VStack(alignment: .leading, spacing: 10) {
                 
                 ScrollView {
-                    CustomTextFieldTitle(newNote: $newNote, noteExists: $noteExists)
+                    CustomTextFieldTitleView(newNote: $newNote, noteExists: $noteExists)
                     
                     CustomTextFieldDescriptionView()
                 }
                 
                 Spacer()
                 
-                CustomButtonSave(action: {
+                CustomButtonSaveView(action: {
                     if notesViewModel.addNoteIfNotExists(newNote) {
                         isPresented = false
                     } else {

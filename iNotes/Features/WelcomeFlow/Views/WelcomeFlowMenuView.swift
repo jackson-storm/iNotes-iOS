@@ -1,13 +1,17 @@
 import SwiftUI
 
-struct OnBoardingMenuView: View {
+import SwiftUI
+
+struct WelcomeFlowMenuView: View {
     @Binding var selectedPage: Int
-    @AppStorage("hasLaunchedBefore") private var hasLaunchedBefore = false
+    let totalPages: Int
+    let onComplete: () -> Void
+    let onNext: () -> Void
     
     var body: some View {
         HStack {
             HStack {
-                ForEach(0..<3, id: \.self) { index in
+                ForEach(0..<totalPages, id: \.self) { index in
                     Circle()
                         .fill(selectedPage == index ? Color.white : Color.secondary)
                         .frame(width: 10, height: 10)
@@ -18,12 +22,8 @@ struct OnBoardingMenuView: View {
             
             Spacer()
             
-            if selectedPage == 2 {
-                Button(action: {
-                    withAnimation(.easeInOut) {
-                        hasLaunchedBefore = true
-                    }
-                }) {
+            if selectedPage == totalPages - 1 {
+                Button(action: onComplete) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color.clear)
@@ -35,11 +35,8 @@ struct OnBoardingMenuView: View {
                     }
                 }
                 .frame(width: 180, height: 40)
-                
             } else {
-                Button(action: {
-                    selectedPage += 1
-                }) {
+                Button(action: onNext) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color.clear)
@@ -55,10 +52,5 @@ struct OnBoardingMenuView: View {
         }
         .padding(.horizontal, 30)
         .padding(.vertical, 50)
-        .animation(.easeInOut(duration: 0.5), value: selectedPage)
     }
-}
-
-#Preview {
-    OnBoardingView()
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CustomTextFieldTitle: View {
+struct CustomTextFieldTitleView: View {
     @Binding var newNote: String
     @Binding var noteExists: Bool
     
@@ -73,5 +73,5 @@ struct CustomTextFieldTitle: View {
 }
 
 #Preview {
-    CustomTextFieldTitle(newNote: .constant(""), noteExists: .constant(false))
+    CustomTextFieldTitleView(newNote: .constant(""), noteExists: .constant(false))
 }
