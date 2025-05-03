@@ -7,29 +7,32 @@ struct NotesListView: View {
         VStack {
             if notesViewModel.notes.isEmpty {
                 Spacer()
-                
-                VStack(spacing: 10) {
-                    Image(systemName: "menucard")
-                    Text("Empty notes")
-                        
-                }
-                .padding(.bottom, 50)
-                .foregroundColor(.gray)
-                .font(.system(size: 24))
-                
+                EmptyStateView()
+                Spacer()
             } else {
                 ScrollView {
-                    NotesCardView(notesViewModel: notesViewModel)
+                    NotesCardGridView(notes: notesViewModel.notes)
                 }
             }
-            Spacer()
         }
     }
 }
 
+private struct EmptyStateView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "menucard")
+                .font(.system(size: 24))
+            Text("Empty notes")
+                .font(.system(size: 24))
+        }
+        .foregroundColor(.gray)
+        .padding(.bottom, 50)
+    }
+}
 
-private struct NotesCardView: View {
-    @ObservedObject var notesViewModel: NotesViewModel
+private struct NotesCardGridView: View {
+    let notes: [Note]
     
     private let columns = [
         GridItem(.flexible()),
@@ -38,50 +41,51 @@ private struct NotesCardView: View {
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(notesViewModel.notes, id: \.self) { note in
-                ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.backgroundNotes)
-                        .frame(minHeight: 180)
-                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
-                    
-                    VStack(alignment: .center) {
-                        Text(note)
-                            .lineLimit(1)
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.primary)
-                            .padding(.horizontal, 5)
-                            .padding(.top)
-                        
-                        Spacer()
-                        
-                        VStack(alignment: .center) {
-                            Image(systemName: "list.bullet.rectangle.portrait")
-                            Text("Empty note")
-                               
-                        } .font(.system(size: 15))
-                            .foregroundStyle(.secondary)
-                        
-                        Spacer()
-                        
-                        HStack {
-                            Spacer()
-                            Text("Edited")
-                                
-                        }
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                    }
-                }
+            ForEach(notes) { note in
+                NotesCard(note: note)
             }
         }
         .padding()
     }
 }
 
+private struct NotesCard: View {
+    let note: Note
+    
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.backgroundNotes)
+                .frame(minHeight: 180)
+                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+            
+            VStack {
+                Text(note.title)
+                    .lineLimit(1)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 5)
+                    .padding(.top)
+                
+                Spacer()
+                
+                Text(note.content.isEmpty ? "Empty note" : note.content)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 5)
+                
+                Spacer()
+                
+                Text("Edited: \(note.lastEdited.formatted())")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
+                    .padding(.bottom)
+            }
+        }
+    }
+}
 
 #Preview {
-    HomeView()
+    ContentView()
 }

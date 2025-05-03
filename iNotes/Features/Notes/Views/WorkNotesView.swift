@@ -23,7 +23,8 @@ struct WorkNotesView: View {
                 Spacer()
                 
                 CustomButtonSaveView(action: {
-                    if notesViewModel.addNoteIfNotExists(newNote) {
+                    let note = Note(title: newNote, content: "", lastEdited: Date())
+                    if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {
                         withAnimation {
@@ -37,7 +38,7 @@ struct WorkNotesView: View {
                     .frame(height: 20)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
-                            CardRowNotesView(image: "briefcase.fill", text: "Work", color: .orange)
+                            CardRowNotesView(image: "briefcase.fill", text: "Work", color: .orange, font: 10)
                         }
                     }
             }

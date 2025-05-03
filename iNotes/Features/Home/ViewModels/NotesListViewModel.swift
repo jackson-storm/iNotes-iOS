@@ -1,7 +1,7 @@
 import SwiftUI
 
 class NotesViewModel: ObservableObject {
-    @Published var notes: [String] = []
+    @Published var notes: [Note] = []
     
     private enum Keys {
         static let notes = "savedNotes"
@@ -11,8 +11,8 @@ class NotesViewModel: ObservableObject {
         loadNotes()
     }
     
-    func addNoteIfNotExists(_ note: String) -> Bool {
-        guard !noteExists(note) else { return false }
+    func addNoteIfNotExists(_ note: Note) -> Bool {
+        guard !notes.contains(where: { $0.title == note.title }) else { return false }
         notes.append(note)
         saveNotes()
         return true
@@ -22,10 +22,6 @@ class NotesViewModel: ObservableObject {
         guard !notes.isEmpty else { return }
         notes.removeAll()
         saveNotes()
-    }
-    
-    func noteExists(_ note: String) -> Bool {
-        notes.contains(note)
     }
     
     private func saveNotes() {
@@ -40,7 +36,7 @@ class NotesViewModel: ObservableObject {
     private func loadNotes() {
         guard let data = UserDefaults.standard.data(forKey: Keys.notes) else { return }
         do {
-            notes = try JSONDecoder().decode([String].self, from: data)
+            notes = try JSONDecoder().decode([Note].self, from: data)
         } catch {
             print("Error loading notes: \(error)")
         }

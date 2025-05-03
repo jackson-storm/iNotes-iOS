@@ -21,7 +21,8 @@ struct CreditCardNotesView: View {
                 Spacer()
                 
                 CustomButtonSaveView(action: {
-                    if notesViewModel.addNoteIfNotExists(newNote) {
+                    let note = Note(title: newNote, content: "", lastEdited: Date())
+                    if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {
                         withAnimation {
@@ -35,7 +36,7 @@ struct CreditCardNotesView: View {
                     .frame(height: 20)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
-                            CardRowNotesView(image: "creditcard.fill", text: "Credit Card", color: .green)
+                            CardRowNotesView(image: "creditcard.fill", text: "Credit Card", color: .green, font: 10)
                         }
                     }
             }

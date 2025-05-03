@@ -3,7 +3,18 @@ import SwiftUI
 struct HorizontalFilterView: View {
     @State private var selection: Int = 0
     
-    private let filters = ["All", "Banks", "Messages", "Credit Cards", "Payments"]
+    private let filters = [
+        "All",
+        "Banks",
+        "Credit Cards",
+        "Payments",
+        "Shopping",
+        "Work",
+        "Messages",
+        "Health",
+        "Travel",
+        "Personal"
+    ]
     
     var body: some View {
         VStack {
@@ -13,13 +24,15 @@ struct HorizontalFilterView: View {
                         Button(action: {
                             selection = index
                         }) {
-                            Text(filters[index])
-                                .font(.system(size: 16, weight: .regular))
-                                .foregroundColor(selection == index ? .white : .primary)
-                                .padding(.horizontal, 15)
-                                .padding(.vertical, 8)
-                                .background(selection == index ? Color.backgroundSelected : Color.backgroundSearchBar)
-                                .cornerRadius(10)
+                            HStack(spacing: 8) {
+                                Text(filters[index])
+                                    .font(.system(size: 16, weight: .regular))
+                                    .foregroundColor(selection == index ? .white : .primary)
+                            }
+                            .padding(.horizontal, 15)
+                            .padding(.vertical, 8)
+                            .background(selection == index ? Color.backgroundSelected : Color.backgroundSearchBar)
+                            .cornerRadius(10)
                         }
                         .buttonStyle(.plain)
                     }

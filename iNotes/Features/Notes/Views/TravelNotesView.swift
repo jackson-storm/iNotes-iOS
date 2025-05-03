@@ -23,7 +23,8 @@ struct TravelNotesView: View {
                 Spacer()
                 
                 CustomButtonSaveView(action: {
-                    if notesViewModel.addNoteIfNotExists(newNote) {
+                    let note = Note(title: newNote, content: "", lastEdited: Date())
+                    if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {
                         withAnimation {
@@ -37,7 +38,7 @@ struct TravelNotesView: View {
                     .frame(height: 20)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
-                            CardRowNotesView(image: "airplane", text: "Travel", color: .teal)
+                            CardRowNotesView(image: "airplane", text: "Travel", color: .teal, font: 10)
                         }
                     }
             }
