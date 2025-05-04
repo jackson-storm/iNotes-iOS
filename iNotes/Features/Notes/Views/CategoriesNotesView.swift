@@ -5,9 +5,9 @@ struct CategoriesNotesView: View {
     @Binding var newNote: String
     @Binding var noteExists: Bool
     @Binding var showNoteExists: Bool
-    
+
     @ObservedObject var viewModel: NotesViewModel
-    
+
     var body: some View {
         VStack {
             TypeNotesView(

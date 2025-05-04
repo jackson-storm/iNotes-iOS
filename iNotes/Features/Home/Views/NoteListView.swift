@@ -55,7 +55,7 @@ private struct NotesCard: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 15)
-                .fill(Color.backgroundNotes)
+                .fill(Color.backgroundComponents)
                 .frame(minHeight: 180)
                 .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
             

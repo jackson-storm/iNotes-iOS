@@ -9,7 +9,7 @@ struct CardRowNotesView: View {
     var body: some View {
         HStack {
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 20)
                     .fill(color)
                     .frame(width: 26, height: 26)
                 

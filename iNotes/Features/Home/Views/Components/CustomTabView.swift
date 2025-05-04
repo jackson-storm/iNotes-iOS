@@ -12,6 +12,7 @@ struct CustomTabView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 40)
                 .fill(.ultraThinMaterial)
+                .stroke(.gray.opacity(0.1), lineWidth: 1)
                 .frame(width: 200, height: 65)
             
             HStack(spacing: 23) {

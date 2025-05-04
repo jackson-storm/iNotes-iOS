@@ -25,10 +25,10 @@ struct CustomTextFieldTitleView: View {
             
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.backgroundSearchBar)
+                    .fill(Color.backgroundComponents)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(noteExists ? Color.red : Color.clear, lineWidth: 2)
+                            .stroke(noteExists ? Color.red : Color.gray.opacity(0.1), lineWidth: 1)
                     )
                     .frame(height: 50)
                 

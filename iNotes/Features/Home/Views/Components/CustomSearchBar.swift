@@ -6,7 +6,8 @@ struct CustomSearchBar: View {
     var body: some View {
         ZStack(alignment: .leading) {
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.backgroundSearchBar)
+                .fill(Color.backgroundComponents)
+                .stroke(.gray.opacity(0.1), lineWidth: 1)
                 .frame(height: searchText.isEmpty ? 45 : 50)
             
             if searchText.isEmpty {

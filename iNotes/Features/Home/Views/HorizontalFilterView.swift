@@ -31,7 +31,14 @@ struct HorizontalFilterView: View {
                             }
                             .padding(.horizontal, 15)
                             .padding(.vertical, 8)
-                            .background(selection == index ? Color.backgroundSelected : Color.backgroundSearchBar)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(selection == index ? Color.backgroundSelected : Color.backgroundComponents)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(.gray.opacity(0.1), lineWidth: 1)
+                                    )
+                            )
                             .cornerRadius(10)
                         }
                         .buttonStyle(.plain)

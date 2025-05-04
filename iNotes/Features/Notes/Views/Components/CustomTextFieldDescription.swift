@@ -11,8 +11,10 @@ struct CustomTextFieldDescriptionView: View {
             
             ZStack {
                 RoundedRectangle(cornerRadius: 15)
-                    .fill(Color.backgroundSearchBar)
+                    .fill(Color.backgroundComponents)
+                    .stroke(.gray.opacity(0.1), lineWidth: 1)
                     .frame(height: 260)
+                    
                 
                 ZStack(alignment: .topLeading) {
                     if noteText.isEmpty {
