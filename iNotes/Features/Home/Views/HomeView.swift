@@ -2,15 +2,16 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var searchText: String = ""
+    @State private var selectedCategory: NoteCategory = .all
     @StateObject private var notesViewModel = NotesViewModel()
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 15) {
             HeaderView(searchBarText: $searchText)
             
             HorizontalCalendarView()
             
-            HorizontalFilterView()
+            HorizontalFilterView(selectedCategory: $selectedCategory, notesViewModel: notesViewModel)
             
             ZStack(alignment: .bottom) {
                 NotesListView(notesViewModel: notesViewModel)
@@ -22,6 +23,9 @@ struct HomeView: View {
         }
         .padding(.top, 10)
         .background(Color.backgroundHomePage)
+        .onAppear {
+            notesViewModel.filterNotes(by: selectedCategory)
+        }
     }
 }
 

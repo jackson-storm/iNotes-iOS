@@ -22,7 +22,7 @@ struct CreditCardNotesView: View {
                 Spacer()
                 
                 ButtonSaveView(action: {
-                    let note = Note(title: noteTitle, description: description, lastEdited: Date())
+                    let note = Note(title: noteTitle, description: description, lastEdited: Date(), category: .creditCards)
                     if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {

@@ -5,13 +5,13 @@ struct NotesListView: View {
     
     var body: some View {
         VStack {
-            if notesViewModel.notes.isEmpty {
+            if notesViewModel.filteredNotes.isEmpty {
                 Spacer()
                 EmptyStateView()
                 Spacer()
             } else {
                 ScrollView {
-                    NotesCardGridView(notes: notesViewModel.notes)
+                    NotesCardGridView(notes: notesViewModel.filteredNotes)
                 }
             }
         }
@@ -22,11 +22,12 @@ private struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 10) {
             Image(systemName: "menucard")
-                .font(.system(size: 24))
-            Text("Empty notes")
-                .font(.system(size: 24))
+                .font(.system(size: 50))
+                .foregroundColor(.gray)
+            Text("No notes available")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.gray)
         }
-        .foregroundColor(.gray)
         .padding(.bottom, 50)
     }
 }
@@ -43,10 +44,10 @@ private struct NotesCardGridView: View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(notes) { note in
                 NotesCard(note: note)
-                    
             }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.top)
     }
 }
 
@@ -66,58 +67,35 @@ private struct NotesCard: View {
     }()
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            RoundedRectangle(cornerRadius: 15)
-                .fill(Color.backgroundComponents)
-                .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
-                .frame(maxWidth: .infinity)
+        VStack(alignment: .leading, spacing: 10) {
+            Text(note.title.isEmpty ? "Untitled" : note.title)
+                .font(.headline)
+                .lineLimit(1)
+                .foregroundColor(.primary)
             
-            VStack {
-                HStack {
-                    Text(note.title.isEmpty ? "No name" : note.title)
-                        .lineLimit(2)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    Spacer()
-                }
-                .padding(.horizontal, 15)
-                .padding(.top)
-                
+            Text(note.description.isEmpty ? "No description" : note.description)
+                .font(.subheadline)
+                .lineLimit(3)
+                .foregroundColor(.secondary)
+            
+            Spacer()
+            
+            HStack {
+                Text(note.lastEdited, formatter: dateFormatter)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
                 Spacer()
-                
-                HStack {
-                    Text(note.description.isEmpty ? "Empty note" : note.description)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 5)
-                        .lineLimit(10)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Spacer()
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical)
-                
-                Spacer()
-                
-                HStack {
-                    Spacer()
-                    
-                    HStack {
-                        Text(note.lastEdited, formatter: dateFormatter)
-                            .font(.footnote)
-                        
-                        Spacer()
-                        
-                        Text(note.lastEdited, formatter: timeFormatter)
-                            .font(.footnote)
-                            
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.bottom)
-                }
+                Text(note.lastEdited, formatter: timeFormatter)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
             }
         }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.backgroundComponents)
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
+        )
     }
 }
 
