@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CustomButtonSaveView: View {
+struct ButtonSaveView: View {
     var action : () -> Void = {}
     
     var body: some View {
@@ -23,5 +23,5 @@ struct CustomButtonSaveView: View {
 }
 
 #Preview {
-    CustomButtonSaveView()
+    ButtonSaveView()
 }

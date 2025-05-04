@@ -1,7 +1,9 @@
 import SwiftUI
 
 struct TypeNotesView: View {
-    @Binding var newNote: String
+    
+    @Binding var noteTitle: String
+    @Binding var description: String
     @Binding var noteExists: Bool
     @Binding var showNoteExists: Bool
     @Binding var isPresented: Bool
@@ -12,49 +14,49 @@ struct TypeNotesView: View {
         ScrollView {
             VStack(spacing: 20) {
                 SectionView(header: "Finance") {
-                    NavigationLink(destination: BankNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: BankNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented, description: $description)) {
                         CardRow(title: "Bank", image: "dollarsign.bank.building.fill", color: .red)
                     }
                     CustomDivider()
                     
-                    NavigationLink(destination: CreditCardNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: CreditCardNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Credit Card", image: "creditcard.fill", color: .green)
                     }
                     CustomDivider()
                     
-                    NavigationLink(destination: PaymentNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: PaymentNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Payments", image: "banknote.fill", color: .blue)
                     }
                 }
                 
                 SectionView(header: "Lifestyle") {
-                    NavigationLink(destination: ShoppingNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: ShoppingNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Shopping", image: "cart.fill", color: .purple)
                     }
                     CustomDivider()
                     
-                    NavigationLink(destination: WorkNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: WorkNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Work", image: "briefcase.fill", color: .orange)
                     }
                     CustomDivider()
                     
-                    NavigationLink(destination: MessageNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: MessageNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Messages", image: "ellipsis.message.fill", color: .yellow)
                     }
                 }
                 
                 SectionView(header: "Health & Travel") {
-                    NavigationLink(destination: HealthNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: HealthNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Health", image: "heart.fill", color: .pink)
                     }
                     CustomDivider()
                     
-                    NavigationLink(destination: TravelNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: TravelNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Travel", image: "airplane", color: .teal)
                     }
                     CustomDivider()
                     
-                    NavigationLink(destination: PersonalNotesView(notesViewModel: viewModel, newNote: $newNote, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
+                    NavigationLink(destination: PersonalNotesView(notesViewModel: viewModel, noteTitle: $noteTitle, description: $description, noteExists: $noteExists, showNoteExists: $showNoteExists, isPresented: $isPresented)) {
                         CardRow(title: "Personal", image: "person.fill", color: .indigo)
                     }
                 }

@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct CustomTextFieldTitleView: View {
-    @Binding var newNote: String
+struct TextFieldTitleView: View {
+    @Binding var noteTitle: String
     @Binding var noteExists: Bool
     
     private var dateFormatter: DateFormatter {
@@ -32,26 +32,26 @@ struct CustomTextFieldTitleView: View {
                     )
                     .frame(height: 50)
                 
-                if newNote.isEmpty {
+                if noteTitle.isEmpty {
                     Text("Enter title")
                         .foregroundColor(.secondary)
                         .padding(.leading, 15)
                 }
                 
                 HStack {
-                    TextField("", text: $newNote)
+                    TextField("", text: $noteTitle)
                         .foregroundColor(.primary)
                     
-                    if !newNote.isEmpty {
+                    if !noteTitle.isEmpty {
                         Button(action: {
-                            newNote = ""
+                            noteTitle = ""
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.gray)
                         }
                     }
                 }
-                .animation(.bouncy, value: newNote)
+                .animation(.bouncy, value: noteTitle)
                 .padding(.horizontal, 15)
             }
             
@@ -66,12 +66,12 @@ struct CustomTextFieldTitleView: View {
         .padding(.horizontal, 20)
         .animation(.easeInOut, value: noteExists)
         .onAppear {
-            newNote = ""
+            noteTitle = ""
             noteExists = false
         }
     }
 }
 
 #Preview {
-    CustomTextFieldTitleView(newNote: .constant(""), noteExists: .constant(false))
+    TextFieldTitleView(noteTitle: .constant(""), noteExists: .constant(false))
 }

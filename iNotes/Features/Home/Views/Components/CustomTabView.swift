@@ -2,7 +2,8 @@ import SwiftUI
 
 struct CustomTabView: View {
     @State private var isSheetPresented = false
-    @State private var newNote = ""
+    @State private var noteTitle = ""
+    @State private var description = ""
     @State private var noteExists = false
     @State private var showNoteExists = false
     
@@ -50,7 +51,7 @@ struct CustomTabView: View {
             NavigationStack {
                 CategoriesNotesView(
                     isPresented: $isSheetPresented,
-                    newNote: $newNote,
+                    noteTitle: $noteTitle, description: $description,
                     noteExists: $noteExists,
                     showNoteExists: $showNoteExists,
                     viewModel: notesViewModel 

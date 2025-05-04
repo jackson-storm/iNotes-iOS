@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CustomBackgroundView: View {
+struct NotesBackgroundView: View {
     var body: some View {
         Rectangle()
             .fill(Color.backgroundHomePage)

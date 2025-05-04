@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct CustomTextFieldDescriptionView: View {
-    @State private var noteText: String = ""
+struct TextFieldDescriptionView: View {
+    @Binding var description: String
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -17,25 +17,25 @@ struct CustomTextFieldDescriptionView: View {
                     
                 
                 ZStack(alignment: .topLeading) {
-                    if noteText.isEmpty {
+                    if description.isEmpty {
                         Text("Enter description")
                             .foregroundColor(.secondary)
                             .padding(.horizontal, 15)
                             .padding(.vertical, 13)
                     }
-                    TextEditor(text: $noteText)
+                    TextEditor(text: $description)
                         .scrollContentBackground(.hidden)
                         .frame(height: 250)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
-                        .opacity(noteText.isEmpty ? 0.7 : 1)
+                        .opacity(description.isEmpty ? 0.7 : 1)
                 }
             }
         }
         .padding(20)
+        .onAppear {
+            description = ""
+        }
     }
 }
 
-#Preview {
-    CustomTextFieldDescriptionView()
-}

@@ -3,27 +3,30 @@ import SwiftUI
 struct PersonalNotesView: View {
     @ObservedObject var notesViewModel: NotesViewModel
     
-    @Binding var newNote: String
+    @Binding var noteTitle: String
+    @Binding var description: String
     @Binding var noteExists: Bool
     @Binding var showNoteExists: Bool
     @Binding var isPresented: Bool
     
+    
+    
     var body: some View {
         ZStack {
-            CustomBackgroundView()
+            NotesBackgroundView()
             
             VStack(alignment: .leading, spacing: 10) {
                 
                 ScrollView {
-                    CustomTextFieldTitleView(newNote: $newNote, noteExists: $noteExists)
+                    TextFieldTitleView(noteTitle: $noteTitle, noteExists: $noteExists)
                     
-                    CustomTextFieldDescriptionView()
+                    TextFieldDescriptionView(description: $description)
                 }
                 
                 Spacer()
                 
-                CustomButtonSaveView(action: {
-                    let note = Note(title: newNote, content: "", lastEdited: Date())
+                ButtonSaveView(action: {
+                    let note = Note(title: noteTitle, description: description, lastEdited: Date())
                     if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {

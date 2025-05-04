@@ -43,6 +43,7 @@ private struct NotesCardGridView: View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(notes) { note in
                 NotesCard(note: note)
+                    
             }
         }
         .padding()
@@ -52,35 +53,69 @@ private struct NotesCardGridView: View {
 private struct NotesCard: View {
     let note: Note
     
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter
+    }()
+
+    private let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }()
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 15)
                 .fill(Color.backgroundComponents)
-                .frame(minHeight: 180)
                 .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
+                .frame(maxWidth: .infinity)
             
             VStack {
-                Text(note.title)
-                    .lineLimit(1)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                    .padding(.horizontal, 5)
-                    .padding(.top)
+                HStack {
+                    Text(note.title.isEmpty ? "No name" : note.title)
+                        .lineLimit(2)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+                .padding(.horizontal, 15)
+                .padding(.top)
                 
                 Spacer()
                 
-                Text(note.content.isEmpty ? "Empty note" : note.content)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 5)
+                HStack {
+                    Text(note.description.isEmpty ? "Empty note" : note.description)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 5)
+                        .lineLimit(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Spacer()
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical)
                 
                 Spacer()
                 
-                Text("Edited: \(note.lastEdited.formatted())")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
+                HStack {
+                    Spacer()
+                    
+                    HStack {
+                        Text(note.lastEdited, formatter: dateFormatter)
+                            .font(.footnote)
+                        
+                        Spacer()
+                        
+                        Text(note.lastEdited, formatter: timeFormatter)
+                            .font(.footnote)
+                            
+                    }
+                    .padding(.horizontal, 10)
                     .padding(.bottom)
+                }
             }
         }
     }
