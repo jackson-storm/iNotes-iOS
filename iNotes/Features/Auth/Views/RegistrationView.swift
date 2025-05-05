@@ -1,11 +1,12 @@
 import SwiftUI
 
-// TODO: временно
+// TODO: переделать дизайн и проверить работу приложения
 struct RegistrationView: View {
     @State private var username: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
-    
+    @StateObject private var viewModel = AuthViewModel()
+
     var body: some View {
         VStack(spacing: 20) {
             Text("Register")
@@ -15,17 +16,22 @@ struct RegistrationView: View {
             TextField("Username", text: $username)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
-                        
+
             TextField("Email", text: $email)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
-            
+
             SecureField("Password", text: $password)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
             
+            if let error = viewModel.registerError {
+                Text(error)
+                    .foregroundColor(.red)
+            }
+
             Button(action: {
-                // TODO: create logic with service
+                viewModel.register(username: username, email: email, password: password)
             }) {
                 Text("Register")
                     .frame(maxWidth: .infinity)

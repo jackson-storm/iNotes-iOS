@@ -1,9 +1,10 @@
 import SwiftUI
 
-// TODO: временно
+// TODO: переделать дизайн и проверить работу приложения
 struct LoginView: View {
-    @State private var username: String = ""
+    @State private var usernameOrEmail: String = ""
     @State private var password: String = ""
+    @StateObject private var viewModel = AuthViewModel()
     
     var body: some View {
         VStack(spacing: 20) {
@@ -11,16 +12,21 @@ struct LoginView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            TextField("Username", text: $username)
+            TextField("Username or Email", text: $usernameOrEmail)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
-                        
+
             SecureField("Password", text: $password)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal)
             
+            if let error = viewModel.loginError {
+                Text(error)
+                    .foregroundColor(.red)
+            }
+            
             Button(action: {
-                // TODO: create logic with service
+                viewModel.login(usernameOrEmail: usernameOrEmail, password: password)
             }) {
                 Text("Login")
                     .frame(maxWidth: .infinity)
