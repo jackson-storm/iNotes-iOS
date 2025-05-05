@@ -5,6 +5,8 @@ node_modules/
 
 # Prisma
 ./src/generated/
+./prisma/migrations
+./prisma/dev.db
 
 # Testing
 coverage/
