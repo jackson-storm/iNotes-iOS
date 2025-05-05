@@ -68,26 +68,41 @@ private struct NotesCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(note.title.isEmpty ? "Untitled" : note.title)
-                .font(.headline)
-                .lineLimit(1)
-                .foregroundColor(.primary)
+            HStack {
+                Text(note.title.isEmpty ? "Untitled" : note.title)
+                    .font(.headline)
+                    .lineLimit(2)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                ZStack {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(note.category.color)
+                        .frame(width: 28, height: 28)
+                    
+                    Image(systemName: note.category.icon)
+                        .foregroundStyle(.white)
+                        .font(.system(size: 13))
+                }
+            }
             
             Text(note.description.isEmpty ? "No description" : note.description)
                 .font(.subheadline)
-                .lineLimit(3)
+                .lineLimit(10)
                 .foregroundColor(.secondary)
+                .padding(.top, 15)
             
             Spacer()
             
             HStack {
                 Text(note.lastEdited, formatter: dateFormatter)
                     .font(.footnote)
-                    .foregroundColor(.gray)
+             
                 Spacer()
                 Text(note.lastEdited, formatter: timeFormatter)
                     .font(.footnote)
-                    .foregroundColor(.gray)
+                  
             }
         }
         .padding()

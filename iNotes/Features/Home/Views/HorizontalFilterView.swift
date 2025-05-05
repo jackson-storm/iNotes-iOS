@@ -19,7 +19,7 @@ struct HorizontalFilterView: View {
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(selectedCategory == category ? Color.blue : Color.gray.opacity(0.1))
+                                    .fill(selectedCategory == category ? Color.blue : Color.backgroundComponents)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
                                             .stroke(.gray.opacity(0.1), lineWidth: 1)
