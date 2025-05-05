@@ -1,32 +1,50 @@
 import SwiftUI
 
-// TODO: переделать дизайн и проверить работу приложения
 struct LoginView: View {
     @State private var usernameOrEmail: String = ""
     @State private var password: String = ""
     @StateObject private var viewModel = AuthViewModel()
     
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(alignment: .leading, spacing: 20) {
+            Spacer()
+            
             Text("Login")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            TextField("Username or Email", text: $usernameOrEmail)
-                .textFieldStyle(.roundedBorder)
-                .padding(.horizontal)
-
-            SecureField("Password", text: $password)
-                .textFieldStyle(.roundedBorder)
-                .padding(.horizontal)
-            
-            if let error = viewModel.loginError {
-                Text(error)
-                    .foregroundColor(.red)
+            VStack(alignment: .leading, spacing: 15) {
+                UsernameTextField(username: $usernameOrEmail, hasError: viewModel.usernameError != nil)
+                
+                if let usernameError = viewModel.usernameError {
+                    Text(usernameError)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.leading, 5)
+                }
+                
+                PasswordTextField(password: $password, hasError: viewModel.passwordError != nil)
+                
+                if let passwordError = viewModel.passwordError {
+                    Text(passwordError)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.leading, 5)
+                }
+                
+                if let generalError = viewModel.loginError {
+                    Text(generalError)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 5)
+                }
             }
             
             Button(action: {
-                viewModel.login(usernameOrEmail: usernameOrEmail, password: password)
+                if viewModel.validateLogin(usernameOrEmail: usernameOrEmail, password: password) {
+                    viewModel.login(usernameOrEmail: usernameOrEmail, password: password)
+                }
             }) {
                 Text("Login")
                     .frame(maxWidth: .infinity)
@@ -35,12 +53,31 @@ struct LoginView: View {
                     .foregroundColor(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .padding(.horizontal)
+            
+            HStack {
+                Spacer()
+                
+                Text("Don't have an account?")
+                NavigationLink(destination: RegistrationView()) {
+                    Text("Register")
+                        .foregroundColor(.blue)
+                        .underline()
+                }
+                Spacer()
+            }
+            .font(.subheadline)
+            .padding(.top, 10)
+            
+            Spacer()
         }
-        .padding(.horizontal, 10)
+        .padding(.horizontal, 20)
+        .background(Color.backgroundHomePage)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    LoginView()
+    NavigationView {
+        LoginView()
+    }
 }

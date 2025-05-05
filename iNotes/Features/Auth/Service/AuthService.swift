@@ -2,7 +2,6 @@ import Foundation
 
 class AuthService {
     static let shared = AuthService()
-
     private init() {}
 
     func register(request: RegisterRequest, completion: @escaping (Result<AuthResponse, Error>) -> Void) {
