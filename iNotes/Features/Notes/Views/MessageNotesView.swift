@@ -3,27 +3,31 @@ import SwiftUI
 struct MessageNotesView: View {
     @ObservedObject var notesViewModel: NotesViewModel
     
-    @Binding var newNote: String
+    @Binding var noteTitle: String
+    @Binding var description: String
     @Binding var noteExists: Bool
     @Binding var showNoteExists: Bool
     @Binding var isPresented: Bool
     
+    
+    
     var body: some View {
         ZStack {
-            CustomBackgroundView()
+            NotesBackgroundView()
             
             VStack(alignment: .leading, spacing: 10) {
       
                 ScrollView {
-                    CustomTextFieldTitleView(newNote: $newNote, noteExists: $noteExists)
+                    TextFieldTitleView(noteTitle: $noteTitle, noteExists: $noteExists)
                     
-                    CustomTextFieldDescriptionView()
+                    TextFieldDescriptionView(description: $description)
                 }
                     
                 Spacer()
                 
-                CustomButtonSaveView(action: {
-                    if notesViewModel.addNoteIfNotExists(newNote) {
+                ButtonSaveView(action: {
+                    let note = Note(title: noteTitle, description: description, lastEdited: Date(), category: .messages)
+                    if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {
                         withAnimation {
@@ -37,7 +41,7 @@ struct MessageNotesView: View {
                     .frame(height: 20)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
-                            CardRowNotesView(image: "ellipsis.message.fill", text: "Messages", color: .yellow)
+                            CardRowNotesView(image: "ellipsis.message.fill", text: "Messages", color: .yellow, font: 10)
                         }
                     }
             }

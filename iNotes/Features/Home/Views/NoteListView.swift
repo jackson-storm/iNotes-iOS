@@ -5,31 +5,35 @@ struct NotesListView: View {
     
     var body: some View {
         VStack {
-            if notesViewModel.notes.isEmpty {
+            if notesViewModel.filteredNotes.isEmpty {
                 Spacer()
-                
-                VStack(spacing: 10) {
-                    Image(systemName: "menucard")
-                    Text("Empty notes")
-                        
-                }
-                .padding(.bottom, 50)
-                .foregroundColor(.gray)
-                .font(.system(size: 24))
-                
+                EmptyStateView()
+                Spacer()
             } else {
                 ScrollView {
-                    NotesCardView(notesViewModel: notesViewModel)
+                    NotesCardGridView(notes: notesViewModel.filteredNotes)
                 }
             }
-            Spacer()
         }
     }
 }
 
+private struct EmptyStateView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "menucard")
+                .font(.system(size: 50))
+                .foregroundColor(.gray)
+            Text("No notes available")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.gray)
+        }
+        .padding(.bottom, 50)
+    }
+}
 
-private struct NotesCardView: View {
-    @ObservedObject var notesViewModel: NotesViewModel
+private struct NotesCardGridView: View {
+    let notes: [Note]
     
     private let columns = [
         GridItem(.flexible()),
@@ -38,50 +42,78 @@ private struct NotesCardView: View {
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(notesViewModel.notes, id: \.self) { note in
-                ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.backgroundNotes)
-                        .frame(minHeight: 180)
-                        .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 5)
-                    
-                    VStack(alignment: .center) {
-                        Text(note)
-                            .lineLimit(1)
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.primary)
-                            .padding(.horizontal, 5)
-                            .padding(.top)
-                        
-                        Spacer()
-                        
-                        VStack(alignment: .center) {
-                            Image(systemName: "list.bullet.rectangle.portrait")
-                            Text("Empty note")
-                               
-                        } .font(.system(size: 15))
-                            .foregroundStyle(.secondary)
-                        
-                        Spacer()
-                        
-                        HStack {
-                            Spacer()
-                            Text("Edited")
-                                
-                        }
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                    }
-                }
+            ForEach(notes) { note in
+                NotesCard(note: note)
             }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.top)
     }
 }
 
+private struct NotesCard: View {
+    let note: Note
+    
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter
+    }()
+
+    private let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter
+    }()
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text(note.title.isEmpty ? "Untitled" : note.title)
+                    .font(.headline)
+                    .lineLimit(2)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                ZStack {
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(note.category.color)
+                        .frame(width: 28, height: 28)
+                    
+                    Image(systemName: note.category.icon)
+                        .foregroundStyle(.white)
+                        .font(.system(size: 13))
+                }
+            }
+            
+            Text(note.description.isEmpty ? "No description" : note.description)
+                .font(.subheadline)
+                .lineLimit(10)
+                .foregroundColor(.secondary)
+                .padding(.top, 15)
+            
+            Spacer()
+            
+            HStack {
+                Text(note.lastEdited, formatter: dateFormatter)
+                    .font(.footnote)
+             
+                Spacer()
+                Text(note.lastEdited, formatter: timeFormatter)
+                    .font(.footnote)
+                  
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color.backgroundComponents)
+                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
+        )
+    }
+}
 
 #Preview {
-    HomeView()
+    ContentView()
 }

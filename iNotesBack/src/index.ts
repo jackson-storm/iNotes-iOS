@@ -1,16 +1,17 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, {Express} from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import AuthRoutes from "./routes/AuthRoutes";
+dotenv.config();
 
-const app = express();
+const app: Express = express();
 const PORT: number = parseInt(process.env.PORT || '4200', 10);
 
-app.get('/', (_req: Request, res: Response) => {
-  res.send('Hello, world!');
-});
+app.use(cors());
+app.use(express.json());
 
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).send('Internal Server Error');
-});
+// TODO: list implemented routes | список активных роутеров
+app.use('/api/auth', AuthRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);

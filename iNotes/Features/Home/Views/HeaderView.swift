@@ -9,7 +9,7 @@ struct HeaderView: View {
                 HeaderProfileImage()
             }
             
-            CustomSearchBar(searchText: $searchBarText)
+            SearchBarView(searchText: $searchBarText)
             
             if searchBarText.isEmpty {
                 HeaderButtonMenuView()

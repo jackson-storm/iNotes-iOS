@@ -1,3 +1,13 @@
 .idea/
 node_modules/
 .env
+.env.test
+
+# Prisma
+./src/generated/
+./prisma/migrations
+./prisma/dev.db
+
+# Testing
+coverage/
+.nyc_output/

@@ -1,7 +1,9 @@
 import SwiftUI
 
 class NotesViewModel: ObservableObject {
-    @Published var notes: [String] = []
+    @Published var notes: [Note] = []
+    @Published var filteredNotes: [Note] = []
+    @Published var selectedCategory: NoteCategory = .all
     
     private enum Keys {
         static let notes = "savedNotes"
@@ -11,21 +13,29 @@ class NotesViewModel: ObservableObject {
         loadNotes()
     }
     
-    func addNoteIfNotExists(_ note: String) -> Bool {
-        guard !noteExists(note) else { return false }
+    func addNoteIfNotExists(_ note: Note) -> Bool {
+        guard !notes.contains(where: { $0.title == note.title }) else { return false }
         notes.append(note)
         saveNotes()
+        filterNotes(by: selectedCategory)
         return true
+    }
+    
+    func filterNotes(by category: NoteCategory) {
+        withAnimation(.easeOut) {
+            if category == .all {
+                filteredNotes = notes
+            } else {
+                filteredNotes = notes.filter { $0.category == category }
+            }
+        }
     }
     
     func deleteAllNotes() {
         guard !notes.isEmpty else { return }
         notes.removeAll()
         saveNotes()
-    }
-    
-    func noteExists(_ note: String) -> Bool {
-        notes.contains(note)
+        filterNotes(by: selectedCategory)
     }
     
     private func saveNotes() {
@@ -40,9 +50,14 @@ class NotesViewModel: ObservableObject {
     private func loadNotes() {
         guard let data = UserDefaults.standard.data(forKey: Keys.notes) else { return }
         do {
-            notes = try JSONDecoder().decode([String].self, from: data)
+            notes = try JSONDecoder().decode([Note].self, from: data)
+            filteredNotes = notes
         } catch {
             print("Error loading notes: \(error)")
         }
     }
+}
+
+#Preview {
+    ContentView()
 }

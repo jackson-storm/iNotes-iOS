@@ -1,17 +1,19 @@
 import SwiftUI
 
 struct CategoriesNotesView: View {
+    
     @Binding var isPresented: Bool
-    @Binding var newNote: String
+    @Binding var noteTitle: String
+    @Binding var description: String
     @Binding var noteExists: Bool
     @Binding var showNoteExists: Bool
-    
+
     @ObservedObject var viewModel: NotesViewModel
-    
+
     var body: some View {
         VStack {
             TypeNotesView(
-                newNote: $newNote,
+                noteTitle: $noteTitle, description: $description,
                 noteExists: $noteExists,
                 showNoteExists: $showNoteExists,
                 isPresented: $isPresented,
