@@ -20,6 +20,7 @@ jest.mock('../../generated/prisma', () => {
 });
 
 jest.mock('../../middlewares/Cashe', () => ({
+  Cache: jest.fn(() => (req: any, res: any, next: any) => next()),
   cacheService: {
     set: jest.fn(),
     get: jest.fn(),
@@ -44,13 +45,23 @@ describe('Note Controller', () => {
   let app: express.Express;
   let prisma: any;
   
+  const testDate = new Date();
   const sampleNote = {
     id: 1,
     title: 'Test Note',
     description: 'Test Description',
     category: 'Test Category',
-    createdAt: new Date(),
-    editorAt: new Date()
+    createdAt: testDate,
+    editorAt: testDate
+  };
+
+  const expectNoteStructure = (note: any, expected: any) => {
+    expect(note.id).toEqual(expected.id);
+    expect(note.title).toEqual(expected.title);
+    expect(note.description).toEqual(expected.description);
+    expect(note.category).toEqual(expected.category);
+    expect(new Date(note.createdAt)).toBeInstanceOf(Date);
+    expect(new Date(note.editorAt)).toBeInstanceOf(Date);
   };
 
   beforeEach(() => {
@@ -70,7 +81,9 @@ describe('Note Controller', () => {
       const response = await request(app).get('/api/notes');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual([sampleNote]);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(1);
+      expectNoteStructure(response.body[0], sampleNote);
       expect(prisma.task.findMany).toHaveBeenCalledWith({
         orderBy: {
           createdAt: 'desc'
@@ -95,7 +108,7 @@ describe('Note Controller', () => {
       const response = await request(app).get('/api/notes/1');
 
       expect(response.status).toBe(200);
-      expect(response.body).toEqual(sampleNote);
+      expectNoteStructure(response.body, sampleNote);
       expect(prisma.task.findUnique).toHaveBeenCalledWith({
         where: {
           id: 1
@@ -130,23 +143,21 @@ describe('Note Controller', () => {
         category: 'New Category'
       };
 
-      (prisma.task.create as jest.Mock).mockResolvedValue({
+      const createdNote = {
         ...newNote,
         id: 2,
-        createdAt: new Date(),
-        editorAt: new Date()
-      });
+        createdAt: testDate,
+        editorAt: testDate
+      };
+
+      (prisma.task.create as jest.Mock).mockResolvedValue(createdNote);
 
       const response = await request(app)
         .post('/api/notes')
         .send(newNote);
 
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('title', newNote.title);
-      expect(response.body).toHaveProperty('description', newNote.description);
-      expect(response.body).toHaveProperty('category', newNote.category);
-      expect(response.body).toHaveProperty('createdAt');
-      expect(response.body).toHaveProperty('editorAt');
+      expectNoteStructure(response.body, createdNote);
       expect(prisma.task.create).toHaveBeenCalledWith({
         data: newNote
       });
@@ -178,20 +189,20 @@ describe('Note Controller', () => {
 
       (prisma.task.findUnique as jest.Mock).mockResolvedValue(sampleNote);
 
-      (prisma.task.update as jest.Mock).mockResolvedValue({
+      const updatedNote = {
         ...sampleNote,
         ...updateData,
-        editorAt: new Date()
-      });
+        editorAt: testDate
+      };
+
+      (prisma.task.update as jest.Mock).mockResolvedValue(updatedNote);
 
       const response = await request(app)
         .put('/api/notes/1')
         .send(updateData);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('title', updateData.title);
-      expect(response.body).toHaveProperty('description', updateData.description);
-      expect(response.body).toHaveProperty('category', updateData.category);
+      expectNoteStructure(response.body, updatedNote);
       expect(prisma.task.update).toHaveBeenCalled();
     });
 
