@@ -5,7 +5,11 @@ struct ContentView: View {
 
     var body: some View {
         if hasLaunchedBefore {
-            HomeView()
+            NavigationStack {
+                HomeView()
+            }
+            
+            
         } else {
             WelcomeFlowView()
         }

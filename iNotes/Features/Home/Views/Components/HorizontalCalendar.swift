@@ -5,7 +5,7 @@ struct HorizontalCalendarView: View {
         var dates = [Date]()
         let calendar = Calendar.current
         let startDate = Date()
-        for offset in 0..<7 {
+        for offset in 0..<34 {
             if let date = calendar.date(byAdding: .day, value: offset, to: startDate) {
                 dates.append(date)
             }

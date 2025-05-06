@@ -6,6 +6,8 @@ struct CustomTabView: View {
     @State private var description = ""
     @State private var noteExists = false
     @State private var showNoteExists = false
+    @State private var showActionSheet: Bool = false
+    @State private var showDeleteActionSheet: Bool = false
     
     @ObservedObject var notesViewModel: NotesViewModel
     
@@ -29,7 +31,7 @@ struct CustomTabView: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(Color.backgroundSelected)
+                            .fill(Color.blue)
                             .frame(width: 55, height: 55)
                         
                         Image(systemName: "plus")
@@ -39,13 +41,15 @@ struct CustomTabView: View {
                 }
                 
                 Button(action: {
-                    notesViewModel.deleteAllNotes()
+                    if notesViewModel.notes.count > 0 {
+                        showDeleteActionSheet = true
+                    }
                 }) {
                     Image(systemName: "trash")
                         .font(.system(size: 20))
                 }
             }
-            .foregroundStyle(.primary)
+            .foregroundStyle(notesViewModel.notes.count > 0 ? .primary: Color.gray)
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {
@@ -59,5 +63,21 @@ struct CustomTabView: View {
             }
             .presentationBackground(Color.backgroundHomePage)
         }
+        .actionSheet(isPresented: $showDeleteActionSheet) {
+            ActionSheet(
+                title: Text("Delete all notes?"),
+                message: Text("This action is irreversible."),
+                buttons: [
+                    .destructive(Text("Delete")) {
+                        notesViewModel.deleteAllNotes()
+                    },
+                    .cancel()
+                ]
+            )
+        }
     }
+}
+
+#Preview {
+    ContentView()
 }

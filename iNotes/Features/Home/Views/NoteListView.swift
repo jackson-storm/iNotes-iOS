@@ -43,7 +43,10 @@ private struct NotesCardGridView: View {
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
             ForEach(notes) { note in
-                NotesCard(note: note)
+                NavigationLink(destination: EditNotesView(note: note)) {
+                    NotesCard(note: note)
+                }
+                .foregroundStyle(.primary)
             }
         }
         .padding(.horizontal)
@@ -89,6 +92,7 @@ private struct NotesCard: View {
             
             Text(note.description.isEmpty ? "No description" : note.description)
                 .font(.subheadline)
+                .multilineTextAlignment(.leading)
                 .lineLimit(10)
                 .foregroundColor(.secondary)
                 .padding(.top, 15)
