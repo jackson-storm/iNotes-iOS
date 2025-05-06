@@ -1,0 +1,3 @@
+[submodule "iNotes-MacOS"]
+	path = iNotes-MacOS
+	url = https://github.com/jackson-storm/iNotes-MacOS.git
