@@ -14,4 +14,8 @@ final class ServiceURL {
     var authLoginUrl: URL {
         baseURL.appendingPathComponent("auth/login")
     }
+    
+    var notesURL: URL {
+            baseURL.appendingPathComponent("api/notes")
+    }
 }
