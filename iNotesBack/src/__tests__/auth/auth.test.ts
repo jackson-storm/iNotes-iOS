@@ -1,10 +1,10 @@
 import request from 'supertest';
 import express from 'express';
-import { PrismaClient } from '../generated/prisma';
-import AuthRoutes from '../routes/AuthRoutes';
+import { PrismaClient } from '../../generated/prisma';
+import AuthRoutes from '../../routes/AuthRoutes'
 import bcrypt from 'bcrypt';
 
-jest.mock('../generated/prisma', () => {
+jest.mock('../../generated/prisma', () => {
   const mockPrismaClient = {
     user: {
       findFirst: jest.fn(),
@@ -22,7 +22,7 @@ jest.mock('bcrypt', () => ({
   compare: jest.fn(() => Promise.resolve(true)),
 }));
 
-jest.mock('../utils/jwt', () => ({
+jest.mock('../../utils/jwt', () => ({
   signToken: jest.fn(() => 'test-token'),
 }));
 

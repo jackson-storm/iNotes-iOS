@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { signToken, verifyToken } from '../utils/jwt';
+import { signToken, verifyToken } from '../../utils/jwt';
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(() => 'test-token'),

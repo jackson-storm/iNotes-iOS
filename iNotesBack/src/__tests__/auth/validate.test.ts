@@ -1,9 +1,17 @@
 import { Request, Response } from 'express';
-import Validate from '../middlewares/Validate';
+import Validate from '../../middlewares/Validate';
 
 jest.mock('express-validator', () => {
   return {
-    validationResult: jest.fn()
+    validationResult: jest.fn(),
+    body: jest.fn().mockReturnValue({
+      notEmpty: jest.fn().mockReturnThis(),
+      isString: jest.fn().mockReturnThis(),
+      isEmail: jest.fn().mockReturnThis(),
+      isLength: jest.fn().mockReturnThis(),
+      optional: jest.fn().mockReturnThis(),
+      withMessage: jest.fn().mockReturnThis()
+    })
   };
 });
 
