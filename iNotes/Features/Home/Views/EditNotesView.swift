@@ -14,22 +14,39 @@ struct EditNotesView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .top) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 0)
+                    .fill(Color.backgroundHomePage)
+                    .ignoresSafeArea()
+
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $description)
+                        .scrollContentBackground(.hidden)
+                        .padding(.horizontal, 10)
+                        .padding(.top, 65)
+                        .padding(.bottom, 5)
+                }
+            }
+
             HStack {
                 Button(action: {
                     dismiss()
                 }) {
                     Image(systemName: "chevron.left")
                         .foregroundStyle(.primary)
-                        .padding()
-                        
+                        .padding(.vertical, 20)
+                        .padding(.leading, 15)
+                        .font(.system(size: 20))
                 }
-                
-                TextField("", text: $title)
+
+                TextField("Title", text: $title)
                     .bold()
-                
+                    .font(.system(size: 22))
+                    .padding(.leading, 8)
+
                 Spacer()
-                
+
                 HStack(spacing: 20) {
                     Button(action: {}) {
                         Image(systemName: "archivebox")
@@ -41,32 +58,10 @@ struct EditNotesView: View {
                         Image(systemName: "trash")
                     }
                 }
+                .font(.system(size: 20))
                 .padding()
             }
-            .background(Color.backgroundComponents)
-            
-            ZStack {
-                RoundedRectangle(cornerRadius: 0)
-                    .fill(Color.backgroundHomePage)
-                    .frame(width: .infinity, height: .infinity)
-                    .ignoresSafeArea(.all)
-                    
-                
-                ZStack(alignment: .topLeading) {
-                    if description.isEmpty {
-                        Text("Enter description")
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 13)
-                    }
-                    TextEditor(text: $description)
-                        .scrollContentBackground(.hidden)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .opacity(description.isEmpty ? 0.7 : 1)
-                }
-            }
-                
+            .background(Color.backgroundHomePage)
         }
         .navigationBarBackButtonHidden(true)
         .font(.system(size: 18))

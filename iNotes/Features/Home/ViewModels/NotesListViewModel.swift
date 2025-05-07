@@ -31,6 +31,12 @@ class NotesViewModel: ObservableObject {
         }
     }
     
+    func delete(note: Note) {
+        notes.removeAll { $0.id == note.id }
+        saveNotes()
+        filterNotes(by: selectedCategory)
+    }
+    
     func deleteAllNotes() {
         guard !notes.isEmpty else { return }
         notes.removeAll()

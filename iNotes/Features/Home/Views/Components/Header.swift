@@ -29,7 +29,7 @@ private struct HeaderProfileImage: View {
                 Image(systemName: "person.circle")
                     .font(.system(size: 24))
             }
-            .foregroundStyle(Color.blue.opacity(0.8))
+            .foregroundStyle(Color.primary)
         }
     }
 }
@@ -43,7 +43,7 @@ private struct HeaderButtonMenuView: View {
                 Image(systemName: "ellipsis.circle")
                     .font(.system(size: 24))
             }
-            .foregroundStyle(Color.blue.opacity(0.8))
+            .foregroundStyle(Color.primary)
         }
     }
 }
