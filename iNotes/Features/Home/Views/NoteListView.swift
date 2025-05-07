@@ -61,7 +61,27 @@ private struct NotesCardGridView: View {
                                 selectedNote = note
                                 isEditing = true
                             } label: {
-                                Label("Edit", systemImage: "pencil")
+                                Label("Edit note", systemImage: "note")
+                            }
+                            
+                            Button() {
+                                selectedNote = note
+                                isEditing = true
+                            } label: {
+                                Label("Сhange category", systemImage: "tag")
+                            }
+                            
+                            Button() {
+                                notesViewModel.toggleLike(for: note)
+                            } label: {
+                                Label("Add to favorites", systemImage: "heart")
+                            }
+                            
+                            Button() {
+                                selectedNote = note
+                                isEditing = true
+                            } label: {
+                                Label("Add to archive", systemImage: "archivebox")
                             }
                             
                             Button(role: .destructive) {
@@ -77,7 +97,7 @@ private struct NotesCardGridView: View {
             
             .navigationDestination(isPresented: $isEditing) {
                 if let selectedNote = selectedNote {
-                    EditNotesView(note: selectedNote)
+                    EditNotesView(note: selectedNote, viewModel: notesViewModel)
                 }
             }
         }
@@ -109,14 +129,20 @@ private struct NotesCard: View {
                 
                 Spacer()
                 
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(note.category.color)
-                        .frame(width: 28, height: 28)
-                    
-                    Image(systemName: note.category.icon)
-                        .foregroundStyle(.white)
-                        .font(.system(size: 13))
+                VStack(spacing: 10) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(note.category.color)
+                            .frame(width: 28, height: 28)
+                        
+                        Image(systemName: note.category.icon)
+                            .foregroundStyle(.white)
+                            .font(.system(size: 13))
+                    }
+                    if note.isLiked {
+                        Image(systemName: "heart.fill")
+                            .foregroundStyle(.red)
+                    }
                 }
             }
             

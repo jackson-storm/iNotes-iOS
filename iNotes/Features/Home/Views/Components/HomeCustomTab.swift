@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CustomTabView: View {
+struct HomeCustomTabView: View {
     @State private var isSheetPresented = false
     @State private var noteTitle = ""
     @State private var description = ""
@@ -65,10 +65,10 @@ struct CustomTabView: View {
         }
         .actionSheet(isPresented: $showDeleteActionSheet) {
             ActionSheet(
-                title: Text("Delete all notes?"),
+                title: Text("Delete notes?"),
                 message: Text("This action is irreversible."),
                 buttons: [
-                    .destructive(Text("Delete")) {
+                    .destructive(Text("Delete all notes")) {
                         notesViewModel.deleteAllNotes()
                     },
                     .cancel()

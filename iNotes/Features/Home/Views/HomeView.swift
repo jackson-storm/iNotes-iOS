@@ -16,7 +16,7 @@ struct HomeView: View {
             ZStack(alignment: .bottom) {
                 NotesListView(notesViewModel: notesViewModel)
                 
-                CustomTabView(notesViewModel: notesViewModel)
+                HomeCustomTabView(notesViewModel: notesViewModel)
                     .padding(.bottom, 30)
             }
             .edgesIgnoringSafeArea(.bottom)

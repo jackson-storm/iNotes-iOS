@@ -37,6 +37,17 @@ class NotesViewModel: ObservableObject {
         filterNotes(by: selectedCategory)
     }
     
+    func toggleLike(for note: Note) {
+        guard let index = notes.firstIndex(where: { $0.id == note.id }) else { return }
+        notes[index].isLiked.toggle()
+
+        let likeKey = "isLiked_\(note.id.uuidString)"
+        UserDefaults.standard.set(notes[index].isLiked, forKey: likeKey)
+
+        saveNotes()
+        filterNotes(by: selectedCategory)
+    }
+    
     func deleteAllNotes() {
         guard !notes.isEmpty else { return }
         notes.removeAll()
@@ -53,10 +64,18 @@ class NotesViewModel: ObservableObject {
         }
     }
     
+    private func loadLikesFromStorage() {
+        for index in notes.indices {
+            let key = "isLiked_\(notes[index].id.uuidString)"
+            notes[index].isLiked = UserDefaults.standard.bool(forKey: key)
+        }
+    }
+    
     private func loadNotes() {
         guard let data = UserDefaults.standard.data(forKey: Keys.notes) else { return }
         do {
             notes = try JSONDecoder().decode([Note].self, from: data)
+            loadLikesFromStorage()
             filteredNotes = notes
         } catch {
             print("Error loading notes: \(error)")

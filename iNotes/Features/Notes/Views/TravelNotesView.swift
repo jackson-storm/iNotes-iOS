@@ -25,7 +25,7 @@ struct TravelNotesView: View {
                 Spacer()
                 
                 ButtonSaveView(action: {
-                    let note = Note(title: noteTitle, description: description, lastEdited: Date(), category: .travel)
+                    let note = Note(title: noteTitle, description: description, lastEdited: Date(), category: .travel, isLiked: false)
                     if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
                     } else {
