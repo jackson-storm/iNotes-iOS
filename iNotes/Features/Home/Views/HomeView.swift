@@ -9,7 +9,7 @@ struct HomeView: View {
         VStack(spacing: 15) {
             HeaderView(searchBarText: $searchText)
             
-            HorizontalCalendarView()
+            //HorizontalCalendarView()
             
             HorizontalFilterView(selectedCategory: $selectedCategory, notesViewModel: notesViewModel)
             

@@ -4,14 +4,16 @@ struct NotesListView: View {
     @ObservedObject var notesViewModel: NotesViewModel
     
     var body: some View {
-        VStack {
-            if notesViewModel.filteredNotes.isEmpty {
-                Spacer()
-                EmptyStateView()
-                Spacer()
-            } else {
-                ScrollView {
-                    NotesCardGridView(notes: notesViewModel.filteredNotes)
+        NavigationStack {
+            VStack {
+                if notesViewModel.filteredNotes.isEmpty {
+                    Spacer()
+                    EmptyStateView()
+                    Spacer()
+                } else {
+                    ScrollView {
+                        NotesCardGridView(notes: notesViewModel.filteredNotes, notesViewModel: notesViewModel)
+                    }
                 }
             }
         }
@@ -34,6 +36,10 @@ private struct EmptyStateView: View {
 
 private struct NotesCardGridView: View {
     let notes: [Note]
+    let notesViewModel: NotesViewModel
+    
+    @State private var selectedNote: Note?
+    @State private var isEditing = false
     
     private let columns = [
         GridItem(.flexible()),
@@ -41,13 +47,40 @@ private struct NotesCardGridView: View {
     ]
     
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(notes) { note in
-                NotesCard(note: note)
+        VStack {
+            LazyVGrid(columns: columns, spacing: 10) {
+                ForEach(notes) { note in
+                    NotesCard(note: note)
+                        .onTapGesture {
+                            selectedNote = note
+                            isEditing = true
+                        }
+                        .foregroundStyle(.primary)
+                        .contextMenu {
+                            Button() {
+                                selectedNote = note
+                                isEditing = true
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
+                            
+                            Button(role: .destructive) {
+                                notesViewModel.delete(note: note)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top)
+            
+            .navigationDestination(isPresented: $isEditing) {
+                if let selectedNote = selectedNote {
+                    EditNotesView(note: selectedNote)
+                }
             }
         }
-        .padding(.horizontal)
-        .padding(.top)
     }
 }
 
@@ -89,6 +122,7 @@ private struct NotesCard: View {
             
             Text(note.description.isEmpty ? "No description" : note.description)
                 .font(.subheadline)
+                .multilineTextAlignment(.leading)
                 .lineLimit(10)
                 .foregroundColor(.secondary)
                 .padding(.top, 15)
