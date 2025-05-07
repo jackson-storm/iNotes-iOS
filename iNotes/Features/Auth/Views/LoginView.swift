@@ -73,6 +73,7 @@ struct LoginView: View {
         .padding(.horizontal, 20)
         .background(Color.backgroundHomePage)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
     }
 }
 
