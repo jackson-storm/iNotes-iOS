@@ -1,3 +1,3 @@
-# iNotes Backend
+# iNotes Mobile
 
 [back](../README.md)
