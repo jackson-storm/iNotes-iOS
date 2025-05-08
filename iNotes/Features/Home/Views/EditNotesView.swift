@@ -29,12 +29,27 @@ struct EditNotesView: View {
                     .fill(Color.backgroundHomePage)
                     .ignoresSafeArea()
                 
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $description)
-                        .scrollContentBackground(.hidden)
-                        .padding(.horizontal, 10)
-                        .padding(.top, 65)
-                        .padding(.bottom, 5)
+                ZStack() {
+                    VStack {
+                        TextEditor(text: $description)
+                            .scrollContentBackground(.hidden)
+                            .padding(.horizontal, 10)
+                            .padding(.top, 65)
+                            .padding(.bottom, 5)
+                        
+                        Spacer()
+                        
+                        EditCustomTab {
+                            if let index = viewModel.notes.firstIndex(where: { $0.id == note.id }) {
+                                viewModel.notes[index].title = title
+                                viewModel.notes[index].description = description
+                                viewModel.notes[index].lastEdited = Date()
+                                viewModel.saveNotes()
+                                viewModel.filterNotes(by: viewModel.selectedCategory)
+                            }
+                            dismiss()
+                        }
+                    }
                 }
             }
             

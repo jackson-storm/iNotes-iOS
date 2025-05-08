@@ -55,7 +55,7 @@ class NotesViewModel: ObservableObject {
         filterNotes(by: selectedCategory)
     }
     
-    private func saveNotes() {
+    func saveNotes() {
         do {
             let data = try JSONEncoder().encode(notes)
             UserDefaults.standard.set(data, forKey: Keys.notes)

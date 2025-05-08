@@ -71,10 +71,11 @@ private struct NotesCardGridView: View {
                                 Label("Сhange category", systemImage: "tag")
                             }
                             
-                            Button() {
+                            Button {
                                 notesViewModel.toggleLike(for: note)
                             } label: {
-                                Label("Add to favorites", systemImage: "heart")
+                                Label(note.isLiked ? "Remove from favorites" : "Add to favorites",
+                                      systemImage: note.isLiked ? "heart.slash" : "heart")
                             }
                             
                             Button() {
