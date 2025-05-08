@@ -9,6 +9,8 @@ struct HomeCustomTabView: View {
     @State private var showActionSheet: Bool = false
     @State private var showDeleteActionSheet: Bool = false
     
+    @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
+    
     @ObservedObject var notesViewModel: NotesViewModel
     
     var body: some View {
@@ -19,11 +21,20 @@ struct HomeCustomTabView: View {
                 .frame(width: 200, height: 65)
             
             HStack(spacing: 23) {
-                Button(action: {
-                    // Другие действия
-                }) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 20))
+                Menu {
+                    ForEach(DisplayTypeNotes.allCases, id: \.self) { display in
+                        Button(action: {
+                            selectedDisplayTypeNotes = display
+                        }) {
+                            HStack {
+                                Image(systemName: display.iconName)
+                                Text(display.displayName)
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: selectedDisplayTypeNotes.iconName)
+                           .font(.system(size: 20))
                 }
                 
                 Button(action: {
@@ -58,7 +69,7 @@ struct HomeCustomTabView: View {
                     noteTitle: $noteTitle, description: $description,
                     noteExists: $noteExists,
                     showNoteExists: $showNoteExists,
-                    viewModel: notesViewModel 
+                    viewModel: notesViewModel
                 )
             }
             .presentationBackground(Color.backgroundHomePage)

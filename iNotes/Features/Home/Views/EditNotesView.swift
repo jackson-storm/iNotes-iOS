@@ -9,6 +9,7 @@ struct EditNotesView: View {
     @State private var description: String
     @State private var title: String
     @State private var isTap: Bool
+    @State private var showDeleteAlert = false
     
     init(note: Note, viewModel: NotesViewModel) {
         self.note = note
@@ -39,16 +40,7 @@ struct EditNotesView: View {
                         
                         Spacer()
                         
-                        EditCustomTab {
-                            if let index = viewModel.notes.firstIndex(where: { $0.id == note.id }) {
-                                viewModel.notes[index].title = title
-                                viewModel.notes[index].description = description
-                                viewModel.notes[index].lastEdited = Date()
-                                viewModel.saveNotes()
-                                viewModel.filterNotes(by: viewModel.selectedCategory)
-                            }
-                            dismiss()
-                        }
+                        EditCustomTab()
                     }
                 }
             }
@@ -70,9 +62,18 @@ struct EditNotesView: View {
                 Spacer()
                 
                 HStack(spacing: 20) {
-                    Button(action: {}) {
-                        Image(systemName: "archivebox")
-                    }
+                    Button(action: {
+                          if let index = viewModel.notes.firstIndex(where: { $0.id == note.id }) {
+                              viewModel.notes[index].title = title
+                              viewModel.notes[index].description = description
+                              viewModel.notes[index].lastEdited = Date()
+                              viewModel.saveNotes()
+                              viewModel.filterNotes(by: viewModel.selectedCategory)
+                          }
+                          dismiss()
+                      }) {
+                          Image(systemName: "square.and.arrow.down")
+                      }
                     
                     Button(action: {
                         isTap.toggle()
@@ -89,10 +90,18 @@ struct EditNotesView: View {
                     }
                     
                     Button(action: {
-                        viewModel.delete(note: note)
-                        dismiss()
+                        showDeleteAlert = true
                     }) {
                         Image(systemName: "trash")
+                    }
+                    .alert("Delete note?", isPresented: $showDeleteAlert) {
+                        Button("Delete", role: .destructive) {
+                            viewModel.delete(note: note)
+                            dismiss()
+                        }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                        Text("This action cannot be undone.")
                     }
                 }
                 .font(.system(size: 20))
