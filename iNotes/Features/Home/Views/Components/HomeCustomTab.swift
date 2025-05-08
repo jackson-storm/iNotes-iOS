@@ -58,9 +58,10 @@ struct HomeCustomTabView: View {
                 }) {
                     Image(systemName: "trash")
                         .font(.system(size: 20))
+                        .foregroundStyle(notesViewModel.notes.count > 0 ? .primary: Color.gray)
                 }
             }
-            .foregroundStyle(notesViewModel.notes.count > 0 ? .primary: Color.gray)
+            .foregroundStyle(.primary)
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {

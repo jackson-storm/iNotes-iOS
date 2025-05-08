@@ -13,7 +13,7 @@ struct TextFieldDescriptionView: View {
                 RoundedRectangle(cornerRadius: 15)
                     .fill(Color.backgroundComponents)
                     .stroke(.gray.opacity(0.1), lineWidth: 1)
-                    .frame(height: 260)
+                    .frame(height: 360)
                     
                 
                 ZStack(alignment: .topLeading) {
@@ -25,7 +25,7 @@ struct TextFieldDescriptionView: View {
                     }
                     TextEditor(text: $description)
                         .scrollContentBackground(.hidden)
-                        .frame(height: 250)
+                        .frame(height: 350)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .opacity(description.isEmpty ? 0.7 : 1)
@@ -39,3 +39,6 @@ struct TextFieldDescriptionView: View {
     }
 }
 
+#Preview {
+    ContentView()
+}

@@ -244,12 +244,23 @@ private struct NotesCardGrid: View {
                 }
             }
             
-            Text(note.description.isEmpty ? "No description" : note.description)
+            if !note.secretNotesEnabled {
+                Text(note.description.isEmpty ? "No description" : note.description)
+                    .font(.subheadline)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(3)
+                    .foregroundColor(.secondary)
+                    .padding(.top, 10)
+            } else {
+                HStack {
+                    Text("Blocked")
+                    Image(systemName: "lock.fill")
+                    Spacer()
+                }
                 .font(.subheadline)
-                .multilineTextAlignment(.leading)
-                .lineLimit(10)
                 .foregroundColor(.secondary)
-                .padding(.top, 15)
+                .padding(.top, 10)
+            }
             
             Spacer()
             
@@ -317,12 +328,22 @@ private struct NotesCardList: View {
                                 .frame(width: 30, height: 30)
                         )
                 }
-
-                Text(note.description.isEmpty ? "No description" : note.description)
+                
+                if !note.secretNotesEnabled {
+                    Text(note.description.isEmpty ? "No description" : note.description)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(3)
+                        .foregroundColor(.secondary)
+                } else {
+                    HStack {
+                        Text("Blocked")
+                        Image(systemName: "lock.fill")
+                        Spacer()
+                    }
                     .font(.subheadline)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(3)
                     .foregroundColor(.secondary)
+                }
 
                 HStack {
                     Text(note.lastEdited, formatter: dateFormatter)
@@ -384,11 +405,21 @@ private struct NotesCardTimeline: View {
                     }
                 }
 
-                Text(note.description.isEmpty ? "No description" : note.description)
+                if !note.secretNotesEnabled {
+                    Text(note.description.isEmpty ? "No description" : note.description)
+                        .font(.subheadline)
+                        .multilineTextAlignment(.leading)
+                        .lineLimit(3)
+                        .foregroundColor(.secondary)
+                } else {
+                    HStack {
+                        Text("Blocked")
+                        Image(systemName: "lock.fill")
+                        Spacer()
+                    }
                     .font(.subheadline)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(3)
                     .foregroundColor(.secondary)
+                }
 
                 HStack {
                     Text(note.lastEdited, formatter: dateFormatter)
