@@ -60,6 +60,7 @@ struct HomeCustomTabView: View {
                         .font(.system(size: 20))
                         .foregroundStyle(notesViewModel.notes.count > 0 ? .primary: Color.gray)
                 }
+                .disabled(notesViewModel.notes.count == 0)
             }
             .foregroundStyle(.primary)
         }

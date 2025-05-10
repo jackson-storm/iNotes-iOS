@@ -49,6 +49,5 @@ private struct HeaderButtonMenuView: View {
 }
 
 #Preview {
-    @Previewable @State var searchText: String = ""
-    HeaderView(searchBarText: $searchText)
+    ContentView()
 }
