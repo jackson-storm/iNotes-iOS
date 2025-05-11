@@ -4,6 +4,12 @@ struct NotesListView: View {
     @ObservedObject var notesViewModel: NotesViewModel
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     
+    @State private var selectedNote: Note?
+    @State private var isEditing = false
+    
+    @State private var selectedNotes: Set<UUID> = []
+    @State private var isSelectionMode = false
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -15,59 +21,125 @@ struct NotesListView: View {
                     ScrollView {
                         switch selectedDisplayTypeNotes {
                         case .list:
-                            NotesCardListView(notes: notesViewModel.filteredNotes, notesViewModel: notesViewModel)
+                            NotesCardListView(
+                                notes: notesViewModel.filteredNotes,
+                                notesViewModel: notesViewModel,
+                                selectedNote: $selectedNote,
+                                isEditing: $isEditing,
+                                selectedNotes: $selectedNotes,
+                                isSelectionMode: $isSelectionMode
+                            )
                         case .grid:
-                            NotesCardGridView(notes: notesViewModel.filteredNotes, notesViewModel: notesViewModel)
+                            NotesCardGridView(
+                                notes: notesViewModel.filteredNotes,
+                                notesViewModel: notesViewModel,
+                                selectedNote: $selectedNote,
+                                isEditing: $isEditing,
+                                selectedNotes: $selectedNotes,
+                                isSelectionMode: $isSelectionMode
+                            )
                         case .timeLine:
-                            NotesCardTimelineView(notes: notesViewModel.filteredNotes, notesViewModel: notesViewModel)
+                            NotesCardTimelineView(
+                                notes: notesViewModel.filteredNotes,
+                                notesViewModel: notesViewModel,
+                                selectedNote: $selectedNote,
+                                isEditing: $isEditing,
+                                selectedNotes: $selectedNotes,
+                                isSelectionMode: $isSelectionMode
+                            )
                         }
                     }
                 }
             }
+            .navigationDestination(isPresented: $isEditing) {
+                if let selectedNote = selectedNote {
+                    EditNotesView(note: selectedNote, viewModel: notesViewModel)
+                }
+            }
+            .toolbar {
+                if isSelectionMode {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") {
+                            selectedNotes.removeAll()
+                            isSelectionMode = false
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Delete (\(selectedNotes.count))") {
+                            notesViewModel.delete(notesWithIDs: selectedNotes)
+                            selectedNotes.removeAll()
+                            isSelectionMode = false
+                        }
+                        .foregroundColor(.red)
+                    }
+                }
+            }
         }
+        .animation(.easeInOut, value: isSelectionMode)
     }
 }
 
 private struct NotesCardListView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
-
-    @State private var selectedNote: Note?
-    @State private var isEditing = false
-
+    
+    @Binding var selectedNote: Note?
+    @Binding var isEditing: Bool
+    @Binding var selectedNotes: Set<UUID>
+    @Binding var isSelectionMode: Bool
+    
     var body: some View {
         VStack(spacing: 8) {
             ForEach(notes) { note in
-                NotesCardList(note: note)
+                NotesCardList(note: note, selectedNotes: $selectedNotes)
                     .onTapGesture {
-                        selectedNote = note
-                        isEditing = true
+                        if isSelectionMode {
+                            if selectedNotes.contains(note.id) {
+                                selectedNotes.remove(note.id)
+                            } else {
+                                selectedNotes.insert(note.id)
+                            }
+                        } else {
+                            selectedNote = note
+                            isEditing = true
+                        }
                     }
                     .foregroundStyle(.primary)
                     .contextMenu {
-                        Button() {
+                        Button {
                             selectedNote = note
                             isEditing = true
                         } label: {
                             Label("Edit note", systemImage: "note")
                         }
-
-                        Button() {
+                        
+                        Button {
+                            isSelectionMode = true
+                        } label: {
+                            Label("Select", systemImage: "checkmark.circle")
+                        }
+                        
+                        Button {
                             selectedNote = note
                             isEditing = true
                         } label: {
-                            Label("Сhange category", systemImage: "tag")
+                            Label("Change category", systemImage: "tag")
                         }
-
-                        Button() {
+                        
+                        Button {
                             selectedNote = note
                             isEditing = true
                         } label: {
                             Label("Add to archive", systemImage: "archivebox")
                         }
-
+        
                         Button(role: .destructive) {
                             notesViewModel.delete(note: note)
+                            if selectedNote?.id == note.id {
+                                selectedNote = nil
+                                isEditing = false
+                            }
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
@@ -75,28 +147,35 @@ private struct NotesCardListView: View {
             }
         }
         .padding(.horizontal, 10)
-        .navigationDestination(isPresented: $isEditing) {
-            if let selectedNote = selectedNote {
-                EditNotesView(note: selectedNote, viewModel: notesViewModel)
-            }
-        }
+        .padding(.top, 1)
     }
 }
 
 private struct NotesCardTimelineView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
-
-    @State private var selectedNote: Note?
-    @State private var isEditing = false
-
+    
+    @Binding var selectedNote: Note?
+    @Binding var isEditing: Bool
+    @Binding var selectedNotes: Set<UUID>
+    @Binding var isSelectionMode: Bool
+    
+    
     var body: some View {
         VStack(spacing: 10) {
             ForEach(notes) { note in
-                NotesCardTimeline(note: note)
+                NotesCardTimeline(note: note, selectedNotes: $selectedNotes)
                     .onTapGesture {
-                        selectedNote = note
-                        isEditing = true
+                        if isSelectionMode {
+                            if selectedNotes.contains(note.id) {
+                                selectedNotes.remove(note.id)
+                            } else {
+                                selectedNotes.insert(note.id)
+                            }
+                        } else {
+                            selectedNote = note
+                            isEditing = true
+                        }
                     }
                     .foregroundStyle(.primary)
                     .contextMenu {
@@ -106,35 +185,41 @@ private struct NotesCardTimelineView: View {
                         } label: {
                             Label("Edit note", systemImage: "note")
                         }
-
+                        
+                        Button {
+                            isSelectionMode = true
+                        } label: {
+                            Label("Select", systemImage: "checkmark.circle")
+                        }
+                        
                         Button {
                             selectedNote = note
                             isEditing = true
                         } label: {
                             Label("Change category", systemImage: "tag")
                         }
-
+                        
                         Button {
                             selectedNote = note
                             isEditing = true
                         } label: {
                             Label("Add to archive", systemImage: "archivebox")
                         }
-
+                        
                         Button(role: .destructive) {
                             notesViewModel.delete(note: note)
+                            if selectedNote?.id == note.id {
+                                selectedNote = nil
+                                isEditing = false
+                            }
                         } label: {
                             Label("Delete", systemImage: "trash")
                         }
                     }
             }
         }
-        .padding(.horizontal)
-        .navigationDestination(isPresented: $isEditing) {
-            if let selectedNote = selectedNote {
-                EditNotesView(note: selectedNote, viewModel: notesViewModel)
-            }
-        }
+        .padding(.horizontal, 10)
+        .padding(.top, 1)
     }
 }
 
@@ -142,8 +227,10 @@ private struct NotesCardGridView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
     
-    @State private var selectedNote: Note?
-    @State private var isEditing = false
+    @Binding var selectedNote: Note?
+    @Binding var isEditing: Bool
+    @Binding var selectedNotes: Set<UUID>
+    @Binding var isSelectionMode: Bool
     
     private let columns = [
         GridItem(.flexible()),
@@ -151,65 +238,77 @@ private struct NotesCardGridView: View {
     ]
     
     var body: some View {
-        VStack {
-            LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(notes) { note in
-                    NotesCardGrid(note: note)
-                        .onTapGesture {
+        LazyVGrid(columns: columns, spacing: 8) {
+            ForEach(notes) { note in
+                NotesCardGrid(note: note, selectedNotes: $selectedNotes)
+                    .onTapGesture {
+                        if isSelectionMode {
+                            if selectedNotes.contains(note.id) {
+                                selectedNotes.remove(note.id)
+                            } else {
+                                selectedNotes.insert(note.id)
+                            }
+                        } else {
                             selectedNote = note
                             isEditing = true
                         }
-                        .foregroundStyle(.primary)
-                        .contextMenu {
-                            Button() {
-                                selectedNote = note
-                                isEditing = true
-                            } label: {
-                                Label("Edit note", systemImage: "note")
-                            }
-                            
-                            Button() {
-                                selectedNote = note
-                                isEditing = true
-                            } label: {
-                                Label("Сhange category", systemImage: "tag")
-                            }
-                            
-                            
-                            Button() {
-                                selectedNote = note
-                                isEditing = true
-                            } label: {
-                                Label("Add to archive", systemImage: "archivebox")
-                            }
-                            
-                            Button(role: .destructive) {
-                                notesViewModel.delete(note: note)
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+                    }
+                    .foregroundStyle(.primary)
+                    .contextMenu {
+                        Button {
+                            selectedNote = note
+                            isEditing = true
+                        } label: {
+                            Label("Edit note", systemImage: "note")
                         }
-                }
-            }
-            .padding(.horizontal, 10)
-            .navigationDestination(isPresented: $isEditing) {
-                if let selectedNote = selectedNote {
-                    EditNotesView(note: selectedNote, viewModel: notesViewModel)
-                }
+                        
+                        Button {
+                            isSelectionMode = true
+                        } label: {
+                            Label("Select", systemImage: "checkmark.circle")
+                        }
+                        
+                        Button {
+                            selectedNote = note
+                            isEditing = true
+                        } label: {
+                            Label("Change category", systemImage: "tag")
+                        }
+                        
+                        Button {
+                            selectedNote = note
+                            isEditing = true
+                        } label: {
+                            Label("Add to archive", systemImage: "archivebox")
+                        }
+                        
+                        Button(role: .destructive) {
+                            notesViewModel.delete(note: note)
+                            if selectedNote?.id == note.id {
+                                selectedNote = nil
+                                isEditing = false
+                            }
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
             }
         }
+        .padding(.horizontal, 10)
+        .padding(.top, 1)
     }
 }
 
 private struct NotesCardGrid: View {
     let note: Note
+    @Binding var selectedNotes: Set<UUID>
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
-
+    
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -267,11 +366,11 @@ private struct NotesCardGrid: View {
             HStack {
                 Text(note.lastEdited, formatter: dateFormatter)
                     .font(.footnote)
-             
+                
                 Spacer()
                 Text(note.lastEdited, formatter: timeFormatter)
                     .font(.footnote)
-                  
+                
             }
         }
         .padding()
@@ -281,24 +380,29 @@ private struct NotesCardGrid: View {
                 .stroke(.gray.opacity(0.1), lineWidth: 1)
                 .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
+        )
     }
 }
 
 private struct NotesCardList: View {
     let note: Note
-
+    @Binding var selectedNotes: Set<UUID>
+    
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
-
+    
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter
     }()
-
+    
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             RoundedRectangle(cornerRadius: 10)
@@ -311,22 +415,24 @@ private struct NotesCardList: View {
                         .font(.headline)
                         .lineLimit(1)
                         .foregroundColor(.primary)
-
+                    
                     Spacer()
-
-                    if note.isLiked {
-                        Image(systemName: "heart.fill")
-                            .foregroundStyle(.red)
+                    
+                    HStack(spacing: 15) {
+                        if note.isLiked {
+                            Image(systemName: "heart.fill")
+                                .foregroundStyle(.red)
+                        }
+                        
+                        Image(systemName: note.category.icon)
+                            .foregroundStyle(.white)
+                            .font(.system(size: 14))
+                            .background(
+                                Circle()
+                                    .fill(note.category.color)
+                                    .frame(width: 30, height: 30)
+                            )
                     }
-
-                    Image(systemName: note.category.icon)
-                        .foregroundStyle(.white)
-                        .font(.system(size: 14))
-                        .background(
-                            Circle()
-                                .fill(note.category.color)
-                                .frame(width: 30, height: 30)
-                        )
                 }
                 
                 if !note.secretNotesEnabled {
@@ -344,7 +450,7 @@ private struct NotesCardList: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 }
-
+                
                 HStack {
                     Text(note.lastEdited, formatter: dateFormatter)
                         .font(.footnote)
@@ -360,25 +466,30 @@ private struct NotesCardList: View {
                     .stroke(.gray.opacity(0.1), lineWidth: 1)
                     .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
+            )
         }
     }
 }
 
 private struct NotesCardTimeline: View {
     let note: Note
-
+    @Binding var selectedNotes: Set<UUID>
+    
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
-
+    
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter
     }()
-
+    
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             VStack {
@@ -390,21 +501,21 @@ private struct NotesCardTimeline: View {
                     .frame(width: 2)
                     .frame(maxHeight: .infinity)
             }
-
+            
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
                     Text(note.title.isEmpty ? "Untitled" : note.title)
                         .font(.headline)
                         .foregroundColor(.primary)
-
+                    
                     Spacer()
-
+                    
                     if note.isLiked {
                         Image(systemName: "heart.fill")
                             .foregroundStyle(.red)
                     }
                 }
-
+                
                 if !note.secretNotesEnabled {
                     Text(note.description.isEmpty ? "No description" : note.description)
                         .font(.subheadline)
@@ -420,7 +531,7 @@ private struct NotesCardTimeline: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 }
-
+                
                 HStack {
                     Text(note.lastEdited, formatter: dateFormatter)
                         .font(.footnote)
@@ -435,6 +546,10 @@ private struct NotesCardTimeline: View {
                     .fill(Color.backgroundComponents)
                     .stroke(.gray.opacity(0.1), lineWidth: 1)
                     .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 3)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
             )
         }
     }

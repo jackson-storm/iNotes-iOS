@@ -38,9 +38,6 @@ struct EditNotesView: View {
                             .padding(.top, 65)
                             .padding(.bottom, 5)
                         
-                        Spacer()
-                        
-                        EditCustomTab()
                     }
                 }
             }
