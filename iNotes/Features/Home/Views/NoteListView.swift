@@ -7,8 +7,8 @@ struct NotesListView: View {
     @State private var selectedNote: Note?
     @State private var isEditing = false
     
-    @State private var selectedNotes: Set<UUID> = []
-    @State private var isSelectionMode = false
+    @Binding var selectedNotes: Set<UUID>
+    @Binding var isSelectionMode: Bool
     
     var body: some View {
         NavigationStack {
@@ -56,27 +56,7 @@ struct NotesListView: View {
                     EditNotesView(note: selectedNote, viewModel: notesViewModel)
                 }
             }
-            .toolbar {
-                if isSelectionMode {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") {
-                            selectedNotes.removeAll()
-                            isSelectionMode = false
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Delete (\(selectedNotes.count))") {
-                            notesViewModel.delete(notesWithIDs: selectedNotes)
-                            selectedNotes.removeAll()
-                            isSelectionMode = false
-                        }
-                        .foregroundColor(.red)
-                    }
-                }
-            }
         }
-        .animation(.easeInOut, value: isSelectionMode)
     }
 }
 
@@ -108,13 +88,6 @@ private struct NotesCardListView: View {
                     .foregroundStyle(.primary)
                     .contextMenu {
                         Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Edit note", systemImage: "note")
-                        }
-                        
-                        Button {
                             isSelectionMode = true
                         } label: {
                             Label("Select", systemImage: "checkmark.circle")
@@ -124,7 +97,7 @@ private struct NotesCardListView: View {
                             selectedNote = note
                             isEditing = true
                         } label: {
-                            Label("Change category", systemImage: "tag")
+                            Label("Edit note", systemImage: "note")
                         }
                         
                         Button {
@@ -180,13 +153,6 @@ private struct NotesCardTimelineView: View {
                     .foregroundStyle(.primary)
                     .contextMenu {
                         Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Edit note", systemImage: "note")
-                        }
-                        
-                        Button {
                             isSelectionMode = true
                         } label: {
                             Label("Select", systemImage: "checkmark.circle")
@@ -196,7 +162,7 @@ private struct NotesCardTimelineView: View {
                             selectedNote = note
                             isEditing = true
                         } label: {
-                            Label("Change category", systemImage: "tag")
+                            Label("Edit note", systemImage: "note")
                         }
                         
                         Button {
@@ -205,7 +171,7 @@ private struct NotesCardTimelineView: View {
                         } label: {
                             Label("Add to archive", systemImage: "archivebox")
                         }
-                        
+        
                         Button(role: .destructive) {
                             notesViewModel.delete(note: note)
                             if selectedNote?.id == note.id {
@@ -256,13 +222,6 @@ private struct NotesCardGridView: View {
                     .foregroundStyle(.primary)
                     .contextMenu {
                         Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Edit note", systemImage: "note")
-                        }
-                        
-                        Button {
                             isSelectionMode = true
                         } label: {
                             Label("Select", systemImage: "checkmark.circle")
@@ -272,7 +231,7 @@ private struct NotesCardGridView: View {
                             selectedNote = note
                             isEditing = true
                         } label: {
-                            Label("Change category", systemImage: "tag")
+                            Label("Edit note", systemImage: "note")
                         }
                         
                         Button {
@@ -281,7 +240,7 @@ private struct NotesCardGridView: View {
                         } label: {
                             Label("Add to archive", systemImage: "archivebox")
                         }
-                        
+        
                         Button(role: .destructive) {
                             notesViewModel.delete(note: note)
                             if selectedNote?.id == note.id {
