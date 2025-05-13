@@ -18,25 +18,9 @@ struct HomeCustomTabView: View {
             RoundedRectangle(cornerRadius: 40)
                 .fill(.ultraThinMaterial)
                 .stroke(.gray.opacity(0.1), lineWidth: 1)
-                .frame(width: 200, height: 65)
+                .frame(width: 65, height: 65)
             
-            HStack(spacing: 23) {
-                Menu {
-                    ForEach(DisplayTypeNotes.allCases, id: \.self) { display in
-                        Button(action: {
-                            selectedDisplayTypeNotes = display
-                        }) {
-                            HStack {
-                                Image(systemName: display.iconName)
-                                Text(display.displayName)
-                            }
-                        }
-                    }
-                } label: {
-                    Image(systemName: selectedDisplayTypeNotes.iconName)
-                           .font(.system(size: 20))
-                }
-                
+            HStack(spacing: 20) {
                 Button(action: {
                     isSheetPresented = true
                 }) {
@@ -50,17 +34,6 @@ struct HomeCustomTabView: View {
                             .foregroundStyle(.white)
                     }
                 }
-                
-                Button(action: {
-                    if notesViewModel.notes.count > 0 {
-                        showDeleteActionSheet = true
-                    }
-                }) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 20))
-                        .foregroundStyle(notesViewModel.notes.count > 0 ? .primary: Color.gray)
-                }
-                .disabled(notesViewModel.notes.count == 0)
             }
             .foregroundStyle(.primary)
         }
@@ -75,18 +48,6 @@ struct HomeCustomTabView: View {
                 )
             }
             .presentationBackground(Color.backgroundHomePage)
-        }
-        .actionSheet(isPresented: $showDeleteActionSheet) {
-            ActionSheet(
-                title: Text("Delete notes?"),
-                message: Text("This action is irreversible."),
-                buttons: [
-                    .destructive(Text("Delete all notes")) {
-                        notesViewModel.deleteAllNotes()
-                    },
-                    .cancel()
-                ]
-            )
         }
     }
 }

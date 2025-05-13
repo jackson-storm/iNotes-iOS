@@ -18,7 +18,7 @@ struct HomeView: View {
                     notesViewModel: notesViewModel
                 )
             } else {
-                HeaderView(searchBarText: $notesViewModel.searchText)
+                HeaderView(searchBarText: $notesViewModel.searchText, isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes: $selectedDisplayTypeNotes)
             }
             
             HorizontalFilterView(notesViewModel: notesViewModel)
@@ -47,36 +47,6 @@ struct HomeView: View {
         }
         .onChange(of: selectedCategory) { newValue,_ in
             notesViewModel.filterNotes(by: newValue)
-        }
-    }
-}
-
-struct SelectionOverlayView: View {
-    @Binding var isSelectionMode: Bool
-    @Binding var selectedNotes: Set<UUID>
-    @ObservedObject var notesViewModel: NotesViewModel
-
-    var body: some View {
-        if isSelectionMode {
-            HStack {
-                Button("Cancel") {
-                    selectedNotes.removeAll()
-                    isSelectionMode = false
-                }
-                Spacer()
-                Text("Selected: \(selectedNotes.count)")
-                    .foregroundColor(.gray)
-                Spacer()
-                Button("Delete") {
-                    notesViewModel.delete(notesWithIDs: selectedNotes)
-                    selectedNotes.removeAll()
-                    isSelectionMode = false
-                }
-                .foregroundColor(.red)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 5)
-            .background(.backgroundHomePage)
         }
     }
 }

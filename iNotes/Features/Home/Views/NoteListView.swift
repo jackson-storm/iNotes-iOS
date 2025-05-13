@@ -1,187 +1,81 @@
 import SwiftUI
 
+import SwiftUI
+
 struct NotesListView: View {
     @ObservedObject var notesViewModel: NotesViewModel
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
-    
-    @State private var selectedNote: Note?
-    @State private var isEditing = false
-    
+
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
-    
+
     var body: some View {
-        NavigationStack {
-            VStack {
-                if notesViewModel.filteredNotes.isEmpty {
-                    Spacer()
-                    EmptyStateView()
-                    Spacer()
-                } else {
-                    ScrollView {
-                        switch selectedDisplayTypeNotes {
-                        case .list:
-                            NotesCardListView(
-                                notes: notesViewModel.filteredNotes,
-                                notesViewModel: notesViewModel,
-                                selectedNote: $selectedNote,
-                                isEditing: $isEditing,
-                                selectedNotes: $selectedNotes,
-                                isSelectionMode: $isSelectionMode
-                            )
-                        case .grid:
-                            NotesCardGridView(
-                                notes: notesViewModel.filteredNotes,
-                                notesViewModel: notesViewModel,
-                                selectedNote: $selectedNote,
-                                isEditing: $isEditing,
-                                selectedNotes: $selectedNotes,
-                                isSelectionMode: $isSelectionMode
-                            )
-                        case .timeLine:
-                            NotesCardTimelineView(
-                                notes: notesViewModel.filteredNotes,
-                                notesViewModel: notesViewModel,
-                                selectedNote: $selectedNote,
-                                isEditing: $isEditing,
-                                selectedNotes: $selectedNotes,
-                                isSelectionMode: $isSelectionMode
-                            )
-                        }
+        VStack {
+            if notesViewModel.filteredNotes.isEmpty {
+                Spacer()
+                EmptyStateView()
+                Spacer()
+            } else {
+                ScrollView {
+                    switch selectedDisplayTypeNotes {
+                    case .list:
+                        NotesCardListView(
+                            notes: notesViewModel.filteredNotes,
+                            notesViewModel: notesViewModel,
+                            selectedNotes: $selectedNotes,
+                            isSelectionMode: $isSelectionMode
+                        )
+                    case .grid:
+                        NotesCardGridView(
+                            notes: notesViewModel.filteredNotes,
+                            notesViewModel: notesViewModel,
+                            selectedNotes: $selectedNotes,
+                            isSelectionMode: $isSelectionMode
+                        )
                     }
                 }
             }
-            .navigationDestination(isPresented: $isEditing) {
-                if let selectedNote = selectedNote {
-                    EditNotesView(note: selectedNote, viewModel: notesViewModel)
-                }
-            }
         }
+        .animation(.bouncy, value: selectedDisplayTypeNotes)
+        .animation(.bouncy, value: notesViewModel.filteredNotes.count)
     }
 }
 
 private struct NotesCardListView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
-    
-    @Binding var selectedNote: Note?
-    @Binding var isEditing: Bool
+
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
-    
+
     var body: some View {
         VStack(spacing: 8) {
             ForEach(notes) { note in
-                NotesCardList(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
-                    .onTapGesture {
-                        if isSelectionMode {
-                            if selectedNotes.contains(note.id) {
-                                selectedNotes.remove(note.id)
-                            } else {
-                                selectedNotes.insert(note.id)
-                            }
+                Group {
+                    if isSelectionMode {
+                        NotesCardList(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
+                    } else {
+                        NavigationLink(destination: EditNotesView(note: note, notesViewModel: notesViewModel)) {
+                            NotesCardList(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .onTapGesture {
+                    if isSelectionMode {
+                        if selectedNotes.contains(note.id) {
+                            selectedNotes.remove(note.id)
                         } else {
-                            selectedNote = note
-                            isEditing = true
+                            selectedNotes.insert(note.id)
                         }
                     }
-                    .foregroundStyle(.primary)
-                    .contextMenu {
-                        Button {
-                            isSelectionMode = true
-                        } label: {
-                            Label("Select", systemImage: "checkmark.circle")
-                        }
-                        
-                        Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Edit note", systemImage: "note")
-                        }
-                        
-                        Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Add to archive", systemImage: "archivebox")
-                        }
-        
-                        Button(role: .destructive) {
-                            notesViewModel.delete(note: note)
-                            if selectedNote?.id == note.id {
-                                selectedNote = nil
-                                isEditing = false
-                            }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-            }
-        }
-        .padding(.horizontal, 10)
-        .padding(.top, 1)
-    }
-}
-
-private struct NotesCardTimelineView: View {
-    let notes: [Note]
-    let notesViewModel: NotesViewModel
-    
-    @Binding var selectedNote: Note?
-    @Binding var isEditing: Bool
-    @Binding var selectedNotes: Set<UUID>
-    @Binding var isSelectionMode: Bool
-    
-    
-    var body: some View {
-        VStack(spacing: 10) {
-            ForEach(notes) { note in
-                NotesCardTimeline(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
-                    .onTapGesture {
-                        if isSelectionMode {
-                            if selectedNotes.contains(note.id) {
-                                selectedNotes.remove(note.id)
-                            } else {
-                                selectedNotes.insert(note.id)
-                            }
-                        } else {
-                            selectedNote = note
-                            isEditing = true
-                        }
-                    }
-                    .foregroundStyle(.primary)
-                    .contextMenu {
-                        Button {
-                            isSelectionMode = true
-                        } label: {
-                            Label("Select", systemImage: "checkmark.circle")
-                        }
-                        
-                        Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Edit note", systemImage: "note")
-                        }
-                        
-                        Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Add to archive", systemImage: "archivebox")
-                        }
-        
-                        Button(role: .destructive) {
-                            notesViewModel.delete(note: note)
-                            if selectedNote?.id == note.id {
-                                selectedNote = nil
-                                isEditing = false
-                            }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
+                }
+                .foregroundStyle(.primary)
+                .noteContextMenu(
+                    note: note,
+                    notesViewModel: notesViewModel,
+                    isSelectionMode: $isSelectionMode
+                )
             }
         }
         .padding(.horizontal, 10)
@@ -192,65 +86,43 @@ private struct NotesCardTimelineView: View {
 private struct NotesCardGridView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
-    
-    @Binding var selectedNote: Note?
-    @Binding var isEditing: Bool
+
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
-    
+
     private let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
-    
+
     var body: some View {
         LazyVGrid(columns: columns, spacing: 8) {
             ForEach(notes) { note in
-                NotesCardGrid(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
-                    .onTapGesture {
-                        if isSelectionMode {
-                            if selectedNotes.contains(note.id) {
-                                selectedNotes.remove(note.id)
-                            } else {
-                                selectedNotes.insert(note.id)
-                            }
+                Group {
+                    if isSelectionMode {
+                        NotesCardGrid(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
+                    } else {
+                        NavigationLink(destination: EditNotesView(note: note, notesViewModel: notesViewModel)) {
+                            NotesCardGrid(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .onTapGesture {
+                    if isSelectionMode {
+                        if selectedNotes.contains(note.id) {
+                            selectedNotes.remove(note.id)
                         } else {
-                            selectedNote = note
-                            isEditing = true
+                            selectedNotes.insert(note.id)
                         }
                     }
-                    .foregroundStyle(.primary)
-                    .contextMenu {
-                        Button {
-                            isSelectionMode = true
-                        } label: {
-                            Label("Select", systemImage: "checkmark.circle")
-                        }
-                        
-                        Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Edit note", systemImage: "note")
-                        }
-                        
-                        Button {
-                            selectedNote = note
-                            isEditing = true
-                        } label: {
-                            Label("Add to archive", systemImage: "archivebox")
-                        }
-        
-                        Button(role: .destructive) {
-                            notesViewModel.delete(note: note)
-                            if selectedNote?.id == note.id {
-                                selectedNote = nil
-                                isEditing = false
-                            }
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
+                }
+                .foregroundStyle(.primary)
+                .noteContextMenu(
+                    note: note,
+                    notesViewModel: notesViewModel,
+                    isSelectionMode: $isSelectionMode
+                )
             }
         }
         .padding(.horizontal, 10)
@@ -471,105 +343,6 @@ private struct NotesCardList: View {
     }
 }
 
-private struct NotesCardTimeline: View {
-    let note: Note
-    
-    @Binding var selectedNotes: Set<UUID>
-    @Binding var isSelectionMode: Bool
-    
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy"
-        return formatter
-    }()
-    
-    private let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter
-    }()
-    
-    var body: some View {
-        HStack(alignment: .center, spacing: 12) {
-            if isSelectionMode {
-                ZStack {
-                    Circle()
-                        .stroke(.primary, lineWidth: 1)
-                        .frame(width: 20, height: 20)
-                    
-                    if selectedNotes.contains(note.id) {
-                        Circle()
-                            .fill(note.category.color)
-                            .frame(width: 16, height: 16)
-                    }
-                }
-                .animation(.bouncy, value: selectedNotes)
-                .padding(.horizontal, 5)
-            } else {
-                VStack {
-                    Circle()
-                        .fill(note.category.color)
-                        .frame(width: 12, height: 12)
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 2)
-                        .frame(maxHeight: .infinity)
-                }
-            }
-            
-            VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    Text(note.title.isEmpty ? "Untitled" : note.title)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    if note.isLiked {
-                        Image(systemName: "heart.fill")
-                            .foregroundStyle(.red)
-                    }
-                }
-                
-                if !note.secretNotesEnabled {
-                    Text(note.description.isEmpty ? "No description" : note.description)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(3)
-                        .foregroundColor(.secondary)
-                } else {
-                    HStack {
-                        Text("Blocked")
-                        Image(systemName: "lock.fill")
-                        Spacer()
-                    }
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                }
-                
-                HStack {
-                    Text(note.lastEdited, formatter: dateFormatter)
-                        .font(.footnote)
-                    Spacer()
-                    Text(note.lastEdited, formatter: timeFormatter)
-                        .font(.footnote)
-                }
-            }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.backgroundComponents)
-                    .stroke(.gray.opacity(0.1), lineWidth: 1)
-                    .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 3)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
-            )
-        }
-    }
-}
-
 private struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 10) {
@@ -581,6 +354,34 @@ private struct EmptyStateView: View {
                 .foregroundColor(.gray)
         }
         .padding(.bottom, 50)
+    }
+}
+
+extension View {
+    func noteContextMenu(
+        note: Note,
+        notesViewModel: NotesViewModel,
+        isSelectionMode: Binding<Bool>
+    ) -> some View {
+        self.contextMenu {
+            Button {
+                isSelectionMode.wrappedValue = true
+            } label: {
+                Label("Select notes", systemImage: "checkmark.circle")
+            }
+
+            Button {
+               
+            } label: {
+                Label("Add to archive", systemImage: "archivebox")
+            }
+
+            Button(role: .destructive) {
+                notesViewModel.delete(note: note)
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
     }
 }
 

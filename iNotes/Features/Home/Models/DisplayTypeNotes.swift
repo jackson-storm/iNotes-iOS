@@ -1,16 +1,13 @@
 enum DisplayTypeNotes: String, CaseIterable {
     case list
     case grid
-    case timeLine
 
     var iconName: String {
         switch self {
         case .list:
-            return "list.bullet.rectangle"
+            return "list.bullet"
         case .grid:
             return "square.grid.2x2"
-        case .timeLine:
-            return "line.3.horizontal.decrease.circle" 
         }
     }
 
@@ -20,8 +17,6 @@ enum DisplayTypeNotes: String, CaseIterable {
             return "Grid"
         case .list:
             return "List"
-        case .timeLine:
-            return "TimeLine"
         }
     }
 }
