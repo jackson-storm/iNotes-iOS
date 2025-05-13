@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CustomTabView: View {
+struct HomeCustomTabView: View {
     @State private var isSheetPresented = false
     @State private var noteTitle = ""
     @State private var description = ""
@@ -9,6 +9,8 @@ struct CustomTabView: View {
     @State private var showActionSheet: Bool = false
     @State private var showDeleteActionSheet: Bool = false
     
+    @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
+    
     @ObservedObject var notesViewModel: NotesViewModel
     
     var body: some View {
@@ -16,16 +18,9 @@ struct CustomTabView: View {
             RoundedRectangle(cornerRadius: 40)
                 .fill(.ultraThinMaterial)
                 .stroke(.gray.opacity(0.1), lineWidth: 1)
-                .frame(width: 200, height: 65)
+                .frame(width: 65, height: 65)
             
-            HStack(spacing: 23) {
-                Button(action: {
-                    // Другие действия
-                }) {
-                    Image(systemName: "square.and.pencil")
-                        .font(.system(size: 20))
-                }
-                
+            HStack(spacing: 20) {
                 Button(action: {
                     isSheetPresented = true
                 }) {
@@ -39,17 +34,8 @@ struct CustomTabView: View {
                             .foregroundStyle(.white)
                     }
                 }
-                
-                Button(action: {
-                    if notesViewModel.notes.count > 0 {
-                        showDeleteActionSheet = true
-                    }
-                }) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 20))
-                }
             }
-            .foregroundStyle(notesViewModel.notes.count > 0 ? .primary: Color.gray)
+            .foregroundStyle(.primary)
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {
@@ -58,22 +44,10 @@ struct CustomTabView: View {
                     noteTitle: $noteTitle, description: $description,
                     noteExists: $noteExists,
                     showNoteExists: $showNoteExists,
-                    viewModel: notesViewModel 
+                    viewModel: notesViewModel
                 )
             }
             .presentationBackground(Color.backgroundHomePage)
-        }
-        .actionSheet(isPresented: $showDeleteActionSheet) {
-            ActionSheet(
-                title: Text("Delete all notes?"),
-                message: Text("This action is irreversible."),
-                buttons: [
-                    .destructive(Text("Delete")) {
-                        notesViewModel.deleteAllNotes()
-                    },
-                    .cancel()
-                ]
-            )
         }
     }
 }

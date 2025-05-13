@@ -4,9 +4,9 @@ node_modules/
 .env.test
 
 # Prisma
-./src/generated/
-./prisma/migrations
-./prisma/dev.db
+src/generated
+prisma/migrations
+prisma/dev.db
 
 # Testing
 coverage/

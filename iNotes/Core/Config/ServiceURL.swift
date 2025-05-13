@@ -5,7 +5,7 @@ final class ServiceURL {
 
     private init() {}
 
-    private let baseURL = URL(string: "http://localhost:4200/api")!
+    private let baseURL = URL(string: "http://127.0.0.1:4200/api")!
 
     var authRegisterUrl: URL {
         baseURL.appendingPathComponent("auth/register")
@@ -16,6 +16,6 @@ final class ServiceURL {
     }
     
     var notesURL: URL {
-            baseURL.appendingPathComponent("api/notes")
+            baseURL.appendingPathComponent("notes")
     }
 }

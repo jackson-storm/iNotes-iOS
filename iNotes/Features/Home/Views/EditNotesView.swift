@@ -2,73 +2,94 @@ import SwiftUI
 
 struct EditNotesView: View {
     let note: Note
+    
+    @ObservedObject var notesViewModel: NotesViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var description: String
     @State private var title: String
-
-    init(note: Note) {
+    @State private var isTap: Bool
+    @State private var showDeleteAlert = false
+    
+    init(note: Note, notesViewModel: NotesViewModel) {
         self.note = note
+        self.notesViewModel = notesViewModel
+        
         _description = State(initialValue: note.description)
         _title = State(initialValue: note.title)
+        let stored = UserDefaults.standard.bool(forKey: "isLiked_\(note.id.uuidString)")
+        _isTap = State(initialValue: stored)
     }
-
+    
     var body: some View {
-        ZStack(alignment: .top) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 0)
-                    .fill(Color.backgroundHomePage)
-                    .ignoresSafeArea()
-
-                ZStack(alignment: .topLeading) {
-                    TextEditor(text: $description)
-                        .scrollContentBackground(.hidden)
-                        .padding(.horizontal, 10)
-                        .padding(.top, 65)
-                        .padding(.bottom, 5)
-                }
-            }
-
+        VStack(spacing: 0) {
             HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundStyle(.primary)
-                        .padding(.vertical, 20)
-                        .padding(.leading, 15)
-                        .font(.system(size: 20))
-                }
-
                 TextField("Title", text: $title)
                     .bold()
                     .font(.system(size: 22))
-                    .padding(.leading, 8)
-
-                Spacer()
-
-                HStack(spacing: 20) {
-                    Button(action: {}) {
-                        Image(systemName: "archivebox")
-                    }
-                    Button(action: {}) {
-                        Image(systemName: "heart")
-                    }
-                    Button(action: {}) {
-                        Image(systemName: "trash")
-                    }
-                }
-                .font(.system(size: 20))
-                .padding()
+                    .padding(.horizontal)
+                    .padding(.top)
+                
+                Text(note.lastEdited.formatted(date: .abbreviated, time: .shortened))
+                    .foregroundColor(.gray)
+                    .font(.caption)
+                    .padding(.trailing)
+                    .padding(.top)
             }
-            .background(Color.backgroundHomePage)
+            
+                TextEditor(text: $description)
+                    .scrollContentBackground(.hidden)
+                    .padding()
+                    .background(Color.backgroundHomePage)
+            
         }
-        .navigationBarBackButtonHidden(true)
-        .font(.system(size: 18))
-        .foregroundStyle(.primary)
+        .background(Color.backgroundHomePage.ignoresSafeArea())
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                
+                Menu {
+                    Button {
+                        notesViewModel.toggleLike(for: note)
+                        isTap.toggle()
+                    } label: {
+                        Text("Like")
+                        Image(systemName: isTap ? "heart.fill" : "heart")
+                            .foregroundStyle(isTap ? .red : .primary)
+                    }
+                    
+                    Button(role: .destructive) {
+                        showDeleteAlert = true
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        .alert("Delete note?", isPresented: $showDeleteAlert) {
+            Button("Delete", role: .destructive) {
+                notesViewModel.delete(note: note)
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This action cannot be undone.")
+        }
+        .onChange(of: title) { newTitle, _ in
+            notesViewModel.update(noteID: note.id, title: newTitle, description: description)
+        }
+        .onChange(of: description) { newDescription, _ in
+            notesViewModel.update(noteID: note.id, title: title, description: newDescription)
+        }
     }
 }
-
 
 #Preview {
     ContentView()

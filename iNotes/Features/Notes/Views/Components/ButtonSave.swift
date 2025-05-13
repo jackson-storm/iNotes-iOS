@@ -16,7 +16,7 @@ struct ButtonSaveView: View {
                     .font(.system(size: 16, weight: .bold))
             }
             .padding(.horizontal, 20)
-            .padding(.bottom, 20)
+            .padding(.bottom, 15)
         }
         .foregroundStyle(.white)
     }

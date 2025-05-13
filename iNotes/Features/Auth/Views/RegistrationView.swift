@@ -64,10 +64,25 @@ struct RegistrationView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             
+            HStack {
+                Spacer()
+                
+                Text("Have an account?")
+                NavigationLink(destination: LoginView()) {
+                    Text("Login")
+                        .foregroundColor(.blue)
+                        .underline()
+                }
+                Spacer()
+            }
+            .font(.subheadline)
+            .padding(.top, 10)
+            
             Spacer()
         }
         .padding(.horizontal, 20)
         .background(Color.backgroundHomePage)
+        .navigationBarHidden(true)
     }
 }
 

@@ -11,14 +11,20 @@ class AuthViewModel: ObservableObject {
 
     @Published var isLoggedIn = false
 
+    init() {
+        if UserDefaults.standard.string(forKey: "token") != nil {
+            isLoggedIn = true
+        }
+    }
+
     func login(usernameOrEmail: String, password: String) {
         clearErrors()
-
         let request = LoginRequest(login: usernameOrEmail, password: password)
         AuthService.shared.login(request: request) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success:
+                case .success(let response):
+                    UserDefaults.standard.set(response.token, forKey: "token")
                     self.isLoggedIn = true
                 case .failure(let error):
                     self.loginError = error.localizedDescription
@@ -29,12 +35,12 @@ class AuthViewModel: ObservableObject {
 
     func register(username: String, email: String, password: String) {
         clearErrors()
-
         let request = RegisterRequest(username: username, email: email, password: password)
         AuthService.shared.register(request: request) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success:
+                case .success(let response):
+                    UserDefaults.standard.set(response.token, forKey: "token")
                     self.isLoggedIn = true
                 case .failure(let error):
                     self.registerError = error.localizedDescription

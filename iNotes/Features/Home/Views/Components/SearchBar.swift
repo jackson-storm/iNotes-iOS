@@ -47,3 +47,6 @@ struct SearchBarView: View {
     }
 }
 
+#Preview {
+    ContentView()
+}
