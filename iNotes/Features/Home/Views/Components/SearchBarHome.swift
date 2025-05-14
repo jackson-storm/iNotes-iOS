@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct SearchBarView: View {
+struct SearchBarHomeView: View {
     @Binding var searchText: String
     
     var body: some View {

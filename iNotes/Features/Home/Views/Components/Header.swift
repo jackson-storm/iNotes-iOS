@@ -11,7 +11,7 @@ struct HeaderView: View {
                 HeaderProfileImage()
             }
             
-            SearchBarView(searchText: $searchBarText)
+            SearchBarHomeView(searchText: $searchBarText)
             
             if searchBarText.isEmpty {
                 HeaderButtonMenuView(isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes:
