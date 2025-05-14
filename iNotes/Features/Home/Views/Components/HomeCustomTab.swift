@@ -2,13 +2,14 @@ import SwiftUI
 
 struct HomeCustomTabView: View {
     @State private var isSheetPresented = false
-    @State private var noteTitle = ""
-    @State private var description = ""
     @State private var noteExists = false
     @State private var showNoteExists = false
     @State private var showActionSheet: Bool = false
     @State private var showDeleteActionSheet: Bool = false
     
+    @State private var noteTitle = ""
+    @State private var description = ""
+
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     
     @ObservedObject var notesViewModel: NotesViewModel

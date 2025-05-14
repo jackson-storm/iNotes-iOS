@@ -3,6 +3,7 @@ import SwiftUI
 struct SelectionOverlayView: View {
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
+    
     @ObservedObject var notesViewModel: NotesViewModel
 
     @State private var deleteActionType: DeleteActionType?
