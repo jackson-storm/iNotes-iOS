@@ -40,7 +40,7 @@ extension NoteCategory {
         case .messages: return "ellipsis.message.fill"
         case .health: return "heart.fill"
         case .personal: return "person.fill"
-        case .all: return "folder"
+        case .all: return "folder.fill"
         }
     }
 }
