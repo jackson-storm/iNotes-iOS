@@ -60,9 +60,10 @@ struct EditNotesView: View {
     }
     
     private var searchBar: some View {
-        HStack {
+        VStack(alignment: .leading) {
             if isActiveSearch {
-                SearchBarEditNotes(searchTextEditNotes: $searchTextEditNotes, isActiveSearch: $isActiveSearch)
+                SearchBarEditNotes(searchTextEditNotes: $searchTextEditNotes, isActiveSearch: $isActiveSearch, description: $description)
+                
             }
         }
     }
@@ -107,7 +108,7 @@ struct EditNotesView: View {
                 .padding(.horizontal, 11)
                 .padding(.top, 8)
                 .background(Color.backgroundHomePage)
-
+            
             if let highlightedText {
                 Text(highlightedText)
                     .padding()
@@ -118,7 +119,8 @@ struct EditNotesView: View {
     }
     
     private var noteToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
+        ToolbarItem(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
+            HStack(spacing: 16) {
                 Button {
                     if let last = undoStack.popLast() {
                         redoStack.append((title, description))
@@ -140,9 +142,17 @@ struct EditNotesView: View {
                 }.disabled(redoStack.isEmpty)
                 
                 Button {
+                    notesViewModel.toggleLike(for: note)
+                    isTap.toggle()
+                } label: {
+                    Image(systemName: isTap ? "heart.fill" : "heart")
+                        .foregroundStyle(isTap ? .red : .accentColor)
+                }
+                
+                Button {
                     
                 } label: {
-                    Image(systemName: "square.and.arrow.up")
+                    Image(systemName: "archivebox")
                 }
                 
                 Menu {
@@ -155,12 +165,10 @@ struct EditNotesView: View {
                     }
                     
                     Button {
-                        notesViewModel.toggleLike(for: note)
-                        isTap.toggle()
+                        UIPasteboard.general.string = description
                     } label: {
-                        Text("Like")
-                        Image(systemName: isTap ? "heart.fill" : "heart")
-                            .foregroundStyle(isTap ? .red : .primary)
+                        Text("Copy text")
+                        Image(systemName: "doc.on.doc")
                     }
                     
                     Button(role: .destructive) {
@@ -172,6 +180,8 @@ struct EditNotesView: View {
                     Image(systemName: "ellipsis.circle")
                 }
             }
+            .font(.system(size: 17))
+        }
     }
 }
 

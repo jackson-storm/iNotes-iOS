@@ -4,6 +4,7 @@ struct HeaderView: View {
     @Binding var searchBarText: String
     @Binding var isSelectionMode: Bool
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
+    @Binding var sortType: NotesSortType
     
     var body: some View {
         HStack(spacing: 15) {
@@ -14,8 +15,11 @@ struct HeaderView: View {
             SearchBarHomeView(searchText: $searchBarText)
             
             if searchBarText.isEmpty {
-                HeaderButtonMenuView(isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes:
-                $selectedDisplayTypeNotes)
+                HeaderButtonMenuView(
+                    isSelectionMode: $isSelectionMode,
+                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                    sortType: $sortType
+                )
             }
         }
         .animation(.bouncy(duration: 0.5), value: searchBarText)
@@ -40,60 +44,54 @@ private struct HeaderProfileImage: View {
 private struct HeaderButtonMenuView: View {
     @Binding var isSelectionMode: Bool
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
+    @Binding var sortType: NotesSortType
     
     var body: some View {
-        VStack {
+        Menu {
+            Button(action: {
+                isSelectionMode = true
+            }) {
+                Label("Select notes", systemImage: "checkmark.circle")
+            }
+
             Menu {
-                Button(action: {
-                    isSelectionMode = true
-                }) {
-                    Label("Select notes", systemImage: "checkmark.circle")
-                }
-                
-                Menu {
-                    Button(action: {
-                        selectedDisplayTypeNotes = .list
-                    }) {
-                       Text("List")
-                    }
-                    Button(action: {
-                        selectedDisplayTypeNotes = .grid
-                    }) {
-                       Text("Grid")
-                    }
+                Button {
+                    selectedDisplayTypeNotes = .list
                 } label: {
-                    Label("Display notes", systemImage: selectedDisplayTypeNotes.iconName)
+                    Label("List", systemImage: selectedDisplayTypeNotes == .list ? "checkmark" : "")
                 }
-
-                Menu {
-                    Button(action: {
-                        
-                    }) {
-                        Text("По умолчанию (дата изменения)")
-                    }
+                Button {
+                    selectedDisplayTypeNotes = .grid
                 } label: {
-                    Label("Sorting notes", systemImage: "arrow.up.arrow.down")
-                }
-
-                Menu {
-                    Button(action: {
-                        
-                    }) {
-                        Text("По умолчанию (включено)")
-                    }
-                } label: {
-                    Label("Group by date", systemImage: "calendar")
-                }
-
-                Button(action: {
-                   
-                }) {
-                    Label("Просмотреть вложения", systemImage: "paperclip")
+                    Label("Grid", systemImage: selectedDisplayTypeNotes == .grid ? "checkmark" : "")
                 }
             } label: {
-                Image(systemName: "ellipsis.circle")
-                    .font(.system(size: 24))
+                Label("Display notes", systemImage: selectedDisplayTypeNotes.iconName)
             }
+
+            Menu {
+                Button {
+                    sortType = .creationDate
+                } label: {
+                    Label("Creation date", systemImage: sortType == .creationDate ? "checkmark" : "")
+                }
+                Button {
+                    sortType = .lastModified
+                } label: {
+                    Label("Date modified", systemImage: sortType == .lastModified ? "checkmark" : "")
+                }
+                Button {
+                    sortType = .name
+                } label: {
+                    Label("Name", systemImage: sortType == .name ? "checkmark" : "")
+                }
+            } label: {
+                Label("Sorting notes", systemImage: "arrow.up.arrow.down")
+            }
+
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .font(.system(size: 24))
         }
     }
 }

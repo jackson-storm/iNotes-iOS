@@ -4,12 +4,23 @@ class NotesViewModel: ObservableObject {
     // MARK: - Published Properties
     @Published var notes: [Note] = []
     @Published var searchText: String = ""
+    @Published var sortType: NotesSortType = .creationDate
+    
     @AppStorage("selectedCategory") private var selectedCategoryRawValue: String = NoteCategory.all.rawValue
     
     var filteredNotes: [Note] {
-        notes.filter { note in
+        let baseNotes = notes.filter { note in
             (selectedCategory == .all || note.category == selectedCategory)
             && (searchText.isEmpty || note.title.localizedCaseInsensitiveContains(searchText) || note.description.localizedCaseInsensitiveContains(searchText))
+        }
+        
+        switch sortType {
+        case .creationDate:
+            return baseNotes.sorted { $0.createdAt > $1.createdAt }
+        case .lastModified:
+            return baseNotes.sorted { $0.lastEdited > $1.lastEdited }
+        case .name:
+            return baseNotes.sorted { $0.title.lowercased() < $1.title.lowercased() }
         }
     }
     

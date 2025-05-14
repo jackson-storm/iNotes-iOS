@@ -8,6 +8,7 @@ struct HomeView: View {
     
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
+    @Binding var sortType: NotesSortType
     
     var body: some View {
         VStack(spacing: 15) {
@@ -18,7 +19,12 @@ struct HomeView: View {
                     notesViewModel: notesViewModel
                 )
             } else {
-                HeaderView(searchBarText: $notesViewModel.searchText, isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes: $selectedDisplayTypeNotes)
+                HeaderView(
+                    searchBarText: $notesViewModel.searchText,
+                    isSelectionMode: $isSelectionMode,
+                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                    sortType: $notesViewModel.sortType
+                )
             }
             
             HorizontalFilterView(notesViewModel: notesViewModel)
