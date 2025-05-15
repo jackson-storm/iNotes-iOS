@@ -1,7 +1,8 @@
 import SwiftUI
 
-struct SearchBarView: View {
+struct SearchBarHomeView: View {
     @Binding var searchText: String
+    @Binding var selectedTab: Int
     
     var body: some View {
         ZStack(alignment: .leading) {
@@ -11,7 +12,7 @@ struct SearchBarView: View {
                 .frame(height: searchText.isEmpty ? 45 : 50)
             
             if searchText.isEmpty {
-                Text("Search for notes")
+                Text("Search")
                     .foregroundColor(.gray)
                     .padding(.leading, 50)
             }

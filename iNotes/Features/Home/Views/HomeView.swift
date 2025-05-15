@@ -8,6 +8,9 @@ struct HomeView: View {
     
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
+    @Binding var sortType: NotesSortType
+    @Binding var selectedTab: Int
+    @Binding var isSheetPresented: Bool
     
     var body: some View {
         VStack(spacing: 15) {
@@ -18,30 +21,31 @@ struct HomeView: View {
                     notesViewModel: notesViewModel
                 )
             } else {
-                HeaderView(searchBarText: $notesViewModel.searchText, isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes: $selectedDisplayTypeNotes)
+                HeaderView(
+                    searchBarText: $notesViewModel.searchText,
+                    isSelectionMode: $isSelectionMode,
+                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                    sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
+                )
+            }
+            if selectedTab == 1 {
+                HorizontalFilterView(notesViewModel: notesViewModel)
             }
             
-            HorizontalFilterView(notesViewModel: notesViewModel)
-            
             ZStack(alignment: .bottom) {
-                NotesListView(
-                    notesViewModel: notesViewModel,
-                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    selectedNotes: $selectedNotes,
-                    isSelectionMode: $isSelectionMode
-                )
-                
                 HomeCustomTabView(
+                    isSheetPresented: $isSheetPresented, selectedNotes: $selectedNotes,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab,
                     notesViewModel: notesViewModel
                 )
-                .padding(.bottom, 30)
             }
             .edgesIgnoringSafeArea(.bottom)
         }
-        .animation(.bouncy, value: isSelectionMode)
         .padding(.top, 10)
-        .background(Color.backgroundHomePage)
+        .animation(.bouncy, value: selectedTab)
+        .animation(.bouncy, value: isSelectionMode)
+        .background(Color.backgroundHomePage.ignoresSafeArea())
         .onAppear {
             notesViewModel.filterNotes(by: selectedCategory)
         }

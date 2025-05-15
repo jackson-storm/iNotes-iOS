@@ -1,13 +1,11 @@
 import Foundation
 
-protocol NotesStorage {
+protocol NotesRepository {
     func save(_ notes: [Note])
     func load() -> [Note]
-    func saveLike(for noteID: UUID, isLiked: Bool)
-    func loadLike(for noteID: UUID) -> Bool
 }
 
-final class UserDefaultsNotesStorage: NotesStorage {
+final class UserDefaultsNotesRepository: NotesRepository {
     private let notesKey = "savedNotes"
 
     func save(_ notes: [Note]) {
@@ -21,13 +19,5 @@ final class UserDefaultsNotesStorage: NotesStorage {
               let notes = try? JSONDecoder().decode([Note].self, from: data)
         else { return [] }
         return notes
-    }
-
-    func saveLike(for noteID: UUID, isLiked: Bool) {
-        UserDefaults.standard.set(isLiked, forKey: "isLiked_\(noteID.uuidString)")
-    }
-
-    func loadLike(for noteID: UUID) -> Bool {
-        UserDefaults.standard.bool(forKey: "isLiked_\(noteID.uuidString)")
     }
 }
