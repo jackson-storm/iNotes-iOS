@@ -10,9 +10,7 @@ struct NotesListView: View {
     var body: some View {
         VStack {
             if notesViewModel.filteredNotes.isEmpty {
-                Spacer()
                 EmptyStateView()
-                Spacer()
             } else {
                 ScrollView {
                     InformationNotesView(notesViewModel: notesViewModel)
@@ -36,7 +34,6 @@ struct NotesListView: View {
                 }
             }
         }
-        .background(Color.backgroundHomePage)
         .animation(.bouncy, value: selectedDisplayTypeNotes)
         .animation(.bouncy, value: notesViewModel.filteredNotes.count)
     }

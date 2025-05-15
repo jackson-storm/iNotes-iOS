@@ -5,6 +5,7 @@ struct iNotesApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .background(Color.backgroundHomePage)
         }
     }
 }

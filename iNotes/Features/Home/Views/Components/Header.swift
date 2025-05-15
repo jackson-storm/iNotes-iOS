@@ -5,21 +5,27 @@ struct HeaderView: View {
     @Binding var isSelectionMode: Bool
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     @Binding var sortType: NotesSortType
+    @Binding var selectedTab: Int
+    @Binding var isSheetPresented: Bool
     
     var body: some View {
         HStack(spacing: 15) {
-            if searchBarText.isEmpty {
-                HeaderProfileImage()
+            if selectedTab == 1 {
+                if searchBarText.isEmpty {
+                    HeaderButtonMenuView(
+                        isSelectionMode: $isSelectionMode,
+                        selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                        sortType: $sortType
+                    )
+                }
             }
             
-            SearchBarHomeView(searchText: $searchBarText)
+            SearchBarHomeView(searchText: $searchBarText, selectedTab: $selectedTab)
             
-            if searchBarText.isEmpty {
-                HeaderButtonMenuView(
-                    isSelectionMode: $isSelectionMode,
-                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    sortType: $sortType
-                )
+            if selectedTab == 1 {
+                if searchBarText.isEmpty {
+                    HeaderAddNotesView(isSheetPresented: $isSheetPresented)
+                }
             }
         }
         .animation(.bouncy(duration: 0.5), value: searchBarText)
@@ -27,14 +33,16 @@ struct HeaderView: View {
     }
 }
 
-private struct HeaderProfileImage: View {
+private struct HeaderAddNotesView: View {
+    @Binding var isSheetPresented: Bool
+    
     var body: some View {
         VStack {
             Button(action: {
-                //
+                isSheetPresented = true
             }) {
-                Image(systemName: "person.circle")
-                    .font(.system(size: 24))
+                Image(systemName: "plus.circle")
+                    .font(.system(size: 22))
             }
            
         }
@@ -48,12 +56,6 @@ private struct HeaderButtonMenuView: View {
     
     var body: some View {
         Menu {
-            Button(action: {
-                isSelectionMode = true
-            }) {
-                Label("Select notes", systemImage: "checkmark.circle")
-            }
-
             Menu {
                 Button {
                     selectedDisplayTypeNotes = .list
@@ -91,7 +93,7 @@ private struct HeaderButtonMenuView: View {
 
         } label: {
             Image(systemName: "ellipsis.circle")
-                .font(.system(size: 24))
+                .font(.system(size: 22))
         }
     }
 }

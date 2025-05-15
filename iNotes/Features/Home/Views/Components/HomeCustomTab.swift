@@ -1,53 +1,44 @@
 import SwiftUI
 
 struct HomeCustomTabView: View {
-    @State private var isSheetPresented = false
     @State private var noteTitle = ""
     @State private var description = ""
-    @State private var selectedTab: Int = 0
 
+    @Binding var isSheetPresented: Bool
     @Binding var selectedNotes: Set<UUID>
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     @Binding var isSelectionMode: Bool
+    @Binding var selectedTab: Int
 
     @ObservedObject var notesViewModel: NotesViewModel
 
-
     var body: some View {
-        TabView(selection: $selectedTab) {
-            NotesListView(
-                notesViewModel: notesViewModel,
-                selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                selectedNotes: $selectedNotes,
-                isSelectionMode: $isSelectionMode
-            )
-            .tabItem {
-                Label("Notes", systemImage: "note.text")
+        ZStack(alignment: .bottom) {
+            Group {
+                switch selectedTab {
+                case 0:
+                    ArchiveView()
+                        .transition(.opacity)
+                case 1:
+                    NotesListView (
+                        notesViewModel: notesViewModel,
+                        selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                        selectedNotes: $selectedNotes,
+                        isSelectionMode: $isSelectionMode
+                    )
+                    .transition(.opacity)
+                case 2:
+                    SettingsView()
+                        .transition(.opacity)
+                default:
+                    EmptyView()
+                }
             }
-            .tag(0)
+            .animation(.easeInOut(duration: 0.3), value: selectedTab)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            Color.clear
-                .tabItem {
-                    Label("Add", systemImage: "plus.circle")
-                }
-                .tag(1)
-                .onAppear {
-                    if selectedTab == 1 {
-                        selectedTab = 0
-                    }
-                }
-
-            Text("Settings View")
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .tag(2)
-        }
-        .onChange(of: selectedTab) { newValue, _ in
-            if newValue == 1 {
-                isSheetPresented = true
-                selectedTab = 0
-            }
+            CustomTabBar(selectedTab: $selectedTab, isSheetPresented: $isSheetPresented, isSelectionMode: $isSelectionMode)
+                .background(Color.backgroundHomePage.shadow(radius: 1))
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {
@@ -59,6 +50,72 @@ struct HomeCustomTabView: View {
                 )
             }
             .presentationBackground(Color.backgroundHomePage)
+        }
+    }
+}
+
+struct CustomTabBar: View {
+    @Binding var selectedTab: Int
+    @Binding var isSheetPresented: Bool
+    @Binding var isSelectionMode: Bool
+    
+    var body: some View {
+        HStack {
+            TabBarButton(icon: "archivebox", title: "Archive", isSelected: selectedTab == 0) {
+                selectedTab = 0
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+
+            TabBarButton(icon: "note.text", title: "Notes", isSelected: selectedTab == 1) {
+                selectedTab = 1
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+            .contextMenu {
+                Button {
+                    isSheetPresented = true
+                } label: {
+                    Label("Add note", systemImage: "plus")
+                }
+                Button {
+                    isSelectionMode = true
+                } label: {
+                    Label("Select notes", systemImage: "checkmark.circle")
+                }
+            }
+
+            TabBarButton(icon: "gearshape", title: "Settings", isSelected: selectedTab == 2) {
+                selectedTab = 2
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .padding(.bottom, 28)
+        .padding(.horizontal, 10)
+        .background(Color.backgroundComponents)
+    }
+}
+
+struct TabBarButton: View {
+    let icon: String
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 24))
+                    .foregroundColor(isSelected ? .accentColor : .gray)
+                Text(title)
+                    .font(.caption)
+                    .foregroundColor(isSelected ? .accentColor : .gray)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .contentShape(Rectangle())
         }
     }
 }

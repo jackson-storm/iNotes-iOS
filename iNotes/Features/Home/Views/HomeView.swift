@@ -9,6 +9,8 @@ struct HomeView: View {
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
     @Binding var sortType: NotesSortType
+    @Binding var selectedTab: Int
+    @Binding var isSheetPresented: Bool
     
     var body: some View {
         VStack(spacing: 15) {
@@ -23,31 +25,27 @@ struct HomeView: View {
                     searchBarText: $notesViewModel.searchText,
                     isSelectionMode: $isSelectionMode,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    sortType: $notesViewModel.sortType
+                    sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
                 )
             }
-            
-            HorizontalFilterView(notesViewModel: notesViewModel)
+            if selectedTab == 1 {
+                HorizontalFilterView(notesViewModel: notesViewModel)
+            }
             
             ZStack(alignment: .bottom) {
-                NotesListView(
-                    notesViewModel: notesViewModel,
-                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    selectedNotes: $selectedNotes,
-                    isSelectionMode: $isSelectionMode
-                )
-                
                 HomeCustomTabView(
-                    selectedNotes: $selectedNotes,
+                    isSheetPresented: $isSheetPresented, selectedNotes: $selectedNotes,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    isSelectionMode: $isSelectionMode,
+                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab,
                     notesViewModel: notesViewModel
                 )
             }
             .edgesIgnoringSafeArea(.bottom)
         }
+        .padding(.top, 10)
+        .animation(.bouncy, value: selectedTab)
         .animation(.bouncy, value: isSelectionMode)
-        .background(Color.backgroundHomePage)
+        .background(Color.backgroundHomePage.ignoresSafeArea())
         .onAppear {
             notesViewModel.filterNotes(by: selectedCategory)
         }
