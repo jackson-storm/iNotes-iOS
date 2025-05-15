@@ -5,8 +5,6 @@ struct NoteCategoryEditView: View {
 
     @Binding var noteTitle: String
     @Binding var description: String
-    @Binding var noteExists: Bool
-    @Binding var showNoteExists: Bool
     @Binding var isPresented: Bool
 
     let category: NoteCategory
@@ -22,7 +20,7 @@ struct NoteCategoryEditView: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 ScrollView {
-                    TextFieldTitleView(noteTitle: $noteTitle, noteExists: $noteExists)
+                    TextFieldTitleView(noteTitle: $noteTitle)
 
                     TextFieldDescriptionView(description: $description)
 
@@ -42,10 +40,6 @@ struct NoteCategoryEditView: View {
                     )
                     if notesViewModel.addNoteIfNotExists(note) {
                         isPresented = false
-                    } else {
-                        withAnimation {
-                            noteExists = true
-                        }
                     }
                 })
             }

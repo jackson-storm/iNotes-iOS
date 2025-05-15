@@ -36,6 +36,7 @@ struct NotesListView: View {
                 }
             }
         }
+        .background(Color.backgroundHomePage)
         .animation(.bouncy, value: selectedDisplayTypeNotes)
         .animation(.bouncy, value: notesViewModel.filteredNotes.count)
     }

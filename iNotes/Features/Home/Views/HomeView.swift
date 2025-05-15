@@ -38,15 +38,15 @@ struct HomeView: View {
                 )
                 
                 HomeCustomTabView(
+                    selectedNotes: $selectedNotes,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                    isSelectionMode: $isSelectionMode,
                     notesViewModel: notesViewModel
                 )
-                .padding(.bottom, 30)
             }
             .edgesIgnoringSafeArea(.bottom)
         }
         .animation(.bouncy, value: isSelectionMode)
-        .padding(.top, 10)
         .background(Color.backgroundHomePage)
         .onAppear {
             notesViewModel.filterNotes(by: selectedCategory)

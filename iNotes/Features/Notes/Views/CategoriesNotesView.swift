@@ -5,8 +5,6 @@ struct CategoriesNotesView: View {
     @Binding var isPresented: Bool
     @Binding var noteTitle: String
     @Binding var description: String
-    @Binding var noteExists: Bool
-    @Binding var showNoteExists: Bool
 
     @ObservedObject var viewModel: NotesViewModel
 
@@ -14,8 +12,6 @@ struct CategoriesNotesView: View {
         VStack {
             TypeNotesView(
                 noteTitle: $noteTitle, description: $description,
-                noteExists: $noteExists,
-                showNoteExists: $showNoteExists,
                 isPresented: $isPresented,
                 viewModel: viewModel
             )
