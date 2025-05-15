@@ -10,7 +10,8 @@ struct EditNotesView: View {
     @State private var description: String
     @State private var searchTextEditNotes: String
     
-    @State private var isTap: Bool
+    @State private var isTapLike: Bool
+    @State private var isTapArchive: Bool
     @State private var showDeleteAlert = false
     @State private var isActiveSearch: Bool = false
     
@@ -20,11 +21,13 @@ struct EditNotesView: View {
     init(note: Note, notesViewModel: NotesViewModel) {
         self.note = note
         self.notesViewModel = notesViewModel
-        let stored = UserDefaults.standard.bool(forKey: "isLiked_\(note.id.uuidString)")
+        let storedLike = UserDefaults.standard.bool(forKey: "isLiked_\(note.id.uuidString)")
+        let storedArchive = UserDefaults.standard.bool(forKey: "isArchive_\(note.id.uuidString)")
         
         _description = State(initialValue: note.description)
         _title = State(initialValue: note.title)
-        _isTap = State(initialValue: stored)
+        _isTapLike = State(initialValue: storedLike)
+        _isTapArchive = State(initialValue: storedArchive)
         _searchTextEditNotes = State(initialValue: "")
     }
     
@@ -143,16 +146,18 @@ struct EditNotesView: View {
                 
                 Button {
                     notesViewModel.toggleLike(for: note)
-                    isTap.toggle()
+                    isTapLike.toggle()
                 } label: {
-                    Image(systemName: isTap ? "heart.fill" : "heart")
-                        .foregroundStyle(isTap ? .red : .accentColor)
+                    Image(systemName: isTapLike ? "heart.fill" : "heart")
+                        .foregroundStyle(isTapLike ? .red : .accentColor)
                 }
                 
                 Button {
-                    
+                    notesViewModel.toggleArchive(for: note)
+                    isTapArchive.toggle()
                 } label: {
-                    Image(systemName: "archivebox")
+                    Image(systemName: isTapArchive ? "archivebox.fill" : "archivebox")
+                        .foregroundStyle(isTapArchive ? .blue : .accentColor)
                 }
                 
                 Menu {

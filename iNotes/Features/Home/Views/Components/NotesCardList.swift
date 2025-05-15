@@ -92,6 +92,11 @@ private struct NotesCardList: View {
                     Spacer()
                     
                     HStack(spacing: 15) {
+                        if note.isArchive {
+                            Image(systemName: "archivebox.fill")
+                                .foregroundStyle(.blue)
+                        }
+                        
                         if note.isLiked {
                             Image(systemName: "heart.fill")
                                 .foregroundStyle(.red)

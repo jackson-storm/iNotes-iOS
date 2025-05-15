@@ -6,8 +6,7 @@ struct WelcomeFlowBackgroundView: View {
     var body: some View {
         ZStack {
             Image(image)
-                .resizable()
-                .scaledToFill()
+                
             
             LinearGradient(
                 gradient: Gradient(colors: [

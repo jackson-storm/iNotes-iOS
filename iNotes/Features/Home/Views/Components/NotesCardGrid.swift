@@ -92,7 +92,12 @@ private struct NotesCardGrid: View {
                     
                     Spacer()
                     
-                    HStack(spacing: 10) {
+                    HStack(spacing: 5) {
+                        if note.isArchive {
+                            Image(systemName: "archivebox.fill")
+                                .foregroundStyle(.blue)
+                        }
+                        
                         if note.isLiked {
                             Image(systemName: "heart.fill")
                                 .foregroundStyle(.red)

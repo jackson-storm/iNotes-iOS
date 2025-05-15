@@ -1,5 +1,3 @@
-import Foundation
-
 enum DeleteActionType: Identifiable {
     case deleteAll
     case deleteSelected

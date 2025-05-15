@@ -1,7 +1,5 @@
 import SwiftUI
 
-import SwiftUI
-
 struct WelcomeFlowMenuView: View {
     @Binding var selectedPage: Int
     let totalPages: Int

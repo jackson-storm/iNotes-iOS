@@ -8,17 +8,17 @@ class WelcomeFlowViewModel: ObservableObject {
         WelcomeFlowPage(
             title: "Bring inspiration to life instantly",
             description: "Write down thoughts, notes, and ideas so you never forget anything. Your notes are always within reach.",
-            image: "image3"
+            image: "backgroundPage1"
         ),
         WelcomeFlowPage(
             title: "Make your tasks simpler",
             description: "Create to-do lists, set priorities, and track your progress with easy-to-use management tools.",
-            image: "image4"
+            image: "backgroundPage2"
         ),
         WelcomeFlowPage(
             title: "Plan and execute",
             description: "Set goals, monitor your progress, and achieve results with an intuitive planner.",
-            image: "image5"
+            image: "backgroundPage3"
         )
     ]
     
