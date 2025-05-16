@@ -9,7 +9,9 @@ struct HomeCustomTabView: View {
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     @Binding var isSelectionMode: Bool
     @Binding var selectedTab: Int
-
+    @Binding var selectedTheme: Theme
+    @Binding var selectedTintRawValue: String
+    
     @ObservedObject var notesViewModel: NotesViewModel
 
     var body: some View {
@@ -33,7 +35,10 @@ struct HomeCustomTabView: View {
                     )
                     .transition(.opacity)
                 case 2:
-                    SettingsView()
+                    SettingsView (
+                        selectedTheme: $selectedTheme,
+                        selectedTintRawValue: $selectedTintRawValue
+                    )
                         .transition(.opacity)
                 default:
                     EmptyView()

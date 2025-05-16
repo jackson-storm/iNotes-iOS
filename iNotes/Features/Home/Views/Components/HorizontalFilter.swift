@@ -17,7 +17,7 @@ struct HorizontalFilterView: View {
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(notesViewModel.selectedCategory == category ? Color.blue : Color.backgroundComponents)
+                                    .fill(notesViewModel.selectedCategory == category ? Color.accentColor : Color.backgroundComponents)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
                                             .stroke(.gray.opacity(0.1), lineWidth: 1)

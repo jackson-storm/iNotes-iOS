@@ -11,6 +11,8 @@ struct HomeView: View {
     @Binding var sortType: NotesSortType
     @Binding var selectedTab: Int
     @Binding var isSheetPresented: Bool
+    @Binding var selectedTheme: Theme
+    @Binding var selectedTintRawValue: String
     
     var body: some View {
         VStack(spacing: 15) {
@@ -20,7 +22,7 @@ struct HomeView: View {
                     selectedNotes: $selectedNotes,
                     notesViewModel: notesViewModel
                 )
-            } else {
+            } else if selectedTab != 2 {
                 HeaderView(
                     searchBarText: $notesViewModel.searchText,
                     isSelectionMode: $isSelectionMode,
@@ -36,12 +38,13 @@ struct HomeView: View {
                 HomeCustomTabView(
                     isSheetPresented: $isSheetPresented, selectedNotes: $selectedNotes,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab,
+                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab, selectedTheme: $selectedTheme, selectedTintRawValue: $selectedTintRawValue,
                     notesViewModel: notesViewModel
                 )
             }
             .edgesIgnoringSafeArea(.bottom)
         }
+        .preferredColorScheme(selectedTheme.colorScheme)
         .padding(.top, 10)
         .animation(.bouncy, value: selectedTab)
         .animation(.bouncy, value: isSelectionMode)
