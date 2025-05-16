@@ -17,7 +17,12 @@ struct HomeCustomTabView: View {
             Group {
                 switch selectedTab {
                 case 0:
-                    ArchiveView()
+                    ArchiveContentView (
+                        notes: notesViewModel.filteredNotes,
+                        notesViewModel: notesViewModel,
+                        selectedNotes: $selectedNotes,
+                        isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes: $selectedDisplayTypeNotes
+                    )
                         .transition(.opacity)
                 case 1:
                     NotesListView (
@@ -54,20 +59,20 @@ struct HomeCustomTabView: View {
     }
 }
 
-struct CustomTabBar: View {
+private struct CustomTabBar: View {
     @Binding var selectedTab: Int
     @Binding var isSheetPresented: Bool
     @Binding var isSelectionMode: Bool
     
     var body: some View {
         HStack {
-            TabBarButton(icon: "archivebox", title: "Archive", isSelected: selectedTab == 0) {
+            TabBarButton(icon: (selectedTab != 0) ? "archivebox" : "archivebox.fill", title: "Archive", isSelected: selectedTab == 0) {
                 selectedTab = 0
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
 
-            TabBarButton(icon: "note.text", title: "Notes", isSelected: selectedTab == 1) {
+            TabBarButton(icon: (selectedTab != 1) ? "note" : "note.text", title: "Notes", isSelected: selectedTab == 1) {
                 selectedTab = 1
             }
             .frame(maxWidth: .infinity)
@@ -85,7 +90,7 @@ struct CustomTabBar: View {
                 }
             }
 
-            TabBarButton(icon: "gearshape", title: "Settings", isSelected: selectedTab == 2) {
+            TabBarButton(icon: (selectedTab != 2) ? "gearshape" : "gearshape.fill", title: "Settings", isSelected: selectedTab == 2) {
                 selectedTab = 2
             }
             .frame(maxWidth: .infinity)
@@ -97,7 +102,7 @@ struct CustomTabBar: View {
     }
 }
 
-struct TabBarButton: View {
+private struct TabBarButton: View {
     let icon: String
     let title: String
     let isSelected: Bool

@@ -11,7 +11,6 @@ struct TypeNotesView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                
                 SectionView(header: "Finance") {
                     categoryLink(title: "Bank", image: "dollarsign.bank.building.fill", color: .red, category: .banks)
                     CustomDivider()
@@ -67,7 +66,7 @@ struct TypeNotesView: View {
     }
 }
 
-private struct CardRow: View {
+struct CardRow: View {
     let title: String
     let image: String
     let color: Color
@@ -97,7 +96,7 @@ private struct CardRow: View {
     }
 }
 
-private struct SectionView<Content: View>: View {
+struct SectionView<Content: View>: View {
     let header: String
     let content: Content
     
@@ -127,7 +126,7 @@ private struct SectionView<Content: View>: View {
     }
 }
 
-private struct CustomDivider: View {
+struct CustomDivider: View {
     var body: some View {
         Rectangle()
             .fill(.gray.opacity(0.1))

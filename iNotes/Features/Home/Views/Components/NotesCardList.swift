@@ -42,7 +42,7 @@ struct NotesCardListView: View {
     }
 }
 
-private struct NotesCardList: View {
+struct NotesCardList: View {
     let note: Note
     
     @Binding var selectedNotes: Set<UUID>
