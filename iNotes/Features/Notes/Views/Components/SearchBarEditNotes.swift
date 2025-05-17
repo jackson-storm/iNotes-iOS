@@ -46,12 +46,6 @@ struct SearchBarEditNotes: View {
                     }
                     .padding(.horizontal, 15)
                 }
-                Button {
-                    isActiveSearch = false
-                } label: {
-                    Text("Ready")
-                        .bold()
-                }
                 .padding(.horizontal, 5)
             }
             .animation(.bouncy, value: searchTextEditNotes)
@@ -60,7 +54,7 @@ struct SearchBarEditNotes: View {
         }
         Text("Found: \(searchMatchesCount) word\(searchMatchesCount == 1 ? "" : "s")")
             .font(.caption)
-            .padding(.leading, 15)
+            .padding(.leading, 20)
             .foregroundStyle(searchMatchesCount > 0 ? .green : .red)
     }
 }

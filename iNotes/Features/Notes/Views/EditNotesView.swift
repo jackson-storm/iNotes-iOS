@@ -15,8 +15,11 @@ struct EditNotesView: View {
     @State private var showDeleteAlert = false
     @State private var isActiveSearch: Bool = false
     
-    @State private var undoStack: [(title: String,  description: String)] = []
-    @State private var redoStack: [(title: String,  description: String)] = []
+    @State private var undoStack: [(title: String, description: String)] = []
+    @State private var redoStack: [(title: String, description: String)] = []
+    
+    @State private var matchRanges: [NSRange] = []
+    @State private var currentMatchIndex: Int = 0
     
     init(note: Note, notesViewModel: NotesViewModel) {
         self.note = note
@@ -37,6 +40,8 @@ struct EditNotesView: View {
             noteHeader
             noteEditor
         }
+        .animation(.bouncy, value: matchRanges)
+        .animation(.bouncy, value: currentMatchIndex)
         .animation(.bouncy, value: isActiveSearch)
         .background(Color.backgroundHomePage.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
@@ -60,22 +65,77 @@ struct EditNotesView: View {
             redoStack.removeAll()
             notesViewModel.update(noteID: note.id, title: title, description: newDescription)
         }
+        .onChange(of: searchTextEditNotes) { _, _ in updateMatches() }
+        .onChange(of: description) { _, _ in updateMatches() }
+    }
+    
+    func updateMatches() {
+        matchRanges.removeAll()
+        currentMatchIndex = 0
+        
+        guard !searchTextEditNotes.isEmpty else { return }
+        
+        let pattern = NSRegularExpression.escapedPattern(for: searchTextEditNotes)
+        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        
+        let range = NSRange(location: 0, length: description.utf16.count)
+        matchRanges = regex?.matches(in: description, range: range).map { $0.range } ?? []
     }
     
     private var searchBar: some View {
-        VStack(alignment: .leading) {
-            if isActiveSearch {
-                SearchBarEditNotes(searchTextEditNotes: $searchTextEditNotes, isActiveSearch: $isActiveSearch, description: $description)
-                
+        HStack {
+            VStack(alignment: .leading) {
+                if isActiveSearch {
+                    SearchBarEditNotes(
+                        searchTextEditNotes: $searchTextEditNotes,
+                        isActiveSearch: $isActiveSearch,
+                        description: $description
+                    )
+                }
             }
+            
+            HStack(spacing: 15) {
+                if isActiveSearch && !matchRanges.isEmpty {
+                    Button {
+                        currentMatchIndex = (currentMatchIndex - 1 + matchRanges.count) % matchRanges.count
+                    } label: {
+                        Image(systemName: "chevron.up")
+                            .font(.system(size: 22))
+                    }
+                    
+                    Button {
+                        currentMatchIndex = (currentMatchIndex + 1) % matchRanges.count
+                    } label: {
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 22))
+                    }
+                    
+                    Text("\(currentMatchIndex + 1)/\(matchRanges.count)")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    
+                }
+                
+                if isActiveSearch {
+                    Button {
+                        isActiveSearch = false
+                        matchRanges = []
+                    } label: {
+                        Text("Ready")
+                            .bold()
+                    }
+                }
+            }
+            .padding(.bottom, 8)
         }
+        .padding(.trailing, 10)
     }
     
     private var noteHeader: some View {
         HStack {
             TextField("Title", text: $title)
                 .bold()
-                .font(.system(size: 22))
+                .font(.system(size: 26))
                 .padding(.horizontal)
                 .padding(.top)
             
@@ -88,37 +148,14 @@ struct EditNotesView: View {
     }
     
     private var noteEditor: some View {
-        let highlightedText: AttributedString? = {
-            guard isActiveSearch, !searchTextEditNotes.isEmpty else { return nil }
-            let lowercasedSearch = searchTextEditNotes.lowercased()
-            let attributed = NSMutableAttributedString(string: description)
-            let fullRange = NSRange(location: 0, length: attributed.length)
-            
-            attributed.addAttribute(.foregroundColor, value: UIColor.label, range: fullRange)
-            
-            let regex = try? NSRegularExpression(pattern: NSRegularExpression.escapedPattern(for: lowercasedSearch), options: .caseInsensitive)
-            
-            regex?.enumerateMatches(in: description, options: [], range: fullRange) { match, _, _ in
-                if let matchRange = match?.range {
-                    attributed.addAttribute(.backgroundColor, value: UIColor.systemYellow.withAlphaComponent(0.5), range: matchRange)
-                }
-            }
-            return AttributedString(attributed)
-        }()
-        return ZStack(alignment: .topLeading) {
-            TextEditor(text: $description)
-                .scrollContentBackground(.hidden)
-                .padding(.horizontal, 11)
-                .padding(.top, 8)
-                .background(Color.backgroundHomePage)
-            
-            if let highlightedText {
-                Text(highlightedText)
-                    .padding()
-                    .background(Color.clear)
-                    .allowsHitTesting(false)
-            }
-        }
+        HighlightedTextEditor(
+            text: $description,
+            searchText: searchTextEditNotes,
+            currentMatchIndex: currentMatchIndex,
+            allMatches: matchRanges
+        )
+        .padding(.horizontal, 11)
+        .padding(.top, 8)
     }
     
     private var noteToolbar: some ToolbarContent {
