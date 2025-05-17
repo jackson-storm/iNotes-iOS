@@ -7,12 +7,13 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                TintView(selectedTintRawValue: $selectedTintRawValue)
-                
-                ThemeView(themes: Theme.allCases, selectedTheme: $selectedTheme)
-                
-                Spacer()
+                VStack(spacing: 10) {
+                    TintView(selectedTintRawValue: $selectedTintRawValue)
+                    ThemeView(themes: Theme.allCases, selectedTheme: $selectedTheme)
+                    Spacer()
+                }
             }
+            .padding(.horizontal, 20)
         }
         .animation(.bouncy, value: selectedTintRawValue)
         .animation(.bouncy, value: selectedTheme)
@@ -43,14 +44,13 @@ private struct ThemeView: View {
     @Binding var selectedTheme: Theme
     
     var body: some View {
-        HStack(spacing: 15) {
+        HStack(spacing: 10) {
             ForEach(themes, id: \.self) { theme in
                 VStack(spacing: 8) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 10)
-                            .fill(Color.backgroundComponents)
-                            .stroke(theme == selectedTheme ? Color.accentColor : Color.clear, lineWidth: 4)
-                            .frame(width: 110, height: 65)
+                            .fill(theme == selectedTheme ? Color.accentColor.opacity(0.15) : Color.backgroundComponents)
+                            .frame(height: 60)
                             .onTapGesture {
                                 selectedTheme = theme
                             }
@@ -58,14 +58,18 @@ private struct ThemeView: View {
                         Image(systemName: theme.icon)
                             .font(.system(size: 20))
                     }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(theme == selectedTheme ? Color.accentColor : Color.gray.opacity(0.1), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 1)
+                    
                     Text(theme.rawValue.capitalized)
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.primary)
                 }
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
     }
 }
 
@@ -76,8 +80,9 @@ private struct TintView: View {
         ZStack {
             RoundedRectangle(cornerRadius: 30)
                 .fill(.backgroundComponents)
+                .stroke(.gray.opacity(0.1), lineWidth: 1)
                 .frame(height: 60)
-            
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 20) {
                     ForEach(TintColor.allCases) { option in
@@ -98,10 +103,10 @@ private struct TintView: View {
                             }
                     }
                 }
-                .padding(.horizontal, 10)
+                .padding(.horizontal, 5)
             }
+            .padding(.horizontal, 8)
         }
-        .padding(.horizontal, 20)
     }
 }
 

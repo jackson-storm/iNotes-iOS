@@ -76,9 +76,11 @@ struct NotesCardList: View {
                 }
                 .animation(.bouncy, value: selectedNotes)
                 .padding(.horizontal, 5)
+                
             } else {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(note.category.color)
+                    .fill(note.category.color.opacity(0.55))
+                    .stroke(note.category.color, lineWidth: 1)
                     .frame(width: 8)
             }
             
@@ -146,7 +148,7 @@ struct NotesCardList: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
+                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 2 : 0)
             )
         }
     }

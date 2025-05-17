@@ -30,7 +30,7 @@ struct HomeView: View {
                     sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
                 )
             }
-            if selectedTab == 1 {
+            if selectedTab != 2 {
                 HorizontalFilterView(notesViewModel: notesViewModel)
             }
             

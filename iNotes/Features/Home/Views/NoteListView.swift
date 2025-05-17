@@ -36,6 +36,7 @@ struct NotesListView: View {
                 }
             }
         }
+        .padding(.bottom, 93)
         .animation(.bouncy, value: selectedDisplayTypeNotes)
         .animation(.bouncy, value: activeNotes.count)
     }

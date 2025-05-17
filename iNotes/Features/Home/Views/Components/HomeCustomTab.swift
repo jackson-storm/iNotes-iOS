@@ -44,11 +44,10 @@ struct HomeCustomTabView: View {
                     EmptyView()
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: selectedTab)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             CustomTabBar(selectedTab: $selectedTab, isSheetPresented: $isSheetPresented, isSelectionMode: $isSelectionMode)
-                .background(Color.backgroundHomePage.shadow(radius: 1))
+                .background(Color.backgroundHomePage.shadow(radius: 0.5))
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {

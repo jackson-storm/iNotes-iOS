@@ -46,6 +46,7 @@ struct ArchiveContentView: View {
                 }
             }
             .animation(.bouncy, value: selectedDisplayTypeNotes)
+            .animation(.bouncy, value: archivedNotes.count)
             .padding(.horizontal, 10)
         }
     }
