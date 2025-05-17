@@ -8,7 +8,7 @@ struct NotesCardListView: View {
     @Binding var isSelectionMode: Bool
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 5) {
             ForEach(notes) { note in
                 Group {
                     if isSelectionMode {

@@ -47,7 +47,7 @@ struct HomeCustomTabView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             CustomTabBar(selectedTab: $selectedTab, isSheetPresented: $isSheetPresented, isSelectionMode: $isSelectionMode)
-                .background(Color.backgroundHomePage.shadow(radius: 0.5))
+                .background(Color.backgroundHomePage.shadow(color: .gray, radius: 0.5))
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {

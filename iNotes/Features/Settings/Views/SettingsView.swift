@@ -12,6 +12,7 @@ struct SettingsView: View {
                     ThemeView(themes: Theme.allCases, selectedTheme: $selectedTheme)
                     Spacer()
                 }
+                .padding(.top, 10)
             }
             .padding(.horizontal, 20)
         }
@@ -35,6 +36,8 @@ struct SettingsView: View {
                 }
             }
         }
+        .toolbarBackground(Color(.backgroundComponents), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 

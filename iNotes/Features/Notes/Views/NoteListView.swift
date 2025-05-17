@@ -32,6 +32,7 @@ struct NotesListView: View {
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
+                        .padding(.bottom, 10)
                     }
                 }
             }

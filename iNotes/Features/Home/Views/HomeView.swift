@@ -29,6 +29,7 @@ struct HomeView: View {
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                     sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
                 )
+                .padding(.top, 10)
             }
             if selectedTab != 2 {
                 HorizontalFilterView(notesViewModel: notesViewModel)
@@ -45,7 +46,6 @@ struct HomeView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .preferredColorScheme(selectedTheme.colorScheme)
-        .padding(.top, 10)
         .animation(.bouncy, value: selectedTab)
         .animation(.bouncy, value: isSelectionMode)
         .background(Color.backgroundHomePage.ignoresSafeArea())
