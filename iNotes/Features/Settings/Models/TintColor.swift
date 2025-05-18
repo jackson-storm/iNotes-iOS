@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum TintColor: String, CaseIterable, Identifiable {
-    case blue, green, orange, red, purple, teal
+    case blue, green, orange, red, purple, teal, gray
     
     var id: String { rawValue }
     
@@ -13,6 +13,7 @@ enum TintColor: String, CaseIterable, Identifiable {
         case .red: return .red
         case .purple: return .purple
         case .teal: return .teal
+        case .gray: return .gray
         }
     }
 }
