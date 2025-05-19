@@ -3,6 +3,8 @@ import SwiftUI
 struct EditNotesView: View {
     let note: Note
     
+    @AppStorage("textScale") private var textScale: Double = 100
+    
     @ObservedObject var notesViewModel: NotesViewModel
     @Environment(\.dismiss) var dismiss
     
@@ -14,6 +16,7 @@ struct EditNotesView: View {
     @State private var isTapArchive: Bool
     @State private var showDeleteAlert = false
     @State private var isActiveSearch: Bool = false
+    @State private var isActiveTextSize: Bool = false
     
     @State private var undoStack: [(title: String, description: String)] = []
     @State private var redoStack: [(title: String, description: String)] = []
@@ -21,9 +24,11 @@ struct EditNotesView: View {
     @State private var matchRanges: [NSRange] = []
     @State private var currentMatchIndex: Int = 0
     
+    
     init(note: Note, notesViewModel: NotesViewModel) {
         self.note = note
         self.notesViewModel = notesViewModel
+        
         let storedLike = UserDefaults.standard.bool(forKey: "isLiked_\(note.id.uuidString)")
         let storedArchive = UserDefaults.standard.bool(forKey: "isArchive_\(note.id.uuidString)")
         
@@ -37,12 +42,14 @@ struct EditNotesView: View {
     var body: some View {
         VStack(spacing: 0) {
             searchBar
+            selectTextSize
             noteHeader
             noteEditor
         }
         .animation(.bouncy, value: matchRanges)
         .animation(.bouncy, value: currentMatchIndex)
         .animation(.bouncy, value: isActiveSearch)
+        .animation(.bouncy, value: isActiveTextSize)
         .background(Color.backgroundHomePage.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { noteToolbar }
@@ -83,52 +90,40 @@ struct EditNotesView: View {
     }
     
     private var searchBar: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                if isActiveSearch {
-                    SearchBarEditNotes(
-                        searchTextEditNotes: $searchTextEditNotes,
-                        isActiveSearch: $isActiveSearch,
-                        description: $description
-                    )
-                }
+        VStack(alignment: .leading) {
+            if isActiveSearch {
+                SearchBarEditNotes(
+                    searchTextEditNotes: $searchTextEditNotes,
+                    isActiveSearch: $isActiveSearch,
+                    description: $description,
+                    matchRanges: $matchRanges,
+                    currentMatchIndex: $currentMatchIndex
+                )
             }
-            
-            HStack(spacing: 15) {
-                if isActiveSearch && !matchRanges.isEmpty {
-                    Button {
-                        currentMatchIndex = (currentMatchIndex - 1 + matchRanges.count) % matchRanges.count
-                    } label: {
-                        Image(systemName: "chevron.up")
-                            .font(.system(size: 22))
-                    }
-                    
-                    Button {
-                        currentMatchIndex = (currentMatchIndex + 1) % matchRanges.count
-                    } label: {
-                        Image(systemName: "chevron.down")
-                            .font(.system(size: 22))
-                    }
-                    
-                    Text("\(currentMatchIndex + 1)/\(matchRanges.count)")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                    
-                }
-                
-                if isActiveSearch {
-                    Button {
-                        isActiveSearch = false
-                        matchRanges = []
-                    } label: {
-                        Text("Ready")
-                            .bold()
-                    }
-                }
-            }
-            .padding(.bottom, 8)
         }
-        .padding(.trailing, 10)
+    }
+    
+    private var selectTextSize: some View {
+        VStack(alignment: .leading) {
+            if isActiveTextSize {
+                SelectTextSize (
+                    textScale: $textScale,
+                    isActiveTextSize: $isActiveTextSize
+                )
+            }
+        }
+    }
+    
+    
+    private var noteEditor: some View {
+        HighlightedTextEditor(
+            text: $description,
+            searchText: searchTextEditNotes,
+            currentMatchIndex: currentMatchIndex,
+            allMatches: matchRanges,
+            fontSize: textScale
+        )
+        .padding(10)
     }
     
     private var noteHeader: some View {
@@ -146,18 +141,7 @@ struct EditNotesView: View {
                 .padding(.top)
         }
     }
-    
-    private var noteEditor: some View {
-        HighlightedTextEditor(
-            text: $description,
-            searchText: searchTextEditNotes,
-            currentMatchIndex: currentMatchIndex,
-            allMatches: matchRanges
-        )
-        .padding(.horizontal, 11)
-        .padding(.top, 8)
-    }
-    
+ 
     private var noteToolbar: some ToolbarContent {
         ToolbarItem(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
             HStack(spacing: 16) {
@@ -198,6 +182,7 @@ struct EditNotesView: View {
                 }
                 
                 Menu {
+                    ///Search words
                     Button {
                         searchTextEditNotes = ""
                         isActiveSearch = true
@@ -206,6 +191,14 @@ struct EditNotesView: View {
                         Image(systemName: "magnifyingglass")
                     }
                     
+                    ///Font size
+                    Button {
+                        isActiveTextSize = true
+                    } label: {
+                        Label("Font size", systemImage: "textformat.size")
+                    }
+                    
+                    ///Copyt text
                     Button {
                         UIPasteboard.general.string = description
                     } label: {
@@ -213,6 +206,7 @@ struct EditNotesView: View {
                         Image(systemName: "doc.on.doc")
                     }
                     
+                    ///Delete note
                     Button(role: .destructive) {
                         showDeleteAlert = true
                     } label: {
