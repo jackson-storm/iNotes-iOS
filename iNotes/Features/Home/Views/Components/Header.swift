@@ -29,7 +29,7 @@ struct HeaderView: View {
             }
         }
         .animation(.bouncy(duration: 0.5), value: searchBarText)
-        .padding(.horizontal, 20)
+        .padding(.horizontal, selectedTab == 1 ? 15 : 20)
     }
 }
 
@@ -42,7 +42,9 @@ private struct HeaderAddNotesView: View {
                 isSheetPresented = true
             }) {
                 Image(systemName: "plus.circle")
-                    .font(.system(size: 22))
+                    .padding(5)
+                    .contentShape(Rectangle())
+                    .font(.system(size: 24))
             }
            
         }
@@ -93,7 +95,9 @@ private struct HeaderButtonMenuView: View {
 
         } label: {
             Image(systemName: "ellipsis.circle")
-                .font(.system(size: 22))
+                .padding(5)
+                .contentShape(Rectangle())
+                .font(.system(size: 24))
         }
     }
 }

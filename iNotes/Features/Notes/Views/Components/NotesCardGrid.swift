@@ -42,6 +42,7 @@ struct NotesCardGridView: View {
                 )
             }
         }
+        .animation(.bouncy, value: selectedNotes)
         .padding(.horizontal, 10)
         .padding(.top, 1)
     }
@@ -70,16 +71,15 @@ private struct NotesCardGrid: View {
             if isSelectionMode {
                 ZStack {
                     Circle()
-                        .stroke(.primary, lineWidth: 1)
+                        .stroke(.secondary, lineWidth: 1)
                         .frame(width: 20, height: 20)
                     
                     if selectedNotes.contains(note.id) {
                         Circle()
                             .fill(note.category.color)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 18, height: 18)
                     }
                 }
-                .animation(.bouncy, value: selectedNotes)
                 .padding(.horizontal, 5)
             }
             

@@ -66,7 +66,7 @@ struct TypeNotesView: View {
     }
 }
 
-struct CardRow: View {
+private struct CardRow: View {
     let title: String
     let image: String
     let color: Color
@@ -96,7 +96,7 @@ struct CardRow: View {
     }
 }
 
-struct SectionView<Content: View>: View {
+private struct SectionView<Content: View>: View {
     let header: String
     let content: Content
     
@@ -126,7 +126,7 @@ struct SectionView<Content: View>: View {
     }
 }
 
-struct CustomDivider: View {
+private struct CustomDivider: View {
     var body: some View {
         Rectangle()
             .fill(.gray.opacity(0.1))

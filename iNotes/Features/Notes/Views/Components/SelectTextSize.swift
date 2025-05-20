@@ -22,7 +22,7 @@ struct SelectTextSize: View {
                         Text("\(Int(textScale))%")
                         .overlay (
                             RoundedRectangle(cornerRadius: 5)
-                                .fill(.secondary.opacity(0.4))
+                                .fill(.secondary.opacity(0.2))
                                 .frame(height: 28)
                         )
                          
@@ -30,7 +30,7 @@ struct SelectTextSize: View {
                 }
                 .padding(.horizontal, 10)
             }
-            HStack(spacing: 25) {
+            HStack(spacing: 10) {
                 Button {
                     if textScale < 150 {
                         textScale += 5
@@ -38,6 +38,8 @@ struct SelectTextSize: View {
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 20))
+                        .padding(5)
+                        .contentShape(Rectangle())
                 }
                 Button {
                     if textScale > 50 {
@@ -46,6 +48,8 @@ struct SelectTextSize: View {
                 } label: {
                     Image(systemName: "minus")
                         .font(.system(size: 20))
+                        .padding(5)
+                        .contentShape(Rectangle())
                 }
                 Button {
                     isActiveTextSize = false
@@ -54,7 +58,6 @@ struct SelectTextSize: View {
                         .bold()
                 }
             }
-            .padding(.leading, 10)
         }
         .padding(10)
     }

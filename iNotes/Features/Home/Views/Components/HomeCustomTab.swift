@@ -83,12 +83,16 @@ private struct CustomTabBar: View {
             .contentShape(Rectangle())
             .contextMenu {
                 Button {
+                    selectedTab = 1
                     isSheetPresented = true
+                    
                 } label: {
                     Label("Add note", systemImage: "plus")
                 }
                 Button {
+                    selectedTab = 1
                     isSelectionMode = true
+                    
                 } label: {
                     Label("Select notes", systemImage: "checkmark.circle")
                 }

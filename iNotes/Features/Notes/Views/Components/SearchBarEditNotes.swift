@@ -57,7 +57,7 @@ struct SearchBarEditNotes: View {
                 }
             }
             HStack(spacing: 20) {
-                if !searchTextEditNotes.isEmpty {
+                if searchMatchesCount != 0 && !searchTextEditNotes.isEmpty {
                     Button {
                         currentMatchIndex = (currentMatchIndex - 1 + matchRanges.count) % matchRanges.count
                     } label: {

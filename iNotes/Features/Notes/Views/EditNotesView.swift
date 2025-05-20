@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct EditNotesView: View {
     let note: Note
@@ -17,6 +18,7 @@ struct EditNotesView: View {
     @State private var showDeleteAlert = false
     @State private var isActiveSearch: Bool = false
     @State private var isActiveTextSize: Bool = false
+    @State private var showShareSheet = false
     
     @State private var undoStack: [(title: String, description: String)] = []
     @State private var redoStack: [(title: String, description: String)] = []
@@ -145,6 +147,7 @@ struct EditNotesView: View {
     private var noteToolbar: some ToolbarContent {
         ToolbarItem(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
             HStack(spacing: 16) {
+                ///backward
                 Button {
                     if let last = undoStack.popLast() {
                         redoStack.append((title, description))
@@ -155,6 +158,7 @@ struct EditNotesView: View {
                     Image(systemName: "arrow.uturn.backward")
                 }.disabled(undoStack.isEmpty)
                 
+                ///Forward
                 Button {
                     if let next = redoStack.popLast() {
                         undoStack.append((title, description))
@@ -165,6 +169,7 @@ struct EditNotesView: View {
                     Image(systemName: "arrow.uturn.forward")
                 }.disabled(redoStack.isEmpty)
                 
+                ///Like
                 Button {
                     notesViewModel.toggleLike(for: note)
                     isTapLike.toggle()
@@ -173,6 +178,7 @@ struct EditNotesView: View {
                         .foregroundStyle(isTapLike ? .red : .accentColor)
                 }
                 
+                ///Archive
                 Button {
                     notesViewModel.toggleArchive(for: note)
                     isTapArchive.toggle()
@@ -189,6 +195,11 @@ struct EditNotesView: View {
                     } label: {
                         Text("Search in note")
                         Image(systemName: "magnifyingglass")
+                    }
+                    
+                    ///Share
+                    ShareLink(item: description) {
+                        Label("Share a note", systemImage: "square.and.arrow.up")
                     }
                     
                     ///Font size
@@ -216,7 +227,7 @@ struct EditNotesView: View {
                     Image(systemName: "ellipsis.circle")
                 }
             }
-            .font(.system(size: 17))
+            .font(.system(size: 18))
         }
     }
 }

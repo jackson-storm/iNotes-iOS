@@ -16,14 +16,14 @@ struct HomeView: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            if isSelectionMode {
-                SelectionOverlayView(
+            if isSelectionMode && selectedTab != 2 {
+                SelectionOverlayView (
                     isSelectionMode: $isSelectionMode,
                     selectedNotes: $selectedNotes,
                     notesViewModel: notesViewModel
                 )
             } else if selectedTab != 2 {
-                HeaderView(
+                HeaderView (
                     searchBarText: $notesViewModel.searchText,
                     isSelectionMode: $isSelectionMode,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
@@ -36,7 +36,7 @@ struct HomeView: View {
             }
             
             ZStack(alignment: .bottom) {
-                HomeCustomTabView(
+                HomeCustomTabView (
                     isSheetPresented: $isSheetPresented, selectedNotes: $selectedNotes,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                     isSelectionMode: $isSelectionMode, selectedTab: $selectedTab, selectedTheme: $selectedTheme, selectedTintRawValue: $selectedTintRawValue,
