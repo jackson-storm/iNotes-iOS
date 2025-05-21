@@ -8,7 +8,7 @@ struct NotesCardListView: View {
     @Binding var isSelectionMode: Bool
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 5) {
             ForEach(notes) { note in
                 Group {
                     if isSelectionMode {
@@ -37,12 +37,13 @@ struct NotesCardListView: View {
                 )
             }
         }
+        .animation(.bouncy, value: selectedNotes)
         .padding(.horizontal, 10)
         .padding(.top, 1)
     }
 }
 
-private struct NotesCardList: View {
+struct NotesCardList: View {
     let note: Note
     
     @Binding var selectedNotes: Set<UUID>
@@ -65,20 +66,21 @@ private struct NotesCardList: View {
             if isSelectionMode {
                 ZStack {
                     Circle()
-                        .stroke(.primary, lineWidth: 1)
+                        .stroke(.secondary, lineWidth: 1)
                         .frame(width: 20, height: 20)
                     
                     if selectedNotes.contains(note.id) {
                         Circle()
                             .fill(note.category.color)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 18, height: 18)
                     }
                 }
-                .animation(.bouncy, value: selectedNotes)
                 .padding(.horizontal, 5)
+                
             } else {
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(note.category.color)
+                    .fill(note.category.color.opacity(0.55))
+                    .stroke(note.category.color, lineWidth: 1)
                     .frame(width: 8)
             }
             
@@ -146,7 +148,7 @@ private struct NotesCardList: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
+                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 2 : 0)
             )
         }
     }

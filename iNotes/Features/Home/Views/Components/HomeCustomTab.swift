@@ -9,7 +9,9 @@ struct HomeCustomTabView: View {
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     @Binding var isSelectionMode: Bool
     @Binding var selectedTab: Int
-
+    @Binding var selectedTheme: Theme
+    @Binding var selectedTintRawValue: String
+    
     @ObservedObject var notesViewModel: NotesViewModel
 
     var body: some View {
@@ -17,7 +19,12 @@ struct HomeCustomTabView: View {
             Group {
                 switch selectedTab {
                 case 0:
-                    ArchiveView()
+                    ArchiveContentView (
+                        notes: notesViewModel.filteredNotes,
+                        notesViewModel: notesViewModel,
+                        selectedNotes: $selectedNotes,
+                        isSelectionMode: $isSelectionMode, selectedDisplayTypeNotes: $selectedDisplayTypeNotes
+                    )
                         .transition(.opacity)
                 case 1:
                     NotesListView (
@@ -28,17 +35,19 @@ struct HomeCustomTabView: View {
                     )
                     .transition(.opacity)
                 case 2:
-                    SettingsView()
+                    SettingsView (
+                        selectedTheme: $selectedTheme,
+                        selectedTintRawValue: $selectedTintRawValue
+                    )
                         .transition(.opacity)
                 default:
                     EmptyView()
                 }
             }
-            .animation(.easeInOut(duration: 0.3), value: selectedTab)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             CustomTabBar(selectedTab: $selectedTab, isSheetPresented: $isSheetPresented, isSelectionMode: $isSelectionMode)
-                .background(Color.backgroundHomePage.shadow(radius: 1))
+                .background(Color.backgroundHomePage.shadow(color: .gray, radius: 0.5))
         }
         .sheet(isPresented: $isSheetPresented) {
             NavigationStack {
@@ -54,38 +63,42 @@ struct HomeCustomTabView: View {
     }
 }
 
-struct CustomTabBar: View {
+private struct CustomTabBar: View {
     @Binding var selectedTab: Int
     @Binding var isSheetPresented: Bool
     @Binding var isSelectionMode: Bool
     
     var body: some View {
         HStack {
-            TabBarButton(icon: "archivebox", title: "Archive", isSelected: selectedTab == 0) {
+            TabBarButton(icon: (selectedTab != 0) ? "archivebox" : "archivebox.fill", title: "Archive", isSelected: selectedTab == 0) {
                 selectedTab = 0
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
 
-            TabBarButton(icon: "note.text", title: "Notes", isSelected: selectedTab == 1) {
+            TabBarButton(icon: (selectedTab != 1) ? "note" : "note.text", title: "Notes", isSelected: selectedTab == 1) {
                 selectedTab = 1
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
             .contextMenu {
                 Button {
+                    selectedTab = 1
                     isSheetPresented = true
+                    
                 } label: {
                     Label("Add note", systemImage: "plus")
                 }
                 Button {
+                    selectedTab = 1
                     isSelectionMode = true
+                    
                 } label: {
                     Label("Select notes", systemImage: "checkmark.circle")
                 }
             }
 
-            TabBarButton(icon: "gearshape", title: "Settings", isSelected: selectedTab == 2) {
+            TabBarButton(icon: (selectedTab != 2) ? "gearshape" : "gearshape.fill", title: "Settings", isSelected: selectedTab == 2) {
                 selectedTab = 2
             }
             .frame(maxWidth: .infinity)
@@ -97,7 +110,7 @@ struct CustomTabBar: View {
     }
 }
 
-struct TabBarButton: View {
+private struct TabBarButton: View {
     let icon: String
     let title: String
     let isSelected: Bool

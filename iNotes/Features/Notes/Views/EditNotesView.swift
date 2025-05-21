@@ -1,7 +1,10 @@
 import SwiftUI
+import Combine
 
 struct EditNotesView: View {
     let note: Note
+    
+    @AppStorage("textScale") private var textScale: Double = 100
     
     @ObservedObject var notesViewModel: NotesViewModel
     @Environment(\.dismiss) var dismiss
@@ -14,13 +17,20 @@ struct EditNotesView: View {
     @State private var isTapArchive: Bool
     @State private var showDeleteAlert = false
     @State private var isActiveSearch: Bool = false
+    @State private var isActiveTextSize: Bool = false
+    @State private var showShareSheet = false
     
-    @State private var undoStack: [(title: String,  description: String)] = []
-    @State private var redoStack: [(title: String,  description: String)] = []
+    @State private var undoStack: [(title: String, description: String)] = []
+    @State private var redoStack: [(title: String, description: String)] = []
+    
+    @State private var matchRanges: [NSRange] = []
+    @State private var currentMatchIndex: Int = 0
+    
     
     init(note: Note, notesViewModel: NotesViewModel) {
         self.note = note
         self.notesViewModel = notesViewModel
+        
         let storedLike = UserDefaults.standard.bool(forKey: "isLiked_\(note.id.uuidString)")
         let storedArchive = UserDefaults.standard.bool(forKey: "isArchive_\(note.id.uuidString)")
         
@@ -34,10 +44,14 @@ struct EditNotesView: View {
     var body: some View {
         VStack(spacing: 0) {
             searchBar
+            selectTextSize
             noteHeader
             noteEditor
         }
+        .animation(.bouncy, value: matchRanges)
+        .animation(.bouncy, value: currentMatchIndex)
         .animation(.bouncy, value: isActiveSearch)
+        .animation(.bouncy, value: isActiveTextSize)
         .background(Color.backgroundHomePage.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { noteToolbar }
@@ -60,22 +74,65 @@ struct EditNotesView: View {
             redoStack.removeAll()
             notesViewModel.update(noteID: note.id, title: title, description: newDescription)
         }
+        .onChange(of: searchTextEditNotes) { _, _ in updateMatches() }
+        .onChange(of: description) { _, _ in updateMatches() }
+    }
+    
+    func updateMatches() {
+        matchRanges.removeAll()
+        currentMatchIndex = 0
+        
+        guard !searchTextEditNotes.isEmpty else { return }
+        
+        let pattern = NSRegularExpression.escapedPattern(for: searchTextEditNotes)
+        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        
+        let range = NSRange(location: 0, length: description.utf16.count)
+        matchRanges = regex?.matches(in: description, range: range).map { $0.range } ?? []
     }
     
     private var searchBar: some View {
         VStack(alignment: .leading) {
             if isActiveSearch {
-                SearchBarEditNotes(searchTextEditNotes: $searchTextEditNotes, isActiveSearch: $isActiveSearch, description: $description)
-                
+                SearchBarEditNotes(
+                    searchTextEditNotes: $searchTextEditNotes,
+                    isActiveSearch: $isActiveSearch,
+                    description: $description,
+                    matchRanges: $matchRanges,
+                    currentMatchIndex: $currentMatchIndex
+                )
             }
         }
+    }
+    
+    private var selectTextSize: some View {
+        VStack(alignment: .leading) {
+            if isActiveTextSize {
+                SelectTextSize (
+                    textScale: $textScale,
+                    isActiveTextSize: $isActiveTextSize
+                )
+            }
+        }
+    }
+    
+    
+    private var noteEditor: some View {
+        HighlightedTextEditor(
+            text: $description,
+            searchText: searchTextEditNotes,
+            currentMatchIndex: currentMatchIndex,
+            allMatches: matchRanges,
+            fontSize: textScale
+        )
+        .padding(10)
     }
     
     private var noteHeader: some View {
         HStack {
             TextField("Title", text: $title)
                 .bold()
-                .font(.system(size: 22))
+                .font(.system(size: 26))
                 .padding(.horizontal)
                 .padding(.top)
             
@@ -86,44 +143,11 @@ struct EditNotesView: View {
                 .padding(.top)
         }
     }
-    
-    private var noteEditor: some View {
-        let highlightedText: AttributedString? = {
-            guard isActiveSearch, !searchTextEditNotes.isEmpty else { return nil }
-            let lowercasedSearch = searchTextEditNotes.lowercased()
-            let attributed = NSMutableAttributedString(string: description)
-            let fullRange = NSRange(location: 0, length: attributed.length)
-            
-            attributed.addAttribute(.foregroundColor, value: UIColor.label, range: fullRange)
-            
-            let regex = try? NSRegularExpression(pattern: NSRegularExpression.escapedPattern(for: lowercasedSearch), options: .caseInsensitive)
-            
-            regex?.enumerateMatches(in: description, options: [], range: fullRange) { match, _, _ in
-                if let matchRange = match?.range {
-                    attributed.addAttribute(.backgroundColor, value: UIColor.systemYellow.withAlphaComponent(0.5), range: matchRange)
-                }
-            }
-            return AttributedString(attributed)
-        }()
-        return ZStack(alignment: .topLeading) {
-            TextEditor(text: $description)
-                .scrollContentBackground(.hidden)
-                .padding(.horizontal, 11)
-                .padding(.top, 8)
-                .background(Color.backgroundHomePage)
-            
-            if let highlightedText {
-                Text(highlightedText)
-                    .padding()
-                    .background(Color.clear)
-                    .allowsHitTesting(false)
-            }
-        }
-    }
-    
+ 
     private var noteToolbar: some ToolbarContent {
         ToolbarItem(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
             HStack(spacing: 16) {
+                ///backward
                 Button {
                     if let last = undoStack.popLast() {
                         redoStack.append((title, description))
@@ -134,6 +158,7 @@ struct EditNotesView: View {
                     Image(systemName: "arrow.uturn.backward")
                 }.disabled(undoStack.isEmpty)
                 
+                ///Forward
                 Button {
                     if let next = redoStack.popLast() {
                         undoStack.append((title, description))
@@ -144,6 +169,7 @@ struct EditNotesView: View {
                     Image(systemName: "arrow.uturn.forward")
                 }.disabled(redoStack.isEmpty)
                 
+                ///Like
                 Button {
                     notesViewModel.toggleLike(for: note)
                     isTapLike.toggle()
@@ -152,6 +178,7 @@ struct EditNotesView: View {
                         .foregroundStyle(isTapLike ? .red : .accentColor)
                 }
                 
+                ///Archive
                 Button {
                     notesViewModel.toggleArchive(for: note)
                     isTapArchive.toggle()
@@ -161,6 +188,7 @@ struct EditNotesView: View {
                 }
                 
                 Menu {
+                    ///Search words
                     Button {
                         searchTextEditNotes = ""
                         isActiveSearch = true
@@ -169,6 +197,19 @@ struct EditNotesView: View {
                         Image(systemName: "magnifyingglass")
                     }
                     
+                    ///Share
+                    ShareLink(item: description) {
+                        Label("Share a note", systemImage: "square.and.arrow.up")
+                    }
+                    
+                    ///Font size
+                    Button {
+                        isActiveTextSize = true
+                    } label: {
+                        Label("Font size", systemImage: "textformat.size")
+                    }
+                    
+                    ///Copyt text
                     Button {
                         UIPasteboard.general.string = description
                     } label: {
@@ -176,6 +217,7 @@ struct EditNotesView: View {
                         Image(systemName: "doc.on.doc")
                     }
                     
+                    ///Delete note
                     Button(role: .destructive) {
                         showDeleteAlert = true
                     } label: {
@@ -185,7 +227,7 @@ struct EditNotesView: View {
                     Image(systemName: "ellipsis.circle")
                 }
             }
-            .font(.system(size: 17))
+            .font(.system(size: 18))
         }
     }
 }

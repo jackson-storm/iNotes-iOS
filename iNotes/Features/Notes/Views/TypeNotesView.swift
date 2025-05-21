@@ -11,7 +11,6 @@ struct TypeNotesView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                
                 SectionView(header: "Finance") {
                     categoryLink(title: "Bank", image: "dollarsign.bank.building.fill", color: .red, category: .banks)
                     CustomDivider()

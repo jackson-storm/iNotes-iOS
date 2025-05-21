@@ -11,39 +11,42 @@ struct HomeView: View {
     @Binding var sortType: NotesSortType
     @Binding var selectedTab: Int
     @Binding var isSheetPresented: Bool
+    @Binding var selectedTheme: Theme
+    @Binding var selectedTintRawValue: String
     
     var body: some View {
         VStack(spacing: 15) {
-            if isSelectionMode {
-                SelectionOverlayView(
+            if isSelectionMode && selectedTab != 2 {
+                SelectionOverlayView (
                     isSelectionMode: $isSelectionMode,
                     selectedNotes: $selectedNotes,
                     notesViewModel: notesViewModel
                 )
-            } else {
-                HeaderView(
+            } else if selectedTab != 2 {
+                HeaderView (
                     searchBarText: $notesViewModel.searchText,
                     isSelectionMode: $isSelectionMode,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                     sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
                 )
+                .animation(.bouncy, value: selectedTab)
+                .padding(.top, 10)
             }
-            if selectedTab == 1 {
+            if selectedTab != 2 {
                 HorizontalFilterView(notesViewModel: notesViewModel)
             }
             
             ZStack(alignment: .bottom) {
-                HomeCustomTabView(
+                HomeCustomTabView (
                     isSheetPresented: $isSheetPresented, selectedNotes: $selectedNotes,
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab,
+                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab, selectedTheme: $selectedTheme, selectedTintRawValue: $selectedTintRawValue,
                     notesViewModel: notesViewModel
                 )
             }
             .edgesIgnoringSafeArea(.bottom)
         }
-        .padding(.top, 10)
-        .animation(.bouncy, value: selectedTab)
+        .preferredColorScheme(selectedTheme.colorScheme)
         .animation(.bouncy, value: isSelectionMode)
         .background(Color.backgroundHomePage.ignoresSafeArea())
         .onAppear {

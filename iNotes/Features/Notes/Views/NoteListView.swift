@@ -8,38 +8,42 @@ struct NotesListView: View {
     @Binding var isSelectionMode: Bool
 
     var body: some View {
+        let activeNotes = notesViewModel.filteredNotes.filter { !$0.isArchive }
+
         VStack {
-            if notesViewModel.filteredNotes.isEmpty {
+            if activeNotes.isEmpty {
                 EmptyStateView()
             } else {
                 ScrollView {
                     InformationNotesView(notesViewModel: notesViewModel)
-                    
+
                     switch selectedDisplayTypeNotes {
                     case .list:
                         NotesCardListView(
-                            notes: notesViewModel.filteredNotes,
+                            notes: activeNotes,
                             notesViewModel: notesViewModel,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
                     case .grid:
                         NotesCardGridView(
-                            notes: notesViewModel.filteredNotes,
+                            notes: activeNotes,
                             notesViewModel: notesViewModel,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
+                        .padding(.bottom, 10)
                     }
                 }
             }
         }
+        .padding(.bottom, 93)
         .animation(.bouncy, value: selectedDisplayTypeNotes)
-        .animation(.bouncy, value: notesViewModel.filteredNotes.count)
+        .animation(.bouncy, value: activeNotes.count)
     }
 }
 
-private struct EmptyStateView: View {
+struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 10) {
             Image(systemName: "menucard")
