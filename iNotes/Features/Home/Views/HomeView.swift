@@ -29,6 +29,7 @@ struct HomeView: View {
                     selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                     sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
                 )
+                .animation(.bouncy, value: selectedTab)
                 .padding(.top, 10)
             }
             if selectedTab != 2 {
@@ -46,7 +47,6 @@ struct HomeView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .preferredColorScheme(selectedTheme.colorScheme)
-        .animation(.bouncy, value: selectedTab)
         .animation(.bouncy, value: isSelectionMode)
         .background(Color.backgroundHomePage.ignoresSafeArea())
         .onAppear {
