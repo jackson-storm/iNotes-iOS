@@ -16,6 +16,7 @@ struct NotesListView: View {
             } else {
                 ScrollView {
                     InformationNotesView(notesViewModel: notesViewModel)
+                        .padding(.top, 5)
 
                     switch selectedDisplayTypeNotes {
                     case .list:
@@ -37,7 +38,8 @@ struct NotesListView: View {
                 }
             }
         }
-        .padding(.bottom, 93)
+        .padding(.bottom, 90)
+        .background(.backgroundHomePage)
         .animation(.bouncy, value: selectedDisplayTypeNotes)
         .animation(.bouncy, value: activeNotes.count)
     }
@@ -57,3 +59,6 @@ struct EmptyStateView: View {
     }
 }
 
+#Preview {
+    ContentView()
+}

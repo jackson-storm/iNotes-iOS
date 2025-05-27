@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var sortType: NotesSortType = .creationDate
     @State private var selectedTab: Int = 1
     @State private var isSheetPresented = false
+    @State private var deleteActionType: DeleteActionType?
 
     private var selectedThemeBinding: Binding<Theme> {
         Binding<Theme>(
@@ -39,7 +40,8 @@ struct ContentView: View {
                         selectedTab: $selectedTab,
                         isSheetPresented: $isSheetPresented,
                         selectedTheme: selectedThemeBinding,
-                        selectedTintRawValue: $selectedTintRawValue
+                        selectedTintRawValue: $selectedTintRawValue,
+                        deleteActionType: $deleteActionType
                     )
                 } else {
                     if authViewModel.isLoggedIn {
@@ -50,8 +52,8 @@ struct ContentView: View {
                             selectedTab: $selectedTab,
                             isSheetPresented: $isSheetPresented,
                             selectedTheme: selectedThemeBinding,
-                            selectedTintRawValue: $selectedTintRawValue
-                            
+                            selectedTintRawValue: $selectedTintRawValue,
+                            deleteActionType: $deleteActionType
                         )
                     } else {
                         RegistrationView().environmentObject(authViewModel)

@@ -13,36 +13,70 @@ struct HomeView: View {
     @Binding var isSheetPresented: Bool
     @Binding var selectedTheme: Theme
     @Binding var selectedTintRawValue: String
+    @Binding var deleteActionType: DeleteActionType?
     
+    @State private var noteTitle = ""
+    @State private var description = ""
+
     var body: some View {
-        VStack(spacing: 15) {
-            if isSelectionMode && selectedTab != 2 {
-                SelectionOverlayView (
-                    isSelectionMode: $isSelectionMode,
-                    selectedNotes: $selectedNotes,
-                    notesViewModel: notesViewModel
-                )
-            } else if selectedTab != 2 {
-                HeaderView (
-                    searchBarText: $notesViewModel.searchText,
-                    isSelectionMode: $isSelectionMode,
-                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    sortType: $notesViewModel.sortType, selectedTab: $selectedTab, isSheetPresented: $isSheetPresented
-                )
-                .animation(.bouncy, value: selectedTab)
-                .padding(.top, 10)
+        VStack(spacing: 0) {
+            if selectedTab == 1 {
+                VStack(spacing: 10) {
+                    HeaderView(
+                        searchBarText: $notesViewModel.searchText,
+                        isSelectionMode: $isSelectionMode,
+                        selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                        sortType: $notesViewModel.sortType,
+                        selectedTab: $selectedTab,
+                        isSheetPresented: $isSheetPresented,
+                        deleteActionType: $deleteActionType,
+                        selectedNotes: $selectedNotes,
+                        notesViewModel: notesViewModel
+                    )
+                    .padding(.horizontal)
+                    
+                    HorizontalFilterView(notesViewModel: notesViewModel)
+                }
+                .background(.backgroundComponents.opacity(0.9))
             }
-            if selectedTab != 2 {
-                HorizontalFilterView(notesViewModel: notesViewModel)
-            }
-            
+
             ZStack(alignment: .bottom) {
-                HomeCustomTabView (
-                    isSheetPresented: $isSheetPresented, selectedNotes: $selectedNotes,
-                    selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                    isSelectionMode: $isSelectionMode, selectedTab: $selectedTab, selectedTheme: $selectedTheme, selectedTintRawValue: $selectedTintRawValue,
-                    notesViewModel: notesViewModel
+                Group {
+                    switch selectedTab {
+                    case 0:
+                        ArchiveContentView (
+                            notes: notesViewModel.filteredNotes,
+                            notesViewModel: notesViewModel,
+                            selectedNotes: $selectedNotes,
+                            isSelectionMode: $isSelectionMode,
+                            selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                            deleteActionType: $deleteActionType
+                        )
+                    case 1:
+                        NotesListView (
+                            notesViewModel: notesViewModel,
+                            selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                            selectedNotes: $selectedNotes,
+                            isSelectionMode: $isSelectionMode
+                        )
+                    case 2:
+                        SettingsView (
+                            selectedTheme: $selectedTheme,
+                            selectedTintRawValue: $selectedTintRawValue
+                        )
+                    default:
+                        EmptyView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .transition(.opacity)
+
+                CustomTabBar(
+                    selectedTab: $selectedTab,
+                    isSheetPresented: $isSheetPresented,
+                    isSelectionMode: $isSelectionMode
                 )
+                .background(Color.backgroundHomePage.shadow(color: .gray, radius: 0.5))
             }
             .edgesIgnoringSafeArea(.bottom)
         }
@@ -54,6 +88,17 @@ struct HomeView: View {
         }
         .onChange(of: selectedCategory) { newValue,_ in
             notesViewModel.filterNotes(by: newValue)
+        }
+        .sheet(isPresented: $isSheetPresented) {
+            NavigationStack {
+                CategoriesNotesView(
+                    isPresented: $isSheetPresented,
+                    noteTitle: $noteTitle,
+                    description: $description,
+                    viewModel: notesViewModel
+                )
+            }
+            .presentationBackground(Color.backgroundHomePage)
         }
     }
 }

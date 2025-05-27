@@ -8,28 +8,42 @@ struct HeaderView: View {
     @Binding var selectedTab: Int
     @Binding var isSheetPresented: Bool
     
+    @Binding var deleteActionType: DeleteActionType?
+    @Binding var selectedNotes: Set<UUID>
+    
+    @ObservedObject var notesViewModel: NotesViewModel
+    
     var body: some View {
-        HStack(spacing: 15) {
-            if selectedTab == 1 {
-                if searchBarText.isEmpty {
-                    HeaderButtonMenuView(
-                        isSelectionMode: $isSelectionMode,
-                        selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                        sortType: $sortType
-                    )
+        if isSelectionMode {
+            SelectionOverlayView (
+                isSelectionMode: $isSelectionMode,
+                selectedNotes: $selectedNotes,
+                deleteActionType: $deleteActionType,
+                notesViewModel: notesViewModel
+            )
+        } else {
+            HStack(spacing: 15) {
+                if selectedTab == 1 {
+                    if searchBarText.isEmpty {
+                        HeaderButtonMenuView(
+                            isSelectionMode: $isSelectionMode,
+                            selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                            sortType: $sortType
+                        )
+                    }
+                }
+                
+                SearchBarHomeView(searchText: $searchBarText, selectedTab: $selectedTab)
+                
+                if selectedTab == 1 {
+                    if searchBarText.isEmpty {
+                        HeaderAddNotesView(isSheetPresented: $isSheetPresented)
+                    }
                 }
             }
+            .animation(.bouncy(duration: 0.5), value: searchBarText)
             
-            SearchBarHomeView(searchText: $searchBarText, selectedTab: $selectedTab)
-            
-            if selectedTab == 1 {
-                if searchBarText.isEmpty {
-                    HeaderAddNotesView(isSheetPresented: $isSheetPresented)
-                }
-            }
         }
-        .animation(.bouncy(duration: 0.5), value: searchBarText)
-        .padding(.horizontal, selectedTab == 1 ? 15 : 20)
     }
 }
 
@@ -99,6 +113,7 @@ private struct HeaderButtonMenuView: View {
                 .contentShape(Rectangle())
                 .font(.system(size: 24))
         }
+        
     }
 }
 

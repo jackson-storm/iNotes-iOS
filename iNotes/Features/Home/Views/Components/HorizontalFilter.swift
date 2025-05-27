@@ -17,18 +17,20 @@ struct HorizontalFilterView: View {
                             .padding(.vertical, 8)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(notesViewModel.selectedCategory == category ? Color.accentColor.opacity(0.15) : Color.backgroundComponents)
+                                    .fill(notesViewModel.selectedCategory == category ? Color.accentColor.opacity(0.15) : Color.backgroundButton)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: 10)
-                                            .stroke(notesViewModel.selectedCategory == category ? Color.accentColor : Color.gray.opacity(0.1), lineWidth: 1)
+                                            .stroke(notesViewModel.selectedCategory == category ? Color.accentColor : Color.clear)
                                     )
                             )
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.vertical, 1)
             .padding(.horizontal, 20)
+            .padding(.vertical, 5)
+            
+            Divider()
         }
         .animation(.easeInOut(duration: 0.3), value: notesViewModel.selectedCategory)
     }

@@ -46,6 +46,7 @@ struct NoteCategoryEditView: View {
             .safeAreaInset(edge: .top) {
                 Spacer()
                     .frame(height: 20)
+                    .toolbarBackground(.backgroundComponents.opacity(0.6), for: .navigationBar)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             CardRowNotesView(image: categoryIcon, text: categoryLabel, color: categoryColor, font: 10)

@@ -17,7 +17,9 @@ struct CategoriesNotesView: View {
             )
             Spacer()
         }
-        .navigationTitle("Categories")
+        .navigationTitle(Text("Categories"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.backgroundComponents.opacity(0.6), for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button(action: {

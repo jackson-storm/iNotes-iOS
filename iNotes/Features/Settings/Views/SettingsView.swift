@@ -18,8 +18,9 @@ struct SettingsView: View {
         }
         .animation(.bouncy, value: selectedTintRawValue)
         .animation(.bouncy, value: selectedTheme)
-        .navigationTitle("Settings")
+        .navigationTitle(Text("Settings"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.backgroundComponents.opacity(0.6), for: .navigationBar)
         .preferredColorScheme(selectedTheme.colorScheme)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -36,8 +37,6 @@ struct SettingsView: View {
                 }
             }
         }
-        .toolbarBackground(Color(.backgroundComponents), for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
     }
 }
 

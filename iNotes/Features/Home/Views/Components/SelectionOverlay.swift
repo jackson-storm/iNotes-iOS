@@ -3,10 +3,9 @@ import SwiftUI
 struct SelectionOverlayView: View {
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
+    @Binding var deleteActionType: DeleteActionType?
     
     @ObservedObject var notesViewModel: NotesViewModel
-
-    @State private var deleteActionType: DeleteActionType?
     
     var body: some View {
         if isSelectionMode {
@@ -31,9 +30,8 @@ struct SelectionOverlayView: View {
                     .foregroundColor(.red)
                 }
             }
-            .padding(.horizontal, 20)
             .padding(.vertical, 5)
-            .background(.backgroundHomePage)
+            .background(.backgroundComponents)
             .actionSheet(item: $deleteActionType) { actionType in
                 switch actionType {
                 case .deleteAll:

@@ -8,7 +8,7 @@ struct NotesCardListView: View {
     @Binding var isSelectionMode: Bool
 
     var body: some View {
-        VStack(spacing: 5) {
+        VStack(spacing: 0) {
             ForEach(notes) { note in
                 Group {
                     if isSelectionMode {
@@ -38,118 +38,116 @@ struct NotesCardListView: View {
             }
         }
         .animation(.bouncy, value: selectedNotes)
-        .padding(.horizontal, 10)
-        .padding(.top, 1)
     }
 }
 
 struct NotesCardList: View {
     let note: Note
-    
+
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
-    
+
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
-    
+
     private let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter
     }()
-    
+
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
-            if isSelectionMode {
-                ZStack {
-                    Circle()
-                        .stroke(.secondary, lineWidth: 1)
-                        .frame(width: 20, height: 20)
-                    
-                    if selectedNotes.contains(note.id) {
+        VStack {
+            HStack(alignment: .center, spacing: 20) {
+                // Выбор при множественном выборе
+                if isSelectionMode {
+                    ZStack {
                         Circle()
-                            .fill(note.category.color)
-                            .frame(width: 18, height: 18)
-                    }
-                }
-                .padding(.horizontal, 5)
-                
-            } else {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(note.category.color.opacity(0.55))
-                    .stroke(note.category.color, lineWidth: 1)
-                    .frame(width: 8)
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text(note.title.isEmpty ? "Untitled" : note.title)
-                        .font(.headline)
-                        .lineLimit(1)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 15) {
-                        if note.isArchive {
-                            Image(systemName: "archivebox.fill")
-                                .foregroundStyle(.blue)
+                            .stroke(.secondary, lineWidth: 1)
+                            .frame(width: 24, height: 24)
+
+                        if selectedNotes.contains(note.id) {
+                            Circle()
+                                .fill(note.category.color)
+                                .frame(width: 20, height: 20)
                         }
-                        
-                        if note.isLiked {
-                            Image(systemName: "heart.fill")
-                                .foregroundStyle(.red)
-                        }
-                        
-                        Image(systemName: note.category.icon)
-                            .foregroundStyle(.white)
-                            .font(.system(size: 14))
-                            .background(
-                                Circle()
-                                    .fill(note.category.color)
-                                    .frame(width: 30, height: 30)
-                            )
                     }
+                    .animation(.bouncy, value: selectedNotes)
+                    .padding(.leading, 15)
                 }
-                
-                if !note.secretNotesEnabled {
-                    Text(note.description.isEmpty ? "No description" : note.description)
-                        .font(.subheadline)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(3)
-                        .foregroundColor(.secondary)
-                } else {
-                    HStack {
-                        Text("Blocked")
-                        Image(systemName: "lock.fill")
+
+                // Содержимое карточки
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top) {
+                        Text(note.title.isEmpty ? "Untitled" : note.title)
+                            .font(.headline)
+                            .lineLimit(1)
+                            .foregroundColor(.primary)
+
                         Spacer()
+
+                        HStack(spacing: 10) {
+                            if note.isArchive {
+                                Image(systemName: "archivebox.fill")
+                                    .foregroundStyle(.blue)
+                            }
+
+                            if note.isLiked {
+                                Image(systemName: "heart.fill")
+                                    .foregroundStyle(.red)
+                            }
+
+                            Image(systemName: note.category.icon)
+                                .font(.system(size: 14))
+                                .foregroundStyle(.white)
+                                .background(
+                                    Circle()
+                                        .fill(note.category.color)
+                                        .frame(width: 30, height: 30)
+                                )
+                        }
                     }
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+
+                    if !note.secretNotesEnabled {
+                        Text(note.description.isEmpty ? "No description" : note.description)
+                            .font(.subheadline)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(3)
+                            .foregroundColor(.secondary)
+                    } else {
+                        HStack {
+                            Text("Blocked")
+                            Image(systemName: "lock.fill")
+                            Spacer()
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    }
+
+                    HStack {
+                        Text(note.lastEdited, formatter: dateFormatter)
+                            .font(.footnote)
+                        Spacer()
+                        Text(note.lastEdited, formatter: timeFormatter)
+                            .font(.footnote)
+                    }
                 }
-                
-                HStack {
-                    Text(note.lastEdited, formatter: dateFormatter)
-                        .font(.footnote)
-                    Spacer()
-                    Text(note.lastEdited, formatter: timeFormatter)
-                        .font(.footnote)
-                }
+                .padding(.vertical)
+                .padding(.trailing, 15)
+                .padding(.leading, isSelectionMode ? 0 : 15)
             }
-            .padding()
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.backgroundComponents)
-                    .stroke(.gray.opacity(0.1), lineWidth: 1)
-                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 2 : 0)
-            )
         }
+        .background(
+            RoundedRectangle(cornerRadius: 0)
+                .fill(Color.backgroundComponents.opacity(0.1))
+                .stroke(.gray.opacity(0.1), lineWidth: 1)
+        )
     }
+}
+
+#Preview {
+    ContentView()
 }
