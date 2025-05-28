@@ -2,37 +2,37 @@ import SwiftUI
 
 struct HorizontalFilterView: View {
     @ObservedObject var notesViewModel: NotesViewModel
-
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
+            HStack(spacing: 0) {
                 ForEach(NoteCategory.allCases, id: \.self) { category in
-                    Button(action: {
-                        notesViewModel.filterNotes(by: category)
-                    }) {
-                        Text(category.rawValue.capitalized)
-                            .font(.system(size: 16, weight: .regular))
-                            .foregroundColor(.primary)
-                            .padding(.horizontal, 15)
-                            .padding(.vertical, 8)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(notesViewModel.selectedCategory == category ? Color.accentColor.opacity(0.15) : Color.backgroundButton)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .stroke(notesViewModel.selectedCategory == category ? Color.accentColor : Color.clear)
-                                    )
-                            )
+                    VStack(spacing: 8) {
+                        Button(action: {
+                            notesViewModel.filterNotes(by: category)
+                        }) {
+                            Text(category.rawValue.capitalized)
+                                .font(.system(size: 16, weight: .medium))
+                                .foregroundColor(notesViewModel.selectedCategory == category ? .accentColor : .gray)
+                                .padding(.horizontal)
+                            
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Rectangle()
+                            .fill(notesViewModel.selectedCategory == category ? Color.accentColor : Color.clear)
+                            .frame(width: 30, height: 2)
+                            .animation(.easeInOut(duration: 0.2), value: notesViewModel.selectedCategory)
                     }
-                    .buttonStyle(.plain)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 5)
+            .padding(.horizontal, 5)
+            .padding(.top, 10)
             
             Divider()
         }
-        .animation(.easeInOut(duration: 0.3), value: notesViewModel.selectedCategory)
+        
+        .animation(.bouncy, value: notesViewModel.selectedCategory)
     }
 }
 

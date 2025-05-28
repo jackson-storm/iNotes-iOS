@@ -9,6 +9,11 @@ struct ArchiveContentView: View {
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     @Binding var deleteActionType: DeleteActionType?
     
+    @Binding var searchText: String
+    @Binding var selectedTab: Int
+    
+    @State private var activeSearchBar = false
+    
     var body: some View {
         NavigationStack {
             let archivedNotes = notes.filter { $0.isArchive }
@@ -49,42 +54,102 @@ struct ArchiveContentView: View {
                 .animation(.bouncy, value: archivedNotes.count)
             }
         }
-        .navigationTitle(
-            isSelectionMode ? Text("Selected: \(selectedNotes.count)") : Text("Archive")
-        )
+        .animation(.bouncy, value: activeSearchBar)
+        .animation(.interpolatingSpring, value: isSelectionMode)
+        .navigationTitle("Archive")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.backgroundComponents.opacity(0.6), for: .navigationBar)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if isSelectionMode {
-                    Button("Cancel") {
-                        selectedNotes.removeAll()
-                        isSelectionMode = false
-                    }
-                } else {
-                    Button("Edit") {
-                        isSelectionMode = true
+            if !activeSearchBar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if isSelectionMode {
+                        Button("Cancel") {
+                            selectedNotes.removeAll()
+                            isSelectionMode = false
+                        }
+                    } else {
+                        Button("Edit") {
+                            isSelectionMode = true
+                        }
                     }
                 }
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if isSelectionMode {
-                    if selectedNotes.count > 0 {
-                        Button("Delete") {
-                            deleteActionType = .deleteSelected
+                
+                ToolbarItem(placement: .principal) {
+                    HStack {
+                        if isSelectionMode {
+                            Text("Selected: \(selectedNotes.count)")
+                                .bold()
+                        } else {
+                            Image(systemName: "archivebox.fill")
+                                .font(.system(size: 13))
+                            Text("Archive")
+                                .bold()
                         }
-                        .foregroundColor(.red)
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if isSelectionMode {
+                        if selectedNotes.count > 0 {
+                            Button("Delete") {
+                                deleteActionType = .deleteSelected
+                            }
+                            .foregroundColor(.red)
+                        } else {
+                            Button("Delete all") {
+                                deleteActionType = .deleteAll
+                            }
+                            .foregroundColor(.red)
+                        }
                     } else {
-                        Button("Delete all") {
-                            deleteActionType = .deleteAll
+                        Button(action: {
+                            activeSearchBar = true
+                        }) {
+                            Image(systemName: "magnifyingglass")
+                                
                         }
-                        .foregroundColor(.red)
                     }
-                } else {
-                    Button(action: {}) {
-                        Image(systemName: "magnifyingglass")
+                }
+            } else {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Cancel") {
+                        activeSearchBar = false
                     }
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.backgroundComponents)
+                            .frame(height: 35)
+                        
+                        if searchText.isEmpty {
+                            Text("Search")
+                                .foregroundColor(.gray)
+                                .padding(.leading, 50)
+                        }
+                        
+                        HStack(spacing: 12) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 15))
+                                .foregroundStyle(.gray)
+                            
+                            TextField("", text: $searchText)
+                                .foregroundColor(.primary)
+                            
+                            if !searchText.isEmpty {
+                                Button(action: {
+                                    searchText = ""
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .imageScale(.medium)
+                                }
+                                .foregroundStyle(.gray)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.vertical, 100)
                 }
             }
         }

@@ -42,9 +42,8 @@ struct NotesCardGridView: View {
                 )
             }
         }
-        .animation(.bouncy, value: selectedNotes)
-        .padding(.horizontal, 10)
-        .padding(.top, 1)
+        .padding(8)
+        .padding(.bottom, 10)
     }
 }
 
@@ -92,7 +91,7 @@ private struct NotesCardGrid: View {
                     
                     Spacer()
                     
-                    HStack(spacing: 5) {
+                    HStack(spacing: 10) {
                         if note.isArchive {
                             Image(systemName: "archivebox.fill")
                                 .foregroundStyle(.blue)

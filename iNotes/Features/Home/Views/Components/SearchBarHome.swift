@@ -6,33 +6,25 @@ struct SearchBarHomeView: View {
     
     var body: some View {
         ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 30)
                 .fill(Color.backgroundButton)
                 .frame(height: searchText.isEmpty ? 45 : 50)
             
             if searchText.isEmpty {
                 Text("Search")
                     .foregroundColor(.gray)
-                    .padding(.leading, 50)
+                    .padding(.leading, 45)
             }
             
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 20))
+                    .font(.system(size: 18))
                     .foregroundStyle(.gray)
                 
                 TextField("", text: $searchText)
                     .foregroundColor(.primary)
                 
-                if searchText.isEmpty {
-                    Button(action: {
-                        //
-                    }) {
-                        Image(systemName: "microphone.fill")
-                            .imageScale(.medium)
-                    }
-                    .foregroundStyle(.gray)
-                } else {
+                if !searchText.isEmpty {
                     Button(action: {
                         searchText = ""
                     }) {
@@ -42,7 +34,7 @@ struct SearchBarHomeView: View {
                     .foregroundStyle(.gray)
                 }
             }
-            .padding(.horizontal, 15)
+            .padding(.horizontal)
         }
     }
 }

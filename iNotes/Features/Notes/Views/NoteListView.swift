@@ -15,9 +15,6 @@ struct NotesListView: View {
                 EmptyStateView()
             } else {
                 ScrollView {
-                    InformationNotesView(notesViewModel: notesViewModel)
-                        .padding(.top, 5)
-
                     switch selectedDisplayTypeNotes {
                     case .list:
                         NotesCardListView(
@@ -33,15 +30,12 @@ struct NotesListView: View {
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
-                        .padding(.bottom, 10)
                     }
                 }
             }
         }
-        .padding(.bottom, 90)
         .background(.backgroundHomePage)
-        .animation(.bouncy, value: selectedDisplayTypeNotes)
-        .animation(.bouncy, value: activeNotes.count)
+        .animation(.interpolatingSpring, value: isSelectionMode)
     }
 }
 

@@ -5,7 +5,7 @@ struct HomeView: View {
     @StateObject private var notesViewModel = NotesViewModel()
     
     @AppStorage("selectedDisplayTypeNotes") private var selectedDisplayTypeNotes: DisplayTypeNotes = .list
-    
+
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
     @Binding var sortType: NotesSortType
@@ -37,30 +37,34 @@ struct HomeView: View {
                     
                     HorizontalFilterView(notesViewModel: notesViewModel)
                 }
-                .background(.backgroundComponents.opacity(0.9))
+                .background(.backgroundComponents.opacity(0.8))
+                
+                InformationNotesView(notesViewModel: notesViewModel)
             }
 
             ZStack(alignment: .bottom) {
                 Group {
                     switch selectedTab {
                     case 0:
-                        ArchiveContentView (
+                        ArchiveContentView(
                             notes: notesViewModel.filteredNotes,
                             notesViewModel: notesViewModel,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode,
                             selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                            deleteActionType: $deleteActionType
+                            deleteActionType: $deleteActionType,
+                            searchText: $notesViewModel.searchText,
+                            selectedTab: $selectedTab
                         )
                     case 1:
-                        NotesListView (
+                        NotesListView(
                             notesViewModel: notesViewModel,
                             selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
                     case 2:
-                        SettingsView (
+                        SettingsView(
                             selectedTheme: $selectedTheme,
                             selectedTintRawValue: $selectedTintRawValue
                         )
@@ -70,18 +74,38 @@ struct HomeView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transition(.opacity)
-
-                CustomTabBar(
-                    selectedTab: $selectedTab,
-                    isSheetPresented: $isSheetPresented,
-                    isSelectionMode: $isSelectionMode
-                )
-                .background(Color.backgroundHomePage.shadow(color: .gray, radius: 0.5))
             }
-            .edgesIgnoringSafeArea(.bottom)
+        }
+        .animation(.bouncy, value: selectedTab)
+        .toolbarBackground(.backgroundComponents.opacity(0.8), for: .bottomBar)
+        .toolbarBackgroundVisibility(.visible, for: .bottomBar)
+        .toolbar {
+            ToolbarItemGroup(placement: .bottomBar) {
+                HStack(spacing: 35) {
+                    Spacer()
+                    
+                    TabButton(icon: selectedTab == 0 ? "archivebox.fill" : "archivebox", title: "Archive", isSelected: selectedTab == 0) {
+                        selectedTab = 0
+                    }
+                    
+                    Spacer()
+                    
+                    TabButton(icon: selectedTab == 1 ? "note.text" : "note", title: "Notes", isSelected: selectedTab == 1) {
+                        selectedTab = 1
+                    }
+                    
+                    Spacer()
+                    
+                    TabButton(icon: selectedTab == 2 ? "gearshape.fill" : "gearshape", title: "Settings", isSelected: selectedTab == 2) {
+                        selectedTab = 2
+                    }
+                    
+                    Spacer()
+                }
+            }
         }
         .preferredColorScheme(selectedTheme.colorScheme)
-        .animation(.bouncy, value: isSelectionMode)
+        .animation(.interpolatingSpring, value: isSelectionMode)
         .background(Color.backgroundHomePage.ignoresSafeArea())
         .onAppear {
             notesViewModel.filterNotes(by: selectedCategory)

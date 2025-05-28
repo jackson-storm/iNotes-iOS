@@ -58,7 +58,7 @@ private struct HeaderAddNotesView: View {
                 Image(systemName: "plus.circle")
                     .padding(5)
                     .contentShape(Rectangle())
-                    .font(.system(size: 24))
+                    .font(.system(size: 22))
             }
            
         }
@@ -72,6 +72,13 @@ private struct HeaderButtonMenuView: View {
     
     var body: some View {
         Menu {
+            ///select notes
+            Button {
+                isSelectionMode = true
+            } label: {
+                Label("Select notes", systemImage: "checkmark.circle")
+            }
+            ///display notes
             Menu {
                 Button {
                     selectedDisplayTypeNotes = .list
@@ -86,7 +93,7 @@ private struct HeaderButtonMenuView: View {
             } label: {
                 Label("Display notes", systemImage: selectedDisplayTypeNotes.iconName)
             }
-
+            ///sorting
             Menu {
                 Button {
                     sortType = .creationDate
@@ -111,7 +118,7 @@ private struct HeaderButtonMenuView: View {
             Image(systemName: "ellipsis.circle")
                 .padding(5)
                 .contentShape(Rectangle())
-                .font(.system(size: 24))
+                .font(.system(size: 22))
         }
         
     }

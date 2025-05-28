@@ -5,6 +5,7 @@ class NotesViewModel: ObservableObject {
     @Published var notes: [Note] = []
     @Published var searchText: String = ""
     @Published var sortType: NotesSortType = .creationDate
+    @Published var lastScrollOffset: CGFloat = 0
     
     @AppStorage("selectedCategory") private var selectedCategoryRawValue: String = NoteCategory.all.rawValue
     

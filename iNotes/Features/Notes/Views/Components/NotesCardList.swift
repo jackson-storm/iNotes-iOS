@@ -37,7 +37,6 @@ struct NotesCardListView: View {
                 )
             }
         }
-        .animation(.bouncy, value: selectedNotes)
     }
 }
 
@@ -75,7 +74,6 @@ struct NotesCardList: View {
                                 .frame(width: 20, height: 20)
                         }
                     }
-                    .animation(.bouncy, value: selectedNotes)
                     .padding(.leading, 15)
                 }
 
@@ -89,15 +87,36 @@ struct NotesCardList: View {
 
                         Spacer()
 
-                        HStack(spacing: 10) {
+                        HStack(spacing: 20) {
                             if note.isArchive {
                                 Image(systemName: "archivebox.fill")
                                     .foregroundStyle(.blue)
                             }
 
+                            if note.isArchive {
+                                ZStack {
+                                    Circle()
+                                        .fill(.blue.opacity(0.1))
+                                        .stroke(.secondary, lineWidth: 1)
+                                        .frame(width: 30, height: 30)
+
+                                    Image(systemName: "archivebox.fill")
+                                        .font(.system(size: 15))
+                                }
+                                .foregroundStyle(.blue)
+                            }
+                            
                             if note.isLiked {
-                                Image(systemName: "heart.fill")
-                                    .foregroundStyle(.red)
+                                ZStack {
+                                    Circle()
+                                        .fill(.red.opacity(0.1))
+                                        .stroke(.secondary, lineWidth: 1)
+                                        .frame(width: 30, height: 30)
+
+                                    Image(systemName: "heart.fill")
+                                        .font(.system(size: 15))
+                                }
+                                .foregroundStyle(.red)
                             }
 
                             Image(systemName: note.category.icon)
@@ -109,6 +128,7 @@ struct NotesCardList: View {
                                         .frame(width: 30, height: 30)
                                 )
                         }
+                        .padding(.trailing, 5)
                     }
 
                     if !note.secretNotesEnabled {

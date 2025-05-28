@@ -47,15 +47,44 @@ struct ArchiveCardView: View {
                         
                         Spacer()
                         
-                        Image(systemName: note.category.icon)
-                            .foregroundStyle(.white)
-                            .font(.system(size: 14))
-                            .background(
-                                Circle()
-                                    .fill(note.category.color)
-                                    .frame(width: 30, height: 30)
-                            )
-                        
+                        HStack(spacing: 20) {
+                            if note.isArchive {
+                                ZStack {
+                                    Circle()
+                                        .fill(.blue.opacity(0.1))
+                                        .stroke(.secondary, lineWidth: 1)
+                                        .frame(width: 30, height: 30)
+                                    
+                                    Image(systemName: "archivebox.fill")
+                                        .font(.system(size: 15))
+                                }
+                                .foregroundStyle(.blue)
+                            }
+                            
+                            if note.isLiked {
+                                ZStack {
+                                    Circle()
+                                        .fill(.red.opacity(0.1))
+                                        .stroke(.secondary, lineWidth: 1)
+                                        .frame(width: 30, height: 30)
+                                    
+                                    Image(systemName: "heart.fill")
+                                        .font(.system(size: 15))
+                                }
+                                .foregroundStyle(.red)
+                            }
+                            
+                            Image(systemName: note.category.icon)
+                                .foregroundStyle(.white)
+                                .font(.system(size: 14))
+                                .background(
+                                    Circle()
+                                        .fill(note.category.color)
+                                        .frame(width: 30, height: 30)
+                                )
+                            
+                        }
+                        .padding(.trailing, 5)
                     }
                     
                     if !note.secretNotesEnabled {
@@ -106,4 +135,8 @@ struct EmptyStateArchiveView: View {
         }
         .padding(.bottom, 50)
     }
+}
+
+#Preview {
+    ContentView()
 }

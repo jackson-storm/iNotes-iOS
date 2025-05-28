@@ -15,8 +15,11 @@ struct SelectionOverlayView: View {
                     isSelectionMode = false
                 }
                 Spacer()
+                
                 Text("Selected: \(selectedNotes.count)")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.primary)
+                    .bold()
+                
                 Spacer()
                 if selectedNotes.count > 0 {
                     Button("Delete") {
@@ -31,7 +34,6 @@ struct SelectionOverlayView: View {
                 }
             }
             .padding(.vertical, 5)
-            .background(.backgroundComponents)
             .actionSheet(item: $deleteActionType) { actionType in
                 switch actionType {
                 case .deleteAll:
