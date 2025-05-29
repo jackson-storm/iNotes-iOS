@@ -1,6 +1,26 @@
 import SwiftUI
 
-struct SearchBarEditNotes: View {
+struct SearchBarSection: View {
+    @Binding var isActiveSearch: Bool
+    @Binding var searchTextEditNotes: String
+    @Binding var description: String
+    @Binding var matchRanges: [NSRange]
+    @Binding var currentMatchIndex: Int
+    
+    var body: some View {
+        if isActiveSearch {
+            SearchBarFoundWords(
+                searchTextEditNotes: $searchTextEditNotes,
+                isActiveSearch: $isActiveSearch,
+                description: $description,
+                matchRanges: $matchRanges,
+                currentMatchIndex: $currentMatchIndex
+            )
+        }
+    }
+}
+
+private struct SearchBarFoundWords: View {
     @Binding var searchTextEditNotes: String
     @Binding var isActiveSearch: Bool
     @Binding var description: String

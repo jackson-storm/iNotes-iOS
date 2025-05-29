@@ -1,7 +1,27 @@
 import Foundation
 import SwiftUI
 
-struct HighlightedTextEditor: UIViewRepresentable {
+struct NoteEditorSection: View {
+    @Binding var description: String
+    
+    let searchText: String
+    let currentMatchIndex: Int
+    let matchRanges: [NSRange]
+    let fontSize: Double
+    
+    var body: some View {
+        HighlightedTextEditor(
+            text: $description,
+            searchText: searchText,
+            currentMatchIndex: currentMatchIndex,
+            allMatches: matchRanges,
+            fontSize: fontSize
+        )
+        .padding(10)
+    }
+}
+
+private struct HighlightedTextEditor: UIViewRepresentable {
     @Binding var text: String
 
     var searchText: String

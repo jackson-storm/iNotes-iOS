@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct NoteCategoryEditView: View {
+    @AppStorage("textScale") private var textScale: Double = 100
+
     @ObservedObject var notesViewModel: NotesViewModel
+    @Environment(\.dismiss) private var dismiss
 
     @Binding var noteTitle: String
     @Binding var description: String
@@ -13,23 +16,54 @@ struct NoteCategoryEditView: View {
     let categoryLabel: String
 
     @State private var isSecretNote = false
+    @State private var searchTextEditNotes: String = ""
+    @State private var isActiveSearch: Bool = false
+    @State private var isActiveTextSize: Bool = false
 
     var body: some View {
-        ZStack {
-            NotesBackgroundView()
+        VStack(spacing: 0) {
+            SearchBarSection(
+                isActiveSearch: $isActiveSearch,
+                searchTextEditNotes: $searchTextEditNotes,
+                description: $description,
+                matchRanges: $notesViewModel.matchRanges,
+                currentMatchIndex: $notesViewModel.currentMatchIndex
+            )
 
-            VStack(alignment: .leading, spacing: 10) {
-                ScrollView {
-                    TextFieldTitleView(noteTitle: $noteTitle)
+            TextSizeSection(
+                isActiveTextSize: $isActiveTextSize,
+                textScale: $textScale
+            )
 
-                    TextFieldDescriptionView(description: $description)
+            NoteHeaderSection(
+                title: $noteTitle,
+                lastEdited: Date()
+            )
 
-                    SecretNotesToggle(isSecret: $isSecretNote)
-                }
-
-                Spacer()
-
-                ButtonSaveView(action: {
+            NoteEditorSection(
+                description: $description,
+                searchText: searchTextEditNotes,
+                currentMatchIndex: notesViewModel.currentMatchIndex,
+                matchRanges: notesViewModel.matchRanges,
+                fontSize: textScale
+            )
+        }
+        .animation(.bouncy, value: isActiveSearch)
+        .animation(.bouncy, value: isActiveTextSize)
+        .edgesIgnoringSafeArea(.bottom)
+        .background(Color.backgroundHomePage)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                CardRowNotesView(
+                    image: categoryIcon,
+                    text: categoryLabel,
+                    color: categoryColor,
+                    font: 10
+                )
+            }
+            
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Create") {
                     let note = Note(
                         title: noteTitle,
                         description: description,
@@ -39,20 +73,17 @@ struct NoteCategoryEditView: View {
                         secretNotesEnabled: isSecretNote
                     )
                     if notesViewModel.addNoteIfNotExists(note) {
+                        noteTitle = ""
+                        description = ""
+                        isSecretNote = false
                         isPresented = false
                     }
-                })
-            }
-            .safeAreaInset(edge: .top) {
-                Spacer()
-                    .frame(height: 20)
-                    .toolbarBackground(.backgroundComponents.opacity(0.6), for: .navigationBar)
-                    .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
-                            CardRowNotesView(image: categoryIcon, text: categoryLabel, color: categoryColor, font: 10)
-                        }
-                    }
+                }
             }
         }
     }
+}
+
+#Preview {
+    ContentView()
 }

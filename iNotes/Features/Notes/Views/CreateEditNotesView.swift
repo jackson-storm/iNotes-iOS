@@ -1,7 +1,7 @@
 import SwiftUI
 import Combine
 
-struct EditNotesView: View {
+struct CreateEditNotesView: View {
     let note: Note
     
     @AppStorage("textScale") private var textScale: Double = 100
@@ -19,6 +19,7 @@ struct EditNotesView: View {
     @State private var isActiveSearch: Bool = false
     @State private var isActiveTextSize: Bool = false
     @State private var showShareSheet: Bool = false
+    @State private var isPresented: Bool = false
     
     @State private var undoStack: [(title: String, description: String)] = []
     @State private var redoStack: [(title: String, description: String)] = []
@@ -69,44 +70,15 @@ struct EditNotesView: View {
         .edgesIgnoringSafeArea(.bottom)
         .background(Color.backgroundHomePage)
         .toolbar {
-            EditNotesNoteToolbar(
+            CreateEditNotesToolbar (
                 note: note,
                 title: $title,
                 description: $description,
                 isTapLike: $isTapLike,
                 isTapArchive: $isTapArchive,
-                isActiveSearch: $isActiveSearch,
-                isActiveTextSize: $isActiveTextSize,
-                showDeleteAlert: $showDeleteAlert,
-                undoStack: $undoStack,
-                redoStack: $redoStack,
+                isPresented: $isPresented,
                 notesViewModel: notesViewModel
             )
-        }
-        .alert("Delete note?", isPresented: $showDeleteAlert) {
-            Button("Delete", role: .destructive) {
-                notesViewModel.delete(note: note)
-                dismiss()
-            }
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("This action cannot be undone.")
-        }
-        .onChange(of: title) { newTitle, _ in
-            undoStack.append((title, description))
-            redoStack.removeAll()
-            notesViewModel.update(noteID: note.id, title: newTitle, description: description)
-        }
-        .onChange(of: description) { newDescription, _ in
-            undoStack.append((title, description))
-            redoStack.removeAll()
-            notesViewModel.update(noteID: note.id, title: title, description: newDescription)
-        }
-        .onChange(of: searchTextEditNotes) { _, _ in
-            notesViewModel.updateMatches(in: description, for: searchTextEditNotes)
-        }
-        .onChange(of: description) { _, _ in
-            notesViewModel.updateMatches(in: description, for: searchTextEditNotes)
         }
     }
 }
@@ -114,3 +86,4 @@ struct EditNotesView: View {
 #Preview {
     ContentView()
 }
+

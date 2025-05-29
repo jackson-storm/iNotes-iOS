@@ -1,6 +1,20 @@
 import SwiftUI
 
-struct SelectTextSize: View {
+struct TextSizeSection: View {
+    @Binding var isActiveTextSize: Bool
+    @Binding var textScale: Double
+    
+    var body: some View {
+        if isActiveTextSize {
+            FontsSizeBar(
+                textScale: $textScale,
+                isActiveTextSize: $isActiveTextSize
+            )
+        }
+    }
+}
+
+private struct FontsSizeBar: View {
     @Binding var textScale: Double
     @Binding var isActiveTextSize: Bool
         

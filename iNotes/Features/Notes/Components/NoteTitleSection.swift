@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TextFieldTitleView: View {
+struct NoteTitleSection: View {
     @Binding var noteTitle: String
     
     private var dateFormatter: DateFormatter {

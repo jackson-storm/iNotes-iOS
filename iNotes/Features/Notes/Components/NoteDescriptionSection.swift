@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct TextFieldDescriptionView: View {
+struct NoteDescriptionSection: View {
     @Binding var description: String
     
     var body: some View {

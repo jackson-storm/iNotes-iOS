@@ -23,3 +23,7 @@ struct CardRowNotesView: View {
         }
     }
 }
+
+#Preview {
+    CardRowNotesView(image: "print", text: "print", color: .red, font: 23)
+}

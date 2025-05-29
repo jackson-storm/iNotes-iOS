@@ -14,7 +14,7 @@
 		E2BF95572DC556ED00263114 /* Exceptions for "iNotes" folder in "iNotes" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"Supporting Files/Info.plist",
+				Config/Info.plist,
 			);
 			target = E20B27142DBC1CA4008F4D14 /* iNotes */;
 		};
@@ -268,7 +268,7 @@
 				DEVELOPMENT_TEAM = WZHZ6LB2F6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "iNotes/Supporting Files/Info.plist";
+				INFOPLIST_FILE = iNotes/Config/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -304,7 +304,7 @@
 				DEVELOPMENT_TEAM = WZHZ6LB2F6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "iNotes/Supporting Files/Info.plist";
+				INFOPLIST_FILE = iNotes/Config/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

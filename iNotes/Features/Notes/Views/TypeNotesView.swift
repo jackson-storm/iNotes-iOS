@@ -86,7 +86,7 @@ private struct CardRow: View {
             Text(title)
                 .foregroundStyle(.primary)
                 .font(.body)
-                
+            
             Spacer()
             
             Image(systemName: "chevron.right")

@@ -6,6 +6,8 @@ class NotesViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var sortType: NotesSortType = .creationDate
     @Published var lastScrollOffset: CGFloat = 0
+    @Published var matchRanges: [NSRange] = []
+    @Published var currentMatchIndex: Int = 0
     
     @AppStorage("selectedCategory") private var selectedCategoryRawValue: String = NoteCategory.all.rawValue
     
@@ -76,6 +78,19 @@ class NotesViewModel: ObservableObject {
         notes[index].description = description
         notes[index].lastEdited = Date()
         saveNotes()
+    }
+    
+    func updateMatches(in text: String, for searchText: String) {
+        matchRanges.removeAll()
+        currentMatchIndex = 0
+        
+        guard !searchText.isEmpty else { return }
+        
+        let pattern = NSRegularExpression.escapedPattern(for: searchText)
+        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+        
+        let range = NSRange(location: 0, length: text.utf16.count)
+        matchRanges = regex?.matches(in: text, range: range).map { $0.range } ?? []
     }
     
     func toggleArchive(for note: Note) {
