@@ -13,6 +13,7 @@ enum AssetsConstants {
         static let backgroundNotes = "backgroundNotes"
         static let backgroundComponents = "backgroundComponents"
         static let backgroundSelected = "backgroundSelected"
+        static let backgroundButton = "backgroundButton"
     }
     
     enum Icons {

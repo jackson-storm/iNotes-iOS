@@ -14,9 +14,9 @@ extension View {
             }
 
             Button {
-               
+                notesViewModel.toggleArchive(for: note)
             } label: {
-                Label("Add to archive", systemImage: "archivebox")
+                Label(note.isArchive ? "Delete from archive" : "Add to archive", systemImage: "archivebox")
             }
 
             Button(role: .destructive) {
@@ -27,3 +27,4 @@ extension View {
         }
     }
 }
+

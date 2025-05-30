@@ -13,20 +13,17 @@ struct EditNotesView: View {
     @State private var description: String
     @State private var searchTextEditNotes: String
     
-    @State private var isTapLike: Bool
-    @State private var isTapArchive: Bool
-    @State private var showDeleteAlert = false
+    @State private var isTapLike: Bool = false
+    @State private var isTapArchive: Bool = false
+    @State private var showDeleteAlert: Bool = false
     @State private var isActiveSearch: Bool = false
     @State private var isActiveTextSize: Bool = false
-    @State private var showShareSheet = false
+    @State private var showShareSheet: Bool = false
+    @State private var isSaved: Bool = false
     
     @State private var undoStack: [(title: String, description: String)] = []
     @State private var redoStack: [(title: String, description: String)] = []
-    
-    @State private var matchRanges: [NSRange] = []
-    @State private var currentMatchIndex: Int = 0
-    
-    
+
     init(note: Note, notesViewModel: NotesViewModel) {
         self.note = note
         self.notesViewModel = notesViewModel
@@ -43,18 +40,50 @@ struct EditNotesView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            searchBar
-            selectTextSize
-            noteHeader
-            noteEditor
+            SearchBarSection(
+                isActiveSearch: $isActiveSearch,
+                searchTextEditNotes: $searchTextEditNotes,
+                description: $description,
+                matchRanges: $notesViewModel.matchRanges,
+                currentMatchIndex: $notesViewModel.currentMatchIndex)
+            
+            TextSizeSection(
+                isActiveTextSize: $isActiveTextSize,
+                textScale: $textScale
+            )
+        
+            NoteHeaderSection(
+                title: $title,
+                isSaved: $isSaved,
+                lastEdited: note.lastEdited
+            )
+            
+            NoteEditorSection(
+                description: $description,
+                isSaved: $isSaved,
+                searchText: searchTextEditNotes,
+                currentMatchIndex: notesViewModel.currentMatchIndex,
+                matchRanges: notesViewModel.matchRanges,
+                fontSize: textScale
+            )
         }
-        .animation(.bouncy, value: matchRanges)
-        .animation(.bouncy, value: currentMatchIndex)
         .animation(.bouncy, value: isActiveSearch)
         .animation(.bouncy, value: isActiveTextSize)
-        .background(Color.backgroundHomePage.ignoresSafeArea())
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar { noteToolbar }
+        .edgesIgnoringSafeArea(.bottom)
+        .background(Color.backgroundHomePage)
+        .toolbar {
+            EditNotesNoteToolbar(
+                note: note,
+                title: $title,
+                description: $description,
+                isTapLike: $isTapLike,
+                isTapArchive: $isTapArchive,
+                isActiveSearch: $isActiveSearch,
+                isActiveTextSize: $isActiveTextSize,
+                showDeleteAlert: $showDeleteAlert,
+                notesViewModel: notesViewModel
+            )
+        }
         .alert("Delete note?", isPresented: $showDeleteAlert) {
             Button("Delete", role: .destructive) {
                 notesViewModel.delete(note: note)
@@ -74,160 +103,11 @@ struct EditNotesView: View {
             redoStack.removeAll()
             notesViewModel.update(noteID: note.id, title: title, description: newDescription)
         }
-        .onChange(of: searchTextEditNotes) { _, _ in updateMatches() }
-        .onChange(of: description) { _, _ in updateMatches() }
-    }
-    
-    func updateMatches() {
-        matchRanges.removeAll()
-        currentMatchIndex = 0
-        
-        guard !searchTextEditNotes.isEmpty else { return }
-        
-        let pattern = NSRegularExpression.escapedPattern(for: searchTextEditNotes)
-        let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
-        
-        let range = NSRange(location: 0, length: description.utf16.count)
-        matchRanges = regex?.matches(in: description, range: range).map { $0.range } ?? []
-    }
-    
-    private var searchBar: some View {
-        VStack(alignment: .leading) {
-            if isActiveSearch {
-                SearchBarEditNotes(
-                    searchTextEditNotes: $searchTextEditNotes,
-                    isActiveSearch: $isActiveSearch,
-                    description: $description,
-                    matchRanges: $matchRanges,
-                    currentMatchIndex: $currentMatchIndex
-                )
-            }
+        .onChange(of: searchTextEditNotes) { _, _ in
+            notesViewModel.updateMatches(in: description, for: searchTextEditNotes)
         }
-    }
-    
-    private var selectTextSize: some View {
-        VStack(alignment: .leading) {
-            if isActiveTextSize {
-                SelectTextSize (
-                    textScale: $textScale,
-                    isActiveTextSize: $isActiveTextSize
-                )
-            }
-        }
-    }
-    
-    
-    private var noteEditor: some View {
-        HighlightedTextEditor(
-            text: $description,
-            searchText: searchTextEditNotes,
-            currentMatchIndex: currentMatchIndex,
-            allMatches: matchRanges,
-            fontSize: textScale
-        )
-        .padding(10)
-    }
-    
-    private var noteHeader: some View {
-        HStack {
-            TextField("Title", text: $title)
-                .bold()
-                .font(.system(size: 26))
-                .padding(.horizontal)
-                .padding(.top)
-            
-            Text(note.lastEdited.formatted(date: .abbreviated, time: .shortened))
-                .foregroundColor(.gray)
-                .font(.caption)
-                .padding(.trailing)
-                .padding(.top)
-        }
-    }
- 
-    private var noteToolbar: some ToolbarContent {
-        ToolbarItem(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
-            HStack(spacing: 16) {
-                ///backward
-                Button {
-                    if let last = undoStack.popLast() {
-                        redoStack.append((title, description))
-                        title = last.title
-                        description = last.description
-                    }
-                } label: {
-                    Image(systemName: "arrow.uturn.backward")
-                }.disabled(undoStack.isEmpty)
-                
-                ///Forward
-                Button {
-                    if let next = redoStack.popLast() {
-                        undoStack.append((title, description))
-                        title = next.title
-                        description = next.description
-                    }
-                } label: {
-                    Image(systemName: "arrow.uturn.forward")
-                }.disabled(redoStack.isEmpty)
-                
-                ///Like
-                Button {
-                    notesViewModel.toggleLike(for: note)
-                    isTapLike.toggle()
-                } label: {
-                    Image(systemName: isTapLike ? "heart.fill" : "heart")
-                        .foregroundStyle(isTapLike ? .red : .accentColor)
-                }
-                
-                ///Archive
-                Button {
-                    notesViewModel.toggleArchive(for: note)
-                    isTapArchive.toggle()
-                } label: {
-                    Image(systemName: isTapArchive ? "archivebox.fill" : "archivebox")
-                        .foregroundStyle(isTapArchive ? .blue : .accentColor)
-                }
-                
-                Menu {
-                    ///Search words
-                    Button {
-                        searchTextEditNotes = ""
-                        isActiveSearch = true
-                    } label: {
-                        Text("Search in note")
-                        Image(systemName: "magnifyingglass")
-                    }
-                    
-                    ///Share
-                    ShareLink(item: description) {
-                        Label("Share a note", systemImage: "square.and.arrow.up")
-                    }
-                    
-                    ///Font size
-                    Button {
-                        isActiveTextSize = true
-                    } label: {
-                        Label("Font size", systemImage: "textformat.size")
-                    }
-                    
-                    ///Copyt text
-                    Button {
-                        UIPasteboard.general.string = description
-                    } label: {
-                        Text("Copy text")
-                        Image(systemName: "doc.on.doc")
-                    }
-                    
-                    ///Delete note
-                    Button(role: .destructive) {
-                        showDeleteAlert = true
-                    } label: {
-                        Label("Delete", systemImage: "trash")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
-            }
-            .font(.system(size: 18))
+        .onChange(of: description) { _, _ in
+            notesViewModel.updateMatches(in: description, for: searchTextEditNotes)
         }
     }
 }

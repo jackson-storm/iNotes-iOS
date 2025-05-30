@@ -5,6 +5,7 @@ struct CategoriesNotesView: View {
     @Binding var isPresented: Bool
     @Binding var noteTitle: String
     @Binding var description: String
+    @Binding var isSaved: Bool
 
     @ObservedObject var viewModel: NotesViewModel
 
@@ -12,12 +13,14 @@ struct CategoriesNotesView: View {
         VStack {
             TypeNotesView(
                 noteTitle: $noteTitle, description: $description,
-                isPresented: $isPresented,
+                isPresented: $isPresented, isSaved: $isSaved,
                 viewModel: viewModel
             )
             Spacer()
         }
-        .navigationTitle("Categories")
+        .navigationTitle(Text("Categories"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.backgroundComponents.opacity(0.6), for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button(action: {
