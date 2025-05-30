@@ -2,6 +2,7 @@ import SwiftUI
 
 struct EditNotesNoteToolbar: ToolbarContent {
     let note: Note
+
     @Binding var title: String
     @Binding var description: String
     
@@ -11,34 +12,11 @@ struct EditNotesNoteToolbar: ToolbarContent {
     @Binding var isActiveTextSize: Bool
     @Binding var showDeleteAlert: Bool
     
-    @Binding var undoStack: [(title: String, description: String)]
-    @Binding var redoStack: [(title: String, description: String)]
-    
     let notesViewModel: NotesViewModel
     
     var body: some ToolbarContent {
-        ToolbarItem(placement: isActiveSearch ? .topBarTrailing : .navigationBarTrailing) {
+        ToolbarItem(placement: .navigationBarTrailing) {
             HStack(spacing: 16) {
-                Button {
-                    if let last = undoStack.popLast() {
-                        redoStack.append((title, description))
-                        title = last.title
-                        description = last.description
-                    }
-                } label: {
-                    Image(systemName: "arrow.uturn.backward")
-                }.disabled(undoStack.isEmpty)
-                
-                Button {
-                    if let next = redoStack.popLast() {
-                        undoStack.append((title, description))
-                        title = next.title
-                        description = next.description
-                    }
-                } label: {
-                    Image(systemName: "arrow.uturn.forward")
-                }.disabled(redoStack.isEmpty)
-                
                 Button {
                     notesViewModel.toggleLike(for: note)
                     isTapLike.toggle()

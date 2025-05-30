@@ -14,6 +14,7 @@ struct HomeView: View {
     @Binding var selectedTheme: Theme
     @Binding var selectedTintRawValue: String
     @Binding var deleteActionType: DeleteActionType?
+    @Binding var isSaved: Bool
     
     @State private var noteTitle = ""
     @State private var description = ""
@@ -39,7 +40,7 @@ struct HomeView: View {
                 }
                 .background(.backgroundComponents.opacity(0.8))
                 
-                InformationNotesView(notesViewModel: notesViewModel)
+                //InformationNotesView(notesViewModel: notesViewModel)
             }
 
             ZStack(alignment: .bottom) {
@@ -119,6 +120,7 @@ struct HomeView: View {
                     isPresented: $isSheetPresented,
                     noteTitle: $noteTitle,
                     description: $description,
+                    isSaved: $isSaved,
                     viewModel: notesViewModel
                 )
             }

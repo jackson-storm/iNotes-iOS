@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var selectedTab: Int = 1
     @State private var isSheetPresented = false
     @State private var deleteActionType: DeleteActionType?
+    @State private var isSaved: Bool = false
     
     private var selectedThemeBinding: Binding<Theme> {
         Binding<Theme>(
@@ -39,7 +40,8 @@ struct ContentView: View {
                     isSheetPresented: $isSheetPresented,
                     selectedTheme: selectedThemeBinding,
                     selectedTintRawValue: $selectedTintRawValue,
-                    deleteActionType: $deleteActionType
+                    deleteActionType: $deleteActionType,
+                    isSaved: $isSaved
                 )
             }
             .tint(selectedTint.color)

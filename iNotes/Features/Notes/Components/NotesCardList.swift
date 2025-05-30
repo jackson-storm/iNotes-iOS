@@ -162,7 +162,7 @@ struct NotesCardList: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 0)
-                .fill(Color.backgroundComponents.opacity(0.1))
+                .fill(Color.backgroundHomePage)
                 .stroke(.gray.opacity(0.1), lineWidth: 1)
         )
     }

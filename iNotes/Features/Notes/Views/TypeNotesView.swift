@@ -5,6 +5,7 @@ struct TypeNotesView: View {
     @Binding var noteTitle: String
     @Binding var description: String
     @Binding var isPresented: Bool
+    @Binding var isSaved: Bool
     
     @ObservedObject var viewModel: NotesViewModel
     
@@ -55,6 +56,7 @@ struct TypeNotesView: View {
                 noteTitle: $noteTitle,
                 description: $description,
                 isPresented: $isPresented,
+                isSaved: $isSaved,
                 category: category,
                 categoryIcon: image,
                 categoryColor: color,

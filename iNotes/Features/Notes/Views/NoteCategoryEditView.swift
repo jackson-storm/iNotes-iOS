@@ -9,6 +9,7 @@ struct NoteCategoryEditView: View {
     @Binding var noteTitle: String
     @Binding var description: String
     @Binding var isPresented: Bool
+    @Binding var isSaved: Bool
 
     let category: NoteCategory
     let categoryIcon: String
@@ -36,12 +37,12 @@ struct NoteCategoryEditView: View {
             )
 
             NoteHeaderSection(
-                title: $noteTitle,
+                title: $noteTitle, isSaved: $isSaved,
                 lastEdited: Date()
             )
 
             NoteEditorSection(
-                description: $description,
+                description: $description, isSaved: $isSaved,
                 searchText: searchTextEditNotes,
                 currentMatchIndex: notesViewModel.currentMatchIndex,
                 matchRanges: notesViewModel.matchRanges,

@@ -19,6 +19,7 @@ struct EditNotesView: View {
     @State private var isActiveSearch: Bool = false
     @State private var isActiveTextSize: Bool = false
     @State private var showShareSheet: Bool = false
+    @State private var isSaved: Bool = false
     
     @State private var undoStack: [(title: String, description: String)] = []
     @State private var redoStack: [(title: String, description: String)] = []
@@ -53,11 +54,13 @@ struct EditNotesView: View {
         
             NoteHeaderSection(
                 title: $title,
+                isSaved: $isSaved,
                 lastEdited: note.lastEdited
             )
             
             NoteEditorSection(
                 description: $description,
+                isSaved: $isSaved,
                 searchText: searchTextEditNotes,
                 currentMatchIndex: notesViewModel.currentMatchIndex,
                 matchRanges: notesViewModel.matchRanges,
@@ -78,8 +81,6 @@ struct EditNotesView: View {
                 isActiveSearch: $isActiveSearch,
                 isActiveTextSize: $isActiveTextSize,
                 showDeleteAlert: $showDeleteAlert,
-                undoStack: $undoStack,
-                redoStack: $redoStack,
                 notesViewModel: notesViewModel
             )
         }
