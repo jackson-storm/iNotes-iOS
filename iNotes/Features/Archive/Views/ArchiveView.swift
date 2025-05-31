@@ -89,25 +89,10 @@ struct ArchiveContentView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if isSelectionMode {
-                        if selectedNotes.count > 0 {
-                            Button("Delete") {
-                                deleteActionType = .deleteSelected
-                            }
-                            .foregroundColor(.red)
-                        } else {
-                            Button("Delete all") {
-                                deleteActionType = .deleteAll
-                            }
-                            .foregroundColor(.red)
-                        }
-                    } else {
-                        Button(action: {
-                            activeSearchBar = true
-                        }) {
-                            Image(systemName: "magnifyingglass")
-                                
-                        }
+                    Button(action: {
+                        activeSearchBar = true
+                    }) {
+                        Image(systemName: "magnifyingglass")
                     }
                 }
             } else {

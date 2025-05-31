@@ -44,6 +44,7 @@ struct NotesCardGridView: View {
         }
         .padding(8)
         .padding(.bottom, 10)
+        .animation(.bouncy, value: selectedNotes)
     }
 }
 
@@ -66,22 +67,7 @@ private struct NotesCardGrid: View {
     }()
     
     var body: some View {
-        HStack {
-            if isSelectionMode {
-                ZStack {
-                    Circle()
-                        .stroke(.secondary, lineWidth: 1)
-                        .frame(width: 20, height: 20)
-                    
-                    if selectedNotes.contains(note.id) {
-                        Circle()
-                            .fill(note.category.color)
-                            .frame(width: 18, height: 18)
-                    }
-                }
-                .padding(.horizontal, 5)
-            }
-            
+        ZStack {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text(note.title.isEmpty ? "Untitled" : note.title)
@@ -147,14 +133,34 @@ private struct NotesCardGrid: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.backgroundComponents)
+                    .fill(isSelectionMode ?  Color.backgroundComponents.opacity(0.5) : Color.backgroundHomePage)
                     .stroke(.gray.opacity(0.1), lineWidth: 1)
-                    .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
+                   
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(note.category.color, lineWidth: selectedNotes.contains(note.id) ? 3 : 0)
+                    .fill(selectedNotes.contains(note.id) ? Color.accentColor.opacity(0.05) : Color.clear)
+                    .stroke(Color.accentColor, lineWidth: selectedNotes.contains(note.id) ? 1 : 0)
             )
+            
+            if isSelectionMode {
+                ZStack {
+                    if selectedNotes.contains(note.id) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.accentColor)
+                                .frame(width: 28, height: 28)
+                            
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 14))
+                        }
+                    }
+                }
+            }
         }
     }
+}
+
+#Preview {
+    ContentView()
 }

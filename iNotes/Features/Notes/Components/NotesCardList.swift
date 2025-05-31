@@ -37,6 +37,7 @@ struct NotesCardListView: View {
                 )
             }
         }
+        .animation(.easeInOut, value: selectedNotes)
     }
 }
 
@@ -66,12 +67,17 @@ struct NotesCardList: View {
                     ZStack {
                         Circle()
                             .stroke(.secondary, lineWidth: 1)
-                            .frame(width: 24, height: 24)
+                            .frame(width: 28, height: 28)
 
                         if selectedNotes.contains(note.id) {
-                            Circle()
-                                .fill(note.category.color)
-                                .frame(width: 20, height: 20)
+                            ZStack {
+                                Circle()
+                                    .fill(Color.accentColor)
+                                    .frame(width: 28, height: 28)
+                                
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 14))
+                            }
                         }
                     }
                     .padding(.leading, 15)

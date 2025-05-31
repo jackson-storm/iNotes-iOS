@@ -14,35 +14,58 @@ struct HeaderView: View {
     @ObservedObject var notesViewModel: NotesViewModel
     
     var body: some View {
-        if isSelectionMode {
-            SelectionOverlayView (
-                isSelectionMode: $isSelectionMode,
-                selectedNotes: $selectedNotes,
-                deleteActionType: $deleteActionType,
-                notesViewModel: notesViewModel
-            )
-        } else {
-            HStack(spacing: 15) {
-                if selectedTab == 1 {
-                    if searchBarText.isEmpty {
-                        HeaderButtonMenuView(
-                            isSelectionMode: $isSelectionMode,
-                            selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
-                            sortType: $sortType
-                        )
-                    }
+        HStack(spacing: 15) {
+            if !isSelectionMode {
+                if searchBarText.isEmpty {
+                    HeaderButtonMenuView(
+                        isSelectionMode: $isSelectionMode,
+                        selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
+                        sortType: $sortType
+                    )
                 }
-                
-                SearchBarHomeView(searchText: $searchBarText, selectedTab: $selectedTab)
-                
-                if selectedTab == 1 {
-                    if searchBarText.isEmpty {
-                        HeaderAddNotesView(isSheetPresented: $isSheetPresented)
-                    }
+            } else {
+                Button("Cancel") {
+                    selectedNotes.removeAll()
+                    isSelectionMode = false
                 }
             }
-            .animation(.bouncy(duration: 0.5), value: searchBarText)
             
+            SearchBarHomeView(searchText: $searchBarText, selectedTab: $selectedTab)
+            
+            if searchBarText.isEmpty {
+                HeaderAddNotesView(isSheetPresented: $isSheetPresented)
+                    .disabled(isSelectionMode)
+            }
+        }
+        .animation(.bouncy(duration: 0.5), value: searchBarText)
+        .actionSheet(item: $deleteActionType) { actionType in
+            switch actionType {
+            case .deleteAll:
+                return ActionSheet(
+                    title: Text("Delete notes?"),
+                    message: Text("This action is irreversible."),
+                    buttons: [
+                        .destructive(Text("Delete all notes")) {
+                            notesViewModel.deleteAllNotes()
+                            isSelectionMode = false
+                        },
+                        .cancel()
+                    ]
+                )
+            case .deleteSelected:
+                return ActionSheet(
+                    title: Text("Delete selected notes?"),
+                    message: Text("This action is irreversible."),
+                    buttons: [
+                        .destructive(Text("Delete \(selectedNotes.count) notes")) {
+                            notesViewModel.delete(notesWithIDs: selectedNotes)
+                            selectedNotes.removeAll()
+                            isSelectionMode = false
+                        },
+                        .cancel()
+                    ]
+                )
+            }
         }
     }
 }
@@ -58,9 +81,9 @@ private struct HeaderAddNotesView: View {
                 Image(systemName: "plus.circle")
                     .padding(5)
                     .contentShape(Rectangle())
-                    .font(.system(size: 22))
+                    .font(.system(size: 24, weight: .light))
             }
-           
+            
         }
     }
 }
@@ -113,12 +136,12 @@ private struct HeaderButtonMenuView: View {
             } label: {
                 Label("Sorting notes", systemImage: "arrow.up.arrow.down")
             }
-
+            
         } label: {
             Image(systemName: "ellipsis.circle")
                 .padding(5)
                 .contentShape(Rectangle())
-                .font(.system(size: 22))
+                .font(.system(size: 24, weight: .light))
         }
         
     }

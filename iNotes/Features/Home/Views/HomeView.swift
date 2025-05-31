@@ -18,6 +18,9 @@ struct HomeView: View {
     
     @State private var noteTitle = ""
     @State private var description = ""
+    
+    @State private var showToast = false
+    @State private var toastMessage = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -35,6 +38,7 @@ struct HomeView: View {
                         notesViewModel: notesViewModel
                     )
                     .padding(.horizontal)
+                    .padding(.top, 10)
                     
                     HorizontalFilterView(notesViewModel: notesViewModel)
                 }
@@ -82,27 +86,13 @@ struct HomeView: View {
         .toolbarBackgroundVisibility(.visible, for: .bottomBar)
         .toolbar {
             ToolbarItemGroup(placement: .bottomBar) {
-                HStack(spacing: 35) {
-                    Spacer()
-                    
-                    TabButton(icon: selectedTab == 0 ? "archivebox.fill" : "archivebox", title: "Archive", isSelected: selectedTab == 0) {
-                        selectedTab = 0
-                    }
-                    
-                    Spacer()
-                    
-                    TabButton(icon: selectedTab == 1 ? "note.text" : "note", title: "Notes", isSelected: selectedTab == 1) {
-                        selectedTab = 1
-                    }
-                    
-                    Spacer()
-                    
-                    TabButton(icon: selectedTab == 2 ? "gearshape.fill" : "gearshape", title: "Settings", isSelected: selectedTab == 2) {
-                        selectedTab = 2
-                    }
-                    
-                    Spacer()
-                }
+                CustomTabView(
+                    notesViewModel: notesViewModel,
+                    selectedTab: $selectedTab,
+                    isSelectionMode: $isSelectionMode,
+                    selectedNotes: $selectedNotes,
+                    deleteActionType: $deleteActionType
+                )
             }
         }
         .preferredColorScheme(selectedTheme.colorScheme)
