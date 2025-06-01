@@ -5,7 +5,6 @@ struct NotesListView: View {
     @ObservedObject var createPasswordViewModel: CreatePasswordViewModel
     
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
-
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
 

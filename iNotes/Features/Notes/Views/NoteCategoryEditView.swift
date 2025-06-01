@@ -37,8 +37,6 @@ struct NoteCategoryEditView: View {
                 lastEdited: Date()
             )
             
-        
-            
             Spacer()
         }
         .animation(.bouncy, value: isActiveSearch)

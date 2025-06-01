@@ -126,8 +126,6 @@ struct NotesCardList: View {
                                 .foregroundStyle(.red)
                             }
                             
-                            Divider()
-                            
                             ZStack {
                                 Circle()
                                     .fill(note.category.color)

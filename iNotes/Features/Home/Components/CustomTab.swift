@@ -2,37 +2,51 @@ import SwiftUI
 
 struct CustomTabView: View {
     @ObservedObject var notesViewModel: NotesViewModel
-    
+
     @Binding var selectedTab: Int
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
     @Binding var deleteActionType: DeleteActionType?
-    
+
     let note: Note
 
     var body: some View {
         HStack(spacing: isSelectionMode ? 20 : 35) {
             Spacer()
-            
+
             if !isSelectionMode {
                 TabButton(icon: selectedTab == 0 ? "archivebox.fill" : "archivebox", title: "Archive", isSelected: selectedTab == 0) {
                     selectedTab = 0
                 }
             } else {
                 Button(action: {
-                    if selectedNotes.count < notesViewModel.filteredNotes.count {
-                        selectedNotes = Set(notesViewModel.filteredNotes.map { $0.id })
+                    let currentFilteredNotes: [Note]
+
+                    switch selectedTab {
+                    case 0:
+                        currentFilteredNotes = notesViewModel.notes.filter { $0.isArchive }
+                    case 1:
+                        currentFilteredNotes = notesViewModel.notes.filter { !$0.isArchive }
+                    default:
+                        currentFilteredNotes = []
+                    }
+
+                    if selectedNotes.count < currentFilteredNotes.count {
+                        selectedNotes = Set(currentFilteredNotes.map { $0.id })
                     } else {
                         selectedNotes.removeAll()
                     }
-                    
                 }) {
-                    Text(selectedNotes.count < notesViewModel.filteredNotes.count ? "Select All" : "Deselect All")
+                    let currentFilteredNotesCount = selectedTab == 0 ?
+                        notesViewModel.notes.filter { $0.isArchive }.count :
+                        notesViewModel.notes.filter { !$0.isArchive }.count
+
+                    Text(selectedNotes.count < currentFilteredNotesCount ? "Select All" : "Deselect All")
                 }
             }
-            
+
             Spacer()
-            
+
             if !isSelectionMode {
                 TabButton(icon: selectedTab == 1 ? "note.text" : "note", title: "Notes", isSelected: selectedTab == 1) {
                     selectedTab = 1
@@ -57,9 +71,9 @@ struct CustomTabView: View {
                 }
                 .disabled(selectedNotes.isEmpty)
             }
-            
+
             Spacer()
-            
+
             if !isSelectionMode {
                 TabButton(icon: selectedTab == 2 ? "gearshape.fill" : "gearshape", title: "Settings", isSelected: selectedTab == 2) {
                     selectedTab = 2
@@ -75,7 +89,7 @@ struct CustomTabView: View {
                     }
                 )
             }
-            
+
             Spacer()
         }
         .animation(.bouncy, value: selectedNotes)
@@ -83,7 +97,7 @@ struct CustomTabView: View {
     }
 }
 
-struct ToastView: View {
+private struct ToastView: View {
     let message: String
 
     var body: some View {
@@ -103,7 +117,7 @@ private struct TabButton: View {
     let title: String
     let isSelected: Bool
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 4) {

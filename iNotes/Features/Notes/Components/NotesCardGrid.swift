@@ -14,7 +14,7 @@ struct NotesCardGridView: View {
     ]
 
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: 10) {
             ForEach(notes) { note in
                 Group {
                     if isSelectionMode {
@@ -47,8 +47,7 @@ struct NotesCardGridView: View {
                 )
             }
         }
-        .padding(8)
-        .padding(.bottom, 10)
+        .padding(.top, 10)
         .animation(.bouncy, value: selectedNotes)
     }
 }
@@ -73,7 +72,7 @@ private struct NotesCardGrid: View {
     
     var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 5) {
                 HStack {
                     Text(note.title.isEmpty ? "Untitled" : note.title)
                         .font(.headline)
@@ -93,14 +92,28 @@ private struct NotesCardGrid: View {
                                 .foregroundStyle(.red)
                         }
                         
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 20)
-                                .fill(note.category.color)
-                                .frame(width: 28, height: 28)
-                            
-                            Image(systemName: note.category.icon)
-                                .foregroundStyle(.white)
-                                .font(.system(size: 13))
+                        VStack(spacing: 10) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(note.category.color)
+                                    .frame(width: 28, height: 28)
+                                
+                                Image(systemName: note.category.icon)
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 13))
+                            }
+                            if note.isLock {
+                                ZStack {
+                                    Circle()
+                                        .fill(.blue.opacity(0.1))
+                                        .stroke(.secondary, lineWidth: 1)
+                                        .frame(width: 30, height: 30)
+
+                                    Image(systemName: "lock.fill")
+                                        .font(.system(size: 15))
+                                }
+                                .foregroundStyle(.blue)
+                            }
                         }
                     }
                 }
@@ -137,13 +150,13 @@ private struct NotesCardGrid: View {
             }
             .padding()
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 0)
                     .fill(isSelectionMode ?  Color.backgroundComponents.opacity(0.5) : Color.backgroundHomePage)
                     .stroke(.gray.opacity(0.1), lineWidth: 1)
                    
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 0)
                     .fill(selectedNotes.contains(note.id) ? Color.accentColor.opacity(0.05) : Color.clear)
                     .stroke(Color.accentColor, lineWidth: selectedNotes.contains(note.id) ? 1 : 0)
             )
