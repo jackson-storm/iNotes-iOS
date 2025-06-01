@@ -7,6 +7,8 @@ struct CustomTabView: View {
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
     @Binding var deleteActionType: DeleteActionType?
+    
+    let note: Note
 
     var body: some View {
         HStack(spacing: isSelectionMode ? 20 : 35) {
@@ -66,7 +68,12 @@ struct CustomTabView: View {
                 Button("Delete") {
                     deleteActionType = .deleteSelected
                 }
-                .disabled(selectedNotes.isEmpty)
+                .disabled(
+                    selectedNotes.isEmpty ||
+                    selectedNotes.contains { id in
+                        notesViewModel.notes.first(where: { $0.id == id })?.isLock == true
+                    }
+                )
             }
             
             Spacer()

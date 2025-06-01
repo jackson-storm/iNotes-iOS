@@ -5,11 +5,14 @@ struct NoteEditorSection: View {
     
     @Binding var description: String
     @Binding var isSaved: Bool
+    @Binding var isTapLock: Bool
     
     let searchText: String
     let currentMatchIndex: Int
     let matchRanges: [NSRange]
     let fontSize: Double
+    
+    let note: Note
     
     var body: some View {
         VStack {
@@ -25,8 +28,10 @@ struct NoteEditorSection: View {
             .padding(.horizontal, 10)
         }
         .toolbar {
-            ToolbarItemGroup(placement: .bottomBar) {
-                EditorToolBar(controller: controller)
+            if !isTapLock {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    EditorToolBar(controller: controller)
+                }
             }
         }
     }
@@ -228,4 +233,8 @@ extension HighlightedTextEditor {
             attributedText = last
         }
     }
+}
+
+#Preview {
+    ContentView()
 }

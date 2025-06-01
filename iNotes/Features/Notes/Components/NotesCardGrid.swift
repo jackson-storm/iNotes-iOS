@@ -3,6 +3,7 @@ import SwiftUI
 struct NotesCardGridView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
+    let createPasswordViewModel: CreatePasswordViewModel
 
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
@@ -19,7 +20,11 @@ struct NotesCardGridView: View {
                     if isSelectionMode {
                         NotesCardGrid(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
                     } else {
-                        NavigationLink(destination: EditNotesView(note: note, notesViewModel: notesViewModel)) {
+                        NavigationLink(destination: EditNotesView(
+                            note: note,
+                            notesViewModel: notesViewModel,
+                            createPasswordViewModel: createPasswordViewModel
+                        )) {
                             NotesCardGrid(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
                         }
                         .buttonStyle(.plain)

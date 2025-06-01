@@ -11,11 +11,7 @@ struct NoteCategoryEditView: View {
     @Binding var isPresented: Bool
     @Binding var isSaved: Bool
 
-    let category: NoteCategory
-    let categoryIcon: String
-    let categoryColor: Color
-    let categoryLabel: String
-
+    @State private var selectedCategory: NoteCategory = .all
     @State private var isSecretNote = false
     @State private var searchTextEditNotes: String = ""
     @State private var isActiveSearch: Bool = false
@@ -40,36 +36,64 @@ struct NoteCategoryEditView: View {
                 title: $noteTitle, isSaved: $isSaved,
                 lastEdited: Date()
             )
-
-            NoteEditorSection(
-                description: $description, isSaved: $isSaved,
-                searchText: searchTextEditNotes,
-                currentMatchIndex: notesViewModel.currentMatchIndex,
-                matchRanges: notesViewModel.matchRanges,
-                fontSize: textScale
-            )
+            
+        
+            
+            Spacer()
         }
         .animation(.bouncy, value: isActiveSearch)
         .animation(.bouncy, value: isActiveTextSize)
         .edgesIgnoringSafeArea(.bottom)
         .background(Color.backgroundHomePage)
+        .navigationTitle("Create Note")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                CardRowNotesView(
-                    image: categoryIcon,
-                    text: categoryLabel,
-                    color: categoryColor,
-                    font: 10
-                )
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    isPresented = false
+                } label: {
+                    Text("Cancel")
+                }
             }
             
+            ToolbarItem(placement: .principal) {
+                Menu {
+                    ForEach(NoteCategory.allCases, id: \.self) { category in
+                        Button {
+                            selectedCategory = category
+                        } label: {
+                            Label(category.rawValue.capitalized, systemImage: category.iconMenu)
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        ZStack {
+                            Circle()
+                                .fill(selectedCategory.color)
+                                .frame(width: 26, height: 26)
+                            
+                            Image(systemName: selectedCategory.icon)
+                                .foregroundColor(.white)
+                                .font(.system(size: 10))
+                        }
+                        Text(selectedCategory.rawValue.capitalized)
+                            .foregroundColor(.primary)
+                            .bold()
+                        
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 6)
+                    
+                }
+            }
+
             ToolbarItem(placement: .confirmationAction) {
                 Button("Create") {
                     let note = Note(
                         title: noteTitle,
                         description: description,
                         lastEdited: Date(),
-                        category: category,
+                        category: selectedCategory,
                         isLiked: false,
                         secretNotesEnabled: isSecretNote
                     )

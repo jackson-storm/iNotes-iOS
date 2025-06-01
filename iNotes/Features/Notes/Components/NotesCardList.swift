@@ -3,6 +3,7 @@ import SwiftUI
 struct NotesCardListView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
+    let createPasswordViewModel: CreatePasswordViewModel
 
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
@@ -14,7 +15,12 @@ struct NotesCardListView: View {
                     if isSelectionMode {
                         NotesCardList(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
                     } else {
-                        NavigationLink(destination: EditNotesView(note: note, notesViewModel: notesViewModel)) {
+                        NavigationLink(destination: EditNotesView(
+                            note: note,
+                            notesViewModel: notesViewModel,
+                            createPasswordViewModel: createPasswordViewModel
+                        )
+                        ) {
                             NotesCardList(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
                         }
                         .buttonStyle(.plain)
@@ -93,20 +99,15 @@ struct NotesCardList: View {
 
                         Spacer()
 
-                        HStack(spacing: 20) {
-                            if note.isArchive {
-                                Image(systemName: "archivebox.fill")
-                                    .foregroundStyle(.blue)
-                            }
-
-                            if note.isArchive {
+                        HStack(spacing: 10) {
+                            if note.isLock {
                                 ZStack {
                                     Circle()
                                         .fill(.blue.opacity(0.1))
                                         .stroke(.secondary, lineWidth: 1)
                                         .frame(width: 30, height: 30)
 
-                                    Image(systemName: "archivebox.fill")
+                                    Image(systemName: "lock.fill")
                                         .font(.system(size: 15))
                                 }
                                 .foregroundStyle(.blue)
@@ -124,20 +125,22 @@ struct NotesCardList: View {
                                 }
                                 .foregroundStyle(.red)
                             }
-
-                            Image(systemName: note.category.icon)
-                                .font(.system(size: 14))
-                                .foregroundStyle(.white)
-                                .background(
-                                    Circle()
-                                        .fill(note.category.color)
-                                        .frame(width: 30, height: 30)
-                                )
+                            
+                            Divider()
+                            
+                            ZStack {
+                                Circle()
+                                    .fill(note.category.color)
+                                    .frame(width: 30, height: 30)
+                                
+                                Image(systemName: note.category.icon)
+                                    .font(.system(size: 15))
+                                    .foregroundStyle(.white)
+                            }
                         }
-                        .padding(.trailing, 5)
                     }
 
-                    if !note.secretNotesEnabled {
+                    if !note.isLock {
                         Text(note.description.isEmpty ? "No description" : note.description)
                             .font(.subheadline)
                             .multilineTextAlignment(.leading)

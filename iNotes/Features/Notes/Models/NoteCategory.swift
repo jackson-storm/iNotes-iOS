@@ -43,4 +43,19 @@ extension NoteCategory {
         case .all: return "folder.fill"
         }
     }
+    
+    var iconMenu: String {
+        switch self {
+        case .banks: return "dollarsign.bank.building"
+        case .creditCards: return "creditcard"
+        case .work: return "briefcase"
+        case .payments: return "banknote"
+        case .shopping: return "cart"
+        case .travel: return "airplane"
+        case .messages: return "ellipsis.message"
+        case .health: return "heart"
+        case .personal: return "person"
+        case .all: return "folder"
+        }
+    }
 }

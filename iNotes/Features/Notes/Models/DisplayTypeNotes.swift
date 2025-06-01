@@ -1,21 +1,21 @@
 enum DisplayTypeNotes: String, CaseIterable {
-    case list
-    case grid
+    case List
+    case Grid
 
     var iconName: String {
         switch self {
-        case .list:
+        case .List:
             return "list.bullet"
-        case .grid:
+        case .Grid:
             return "square.grid.2x2"
         }
     }
 
     var displayName: String {
         switch self {
-        case .grid:
+        case .Grid:
             return "Grid"
-        case .list:
+        case .List:
             return "List"
         }
     }

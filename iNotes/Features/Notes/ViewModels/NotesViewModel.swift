@@ -4,7 +4,7 @@ class NotesViewModel: ObservableObject {
     // MARK: - Published
     @Published var notes: [Note] = []
     @Published var searchText: String = ""
-    @Published var sortType: NotesSortType = .creationDate
+    @Published var sortType: NotesSortType = .CreationDate
     @Published var lastScrollOffset: CGFloat = 0
     @Published var matchRanges: [NSRange] = []
     @Published var currentMatchIndex: Int = 0
@@ -20,14 +20,17 @@ class NotesViewModel: ObservableObject {
     private let repository: NotesRepository
     private let likesManager: LikesManager
     private let archiveManager: ArchiveManager
+    private let lockManager: LockManager
     
     // MARK: - Init
     init(repository: NotesRepository = UserDefaultsNotesRepository(),
          likesManager: LikesManager = UserDefaultsLikesManager(),
-         archiveManager: ArchiveManager = UserDefaultsArchiveManager()) {
+         archiveManager: ArchiveManager = UserDefaultsArchiveManager(),
+         lockManager: LockManager = UserDefaultsLockManager()) {
         self.repository = repository
         self.likesManager = likesManager
         self.archiveManager = archiveManager
+        self.lockManager = lockManager
         loadNotes()
     }
     
@@ -39,9 +42,9 @@ class NotesViewModel: ObservableObject {
         }
         
         switch sortType {
-        case .creationDate: return base.sorted { $0.createdAt > $1.createdAt }
-        case .lastModified: return base.sorted { $0.lastEdited > $1.lastEdited }
-        case .name: return base.sorted { $0.title.lowercased() < $1.title.lowercased() }
+        case .CreationDate: return base.sorted { $0.createdAt > $1.createdAt }
+        case .LastModified: return base.sorted { $0.lastEdited > $1.lastEdited }
+        case .Name: return base.sorted { $0.title.lowercased() < $1.title.lowercased() }
         }
     }
 
@@ -107,6 +110,13 @@ class NotesViewModel: ObservableObject {
         likesManager.saveLike(for: notes[index].id, isLiked: notes[index].isLiked)
         saveNotes()
     }
+    
+    func toggleLock(for note: Note) {
+        guard let index = notes.firstIndex(where: { $0.id == note.id }) else { return }
+        notes[index].isLock.toggle()
+        lockManager.saveLock(for: notes[index].id, isLock: notes[index].isLock)
+        saveNotes()
+    }
 
     // MARK: - Persistence
     private func saveNotes() {
@@ -118,6 +128,7 @@ class NotesViewModel: ObservableObject {
         for i in notes.indices {
             notes[i].isLiked = likesManager.loadLike(for: notes[i].id)
             notes[i].isArchive = archiveManager.loadArchive(for: notes[i].id)
+            notes[i].isLock = lockManager.loadLock(for: notes[i].id)
         }
     }
 }

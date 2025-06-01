@@ -6,7 +6,7 @@ struct HeaderView: View {
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
     @Binding var sortType: NotesSortType
     @Binding var selectedTab: Int
-    @Binding var isSheetPresented: Bool
+    @Binding var isSheetAddNotesPresented: Bool
     
     @Binding var deleteActionType: DeleteActionType?
     @Binding var selectedNotes: Set<UUID>
@@ -32,9 +32,20 @@ struct HeaderView: View {
             
             SearchBarHomeView(searchText: $searchBarText, selectedTab: $selectedTab)
             
-            if searchBarText.isEmpty {
-                HeaderAddNotesView(isSheetPresented: $isSheetPresented)
-                    .disabled(isSelectionMode)
+            if !isSelectionMode {
+                if searchBarText.isEmpty {
+                    HeaderAddNotesView(isSheetAddNotesPresented: $isSheetAddNotesPresented)
+                }
+            } else {
+                ZStack {
+                    Circle()
+                        
+                        .stroke(Color.accentColor, lineWidth: 1)
+                        .frame(width: 38, height: 25)
+                    
+                    Text(selectedNotes.count.description)
+                        .foregroundStyle(.white)
+                }
             }
         }
         .animation(.bouncy(duration: 0.5), value: searchBarText)
@@ -71,12 +82,12 @@ struct HeaderView: View {
 }
 
 private struct HeaderAddNotesView: View {
-    @Binding var isSheetPresented: Bool
+    @Binding var isSheetAddNotesPresented: Bool
     
     var body: some View {
         VStack {
             Button(action: {
-                isSheetPresented = true
+                isSheetAddNotesPresented = true
             }) {
                 Image(systemName: "plus.circle")
                     .padding(5)
@@ -96,45 +107,49 @@ private struct HeaderButtonMenuView: View {
     var body: some View {
         Menu {
             ///select notes
-            Button {
-                isSelectionMode = true
-            } label: {
-                Label("Select notes", systemImage: "checkmark.circle")
+            Section {
+                Button {
+                    isSelectionMode = true
+                } label: {
+                    Label("Select notes", systemImage: "checkmark.circle")
+                }
             }
             ///display notes
             Menu {
                 Button {
-                    selectedDisplayTypeNotes = .list
+                    selectedDisplayTypeNotes = .List
                 } label: {
-                    Label("List", systemImage: selectedDisplayTypeNotes == .list ? "checkmark" : "")
+                    Label("List", systemImage: selectedDisplayTypeNotes == .List ? "checkmark" : "")
                 }
                 Button {
-                    selectedDisplayTypeNotes = .grid
+                    selectedDisplayTypeNotes = .Grid
                 } label: {
-                    Label("Grid", systemImage: selectedDisplayTypeNotes == .grid ? "checkmark" : "")
+                    Label("Grid", systemImage: selectedDisplayTypeNotes == .Grid ? "checkmark" : "")
                 }
             } label: {
                 Label("Display notes", systemImage: selectedDisplayTypeNotes.iconName)
+                Text(selectedDisplayTypeNotes.rawValue)
             }
             ///sorting
             Menu {
                 Button {
-                    sortType = .creationDate
+                    sortType = .CreationDate
                 } label: {
-                    Label("Creation date", systemImage: sortType == .creationDate ? "checkmark" : "")
+                    Label("Creation date", systemImage: sortType == .CreationDate ? "checkmark" : "")
                 }
                 Button {
-                    sortType = .lastModified
+                    sortType = .LastModified
                 } label: {
-                    Label("Date modified", systemImage: sortType == .lastModified ? "checkmark" : "")
+                    Label("Date modified", systemImage: sortType == .LastModified ? "checkmark" : "")
                 }
                 Button {
-                    sortType = .name
+                    sortType = .Name
                 } label: {
-                    Label("Name", systemImage: sortType == .name ? "checkmark" : "")
+                    Label("Name", systemImage: sortType == .Name ? "checkmark" : "")
                 }
             } label: {
                 Label("Sorting notes", systemImage: "arrow.up.arrow.down")
+                Text(sortType.rawValue)
             }
             
         } label: {

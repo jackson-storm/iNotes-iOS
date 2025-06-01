@@ -7,9 +7,9 @@ struct ContentView: View {
     
     @State private var selectedNotes: Set<UUID> = []
     @State private var isSelectionMode = false
-    @State private var sortType: NotesSortType = .creationDate
+    @State private var sortType: NotesSortType = .CreationDate
     @State private var selectedTab: Int = 1
-    @State private var isSheetPresented = false
+    @State private var isSheetAddNotesPresented = false
     @State private var deleteActionType: DeleteActionType?
     @State private var isSaved: Bool = false
     
@@ -37,7 +37,7 @@ struct ContentView: View {
                     selectedNotes: $selectedNotes,
                     sortType: $sortType,
                     selectedTab: $selectedTab,
-                    isSheetPresented: $isSheetPresented,
+                    isSheetAddNotesPresented: $isSheetAddNotesPresented,
                     selectedTheme: selectedThemeBinding,
                     selectedTintRawValue: $selectedTintRawValue,
                     deleteActionType: $deleteActionType,
@@ -45,6 +45,8 @@ struct ContentView: View {
                 )
             }
             .tint(selectedTint.color)
+        } else {
+            WelcomeFlowView()
         }
     }
 }

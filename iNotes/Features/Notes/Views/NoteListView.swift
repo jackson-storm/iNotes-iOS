@@ -2,6 +2,8 @@ import SwiftUI
 
 struct NotesListView: View {
     @ObservedObject var notesViewModel: NotesViewModel
+    @ObservedObject var createPasswordViewModel: CreatePasswordViewModel
+    
     @Binding var selectedDisplayTypeNotes: DisplayTypeNotes
 
     @Binding var selectedNotes: Set<UUID>
@@ -16,17 +18,19 @@ struct NotesListView: View {
             } else {
                 ScrollView {
                     switch selectedDisplayTypeNotes {
-                    case .list:
+                    case .List:
                         NotesCardListView(
                             notes: activeNotes,
                             notesViewModel: notesViewModel,
+                            createPasswordViewModel: createPasswordViewModel,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
-                    case .grid:
+                    case .Grid:
                         NotesCardGridView(
                             notes: activeNotes,
                             notesViewModel: notesViewModel,
+                            createPasswordViewModel: createPasswordViewModel,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
                         )
@@ -39,7 +43,7 @@ struct NotesListView: View {
     }
 }
 
-struct EmptyStateView: View {
+private struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 10) {
             Image(systemName: "menucard")

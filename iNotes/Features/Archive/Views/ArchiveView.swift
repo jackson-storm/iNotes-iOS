@@ -3,6 +3,7 @@ import SwiftUI
 struct ArchiveContentView: View {
     let notes: [Note]
     let notesViewModel: NotesViewModel
+    let createPasswordViewModel: CreatePasswordViewModel
     
     @Binding var selectedNotes: Set<UUID>
     @Binding var isSelectionMode: Bool
@@ -25,10 +26,22 @@ struct ArchiveContentView: View {
                         ForEach(archivedNotes) { note in
                             Group {
                                 if isSelectionMode {
-                                    ArchiveCardView(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
+                                    NotesCardList(
+                                        note: note,
+                                        selectedNotes: $selectedNotes,
+                                        isSelectionMode: $isSelectionMode
+                                    )
                                 } else {
-                                    NavigationLink(destination: EditNotesView(note: note, notesViewModel: notesViewModel)) {
-                                        ArchiveCardView(note: note, selectedNotes: $selectedNotes, isSelectionMode: $isSelectionMode)
+                                    NavigationLink(destination: EditNotesView(
+                                        note: note,
+                                        notesViewModel: notesViewModel,
+                                        createPasswordViewModel: createPasswordViewModel
+                                    )) {
+                                        NotesCardList(
+                                            note: note,
+                                            selectedNotes: $selectedNotes,
+                                            isSelectionMode: $isSelectionMode
+                                        )
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -167,6 +180,20 @@ struct ArchiveContentView: View {
                 )
             }
         }
+    }
+}
+
+private struct EmptyStateArchiveView: View {
+    var body: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "menucard")
+                .font(.system(size: 50))
+                .foregroundColor(.gray)
+            Text("No notes available")
+                .font(.system(size: 18, weight: .medium))
+                .foregroundColor(.gray)
+        }
+        .padding(.bottom, 50)
     }
 }
 

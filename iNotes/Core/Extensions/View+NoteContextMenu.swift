@@ -7,10 +7,12 @@ extension View {
         isSelectionMode: Binding<Bool>
     ) -> some View {
         self.contextMenu {
-            Button {
-                isSelectionMode.wrappedValue = true
-            } label: {
-                Label("Select notes", systemImage: "checkmark.circle")
+            Section {
+                Button {
+                    isSelectionMode.wrappedValue = true
+                } label: {
+                    Label("Select notes", systemImage: "checkmark.circle")
+                }
             }
 
             Button {
@@ -24,6 +26,7 @@ extension View {
             } label: {
                 Label("Delete", systemImage: "trash")
             }
+            .disabled(note.isLock)
         }
     }
 }

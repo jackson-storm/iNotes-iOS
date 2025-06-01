@@ -3,14 +3,15 @@ import SwiftUI
 struct HomeView: View {
     @State private var selectedCategory: NoteCategory = .all
     @StateObject private var notesViewModel = NotesViewModel()
+    @StateObject private var createPasswordViewModel = CreatePasswordViewModel()
     
-    @AppStorage("selectedDisplayTypeNotes") private var selectedDisplayTypeNotes: DisplayTypeNotes = .list
+    @AppStorage("selectedDisplayTypeNotes") private var selectedDisplayTypeNotes: DisplayTypeNotes = .List
 
     @Binding var isSelectionMode: Bool
     @Binding var selectedNotes: Set<UUID>
     @Binding var sortType: NotesSortType
     @Binding var selectedTab: Int
-    @Binding var isSheetPresented: Bool
+    @Binding var isSheetAddNotesPresented: Bool
     @Binding var selectedTheme: Theme
     @Binding var selectedTintRawValue: String
     @Binding var deleteActionType: DeleteActionType?
@@ -21,7 +22,9 @@ struct HomeView: View {
     
     @State private var showToast = false
     @State private var toastMessage = ""
-
+    
+    @State private var note: Note = .init(title: "", description: "", category: .all, isLiked: false)
+    
     var body: some View {
         VStack(spacing: 0) {
             if selectedTab == 1 {
@@ -32,7 +35,7 @@ struct HomeView: View {
                         selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                         sortType: $notesViewModel.sortType,
                         selectedTab: $selectedTab,
-                        isSheetPresented: $isSheetPresented,
+                        isSheetAddNotesPresented: $isSheetAddNotesPresented,
                         deleteActionType: $deleteActionType,
                         selectedNotes: $selectedNotes,
                         notesViewModel: notesViewModel
@@ -54,6 +57,7 @@ struct HomeView: View {
                         ArchiveContentView(
                             notes: notesViewModel.filteredNotes,
                             notesViewModel: notesViewModel,
+                            createPasswordViewModel: createPasswordViewModel,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode,
                             selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
@@ -64,6 +68,7 @@ struct HomeView: View {
                     case 1:
                         NotesListView(
                             notesViewModel: notesViewModel,
+                            createPasswordViewModel: createPasswordViewModel,
                             selectedDisplayTypeNotes: $selectedDisplayTypeNotes,
                             selectedNotes: $selectedNotes,
                             isSelectionMode: $isSelectionMode
@@ -91,7 +96,8 @@ struct HomeView: View {
                     selectedTab: $selectedTab,
                     isSelectionMode: $isSelectionMode,
                     selectedNotes: $selectedNotes,
-                    deleteActionType: $deleteActionType
+                    deleteActionType: $deleteActionType,
+                    note: note
                 )
             }
         }
@@ -104,14 +110,14 @@ struct HomeView: View {
         .onChange(of: selectedCategory) { newValue,_ in
             notesViewModel.filterNotes(by: newValue)
         }
-        .sheet(isPresented: $isSheetPresented) {
+        .sheet(isPresented: $isSheetAddNotesPresented) {
             NavigationStack {
-                CategoriesNotesView(
-                    isPresented: $isSheetPresented,
+                NoteCategoryEditView(
+                    notesViewModel: notesViewModel,
                     noteTitle: $noteTitle,
                     description: $description,
-                    isSaved: $isSaved,
-                    viewModel: notesViewModel
+                    isPresented: $isSheetAddNotesPresented,
+                    isSaved: $isSaved
                 )
             }
             .presentationBackground(Color.backgroundHomePage)

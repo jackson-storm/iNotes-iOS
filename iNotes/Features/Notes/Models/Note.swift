@@ -10,11 +10,12 @@ struct Note: Identifiable, Codable, Hashable {
     
     var isLiked: Bool
     var isArchive: Bool
+    var isLock: Bool
     
     var category: NoteCategory
     var secretNotesEnabled: Bool
 
-    init(title: String, description: String, lastEdited: Date = Date(), category: NoteCategory, isLiked: Bool, createAt: Date = Date(), secretNotesEnabled: Bool = false, isArchive: Bool = false) {
+    init(title: String, description: String, lastEdited: Date = Date(), category: NoteCategory, isLiked: Bool, createAt: Date = Date(), secretNotesEnabled: Bool = false, isArchive: Bool = false, isLock: Bool = false) {
         self.id = UUID()
         self.title = title
         self.description = description
@@ -24,6 +25,7 @@ struct Note: Identifiable, Codable, Hashable {
         
         self.isLiked = isLiked
         self.isArchive = isArchive
+        self.isLock = isLock
         
         self.createdAt = createAt
         self.secretNotesEnabled = secretNotesEnabled
